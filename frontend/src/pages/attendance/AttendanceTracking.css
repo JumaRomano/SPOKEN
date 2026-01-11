@@ -1,0 +1,50 @@
+.attendance-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.attendance-placeholder {
+    text-align: center;
+    padding: 64px 32px;
+}
+
+.placeholder-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+}
+
+.attendance-placeholder h3 {
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    color: #1a202c;
+}
+
+.attendance-placeholder p {
+    margin: 0 0 32px 0;
+    color: #718096;
+    font-size: 16px;
+}
+
+.placeholder-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #f7fafc;
+    border-radius: 8px;
+}
+
+.feature-icon {
+    font-size: 24px;
+}

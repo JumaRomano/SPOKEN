@@ -1,0 +1,139 @@
+.event-list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.events-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.event-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 4px solid #667eea;
+}
+
+.event-card.past {
+    border-left-color: #cbd5e0;
+    opacity: 0.8;
+}
+
+.event-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.event-date-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.event-card.past .event-date-badge {
+    background: #a0aec0;
+}
+
+.badge-day {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.badge-month {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.event-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.event-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.event-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a202c;
+}
+
+.event-status {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.event-status.upcoming {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.event-status.past {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.event-description {
+    margin: 0;
+    color: #718096;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.event-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.event-detail {
+    font-size: 14px;
+    color: #4a5568;
+}
+
+.event-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+@media (max-width: 640px) {
+    .event-card {
+        flex-direction: column;
+    }
+
+    .event-date-badge {
+        width: 60px;
+        height: 60px;
+    }
+
+    .badge-day {
+        font-size: 24px;
+    }
+}
