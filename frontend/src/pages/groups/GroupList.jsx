@@ -19,7 +19,7 @@ const GroupList = () => {
         try {
             setLoading(true);
             const response = await groupService.getAll();
-            setGroups(response.data || []);
+            setGroups(response.groups || []);
         } catch (err) {
             setError('Failed to load groups');
             console.error(err);
@@ -56,7 +56,7 @@ const GroupList = () => {
                 ) : (
                     <div className="groups-grid">
                         {groups.map((group) => {
-                            const typeInfo = groupTypes[group.groupType] || groupTypes.ministry;
+                            const typeInfo = groupTypes[group.group_type] || groupTypes.ministry;
                             return (
                                 <div key={group.id} className="group-card">
                                     <div
@@ -71,14 +71,14 @@ const GroupList = () => {
                                             {group.description || 'No description'}
                                         </p>
                                         <div className="group-meta">
-                                            <span className="group-type">{group.groupType}</span>
+                                            <span className="group-type capitalize">{group.group_type}</span>
                                             <span className="group-members">
-                                                {group.memberCount || 0} members
+                                                {group.member_count || 0} members
                                             </span>
                                         </div>
-                                        {group.meetingSchedule && (
+                                        {group.meeting_schedule && (
                                             <div className="group-schedule">
-                                                📅 {group.meetingSchedule}
+                                                📅 {group.meeting_schedule}
                                             </div>
                                         )}
                                     </div>

@@ -14,6 +14,7 @@ class GroupService {
             search = '',
         } = filters;
 
+        // Note: category filter maps to group_type column
         let query = `
       SELECT g.*, 
              m.first_name || ' ' || m.last_name as leader_name,
@@ -27,7 +28,7 @@ class GroupService {
         let paramCount = 2;
 
         if (category) {
-            query += ` AND g.category = $${paramCount}`;
+            query += ` AND g.group_type = $${paramCount}`;
             params.push(category);
             paramCount++;
         }
@@ -87,15 +88,20 @@ class GroupService {
             name,
             description,
             category,
+            groupType,
             leaderId = null,
             parentGroupId = null,
+            meetingSchedule,
         } = groupData;
 
+        // Support both groupType and category fields
+        const type = groupType || category;
+
         const result = await db.query(
-            `INSERT INTO groups (name, description, category, leader_id, parent_group_id, is_active)
-       VALUES ($1, $2, $3, $4, $5, true)
+            `INSERT INTO groups (name, description, group_type, leader_id, parent_group_id, meeting_schedule, is_active)
+       VALUES ($1, $2, $3, $4, $5, $6, true)
        RETURNING *`,
-            [name, description, category, leaderId, parentGroupId]
+            [name, description, type, leaderId, parentGroupId, meetingSchedule]
         );
 
         logger.info('Group created:', { groupId: result.rows[0].id, name });
@@ -106,20 +112,32 @@ class GroupService {
      * Update group
      */
     async update(id, groupData) {
-        const { name, description, category, leaderId, parentGroupId, status } = groupData;
+        const {
+            name,
+            description,
+            category,
+            groupType,
+            leaderId,
+            parentGroupId,
+            meetingSchedule,
+            status
+        } = groupData;
+
+        const type = groupType || category;
 
         const result = await db.query(
             `UPDATE groups SET
         name = COALESCE($1, name),
         description = COALESCE($2, description),
-        category = COALESCE($3, category),
+        group_type = COALESCE($3, group_type),
         leader_id = COALESCE($4, leader_id),
         parent_group_id = COALESCE($5, parent_group_id),
-        is_active = COALESCE($6, is_active),
+        meeting_schedule = COALESCE($6, meeting_schedule),
+        is_active = COALESCE($7, is_active),
         updated_at = CURRENT_TIMESTAMP
-       WHERE id = $7
+       WHERE id = $8
        RETURNING *`,
-            [name, description, category, leaderId, parentGroupId, status === 'active', id]
+            [name, description, type, leaderId, parentGroupId, meetingSchedule, status === 'active', id]
         );
 
         if (result.rows.length === 0) {
@@ -253,14 +271,14 @@ class GroupService {
      * Record group transaction
      */
     async recordTransaction(groupId, transactionData, recordedBy) {
-        const { transactionType, amount, description, category, transactionDate } = transactionData;
+        const { transactionType, amount, description, transactionDate } = transactionData;
 
         const result = await db.query(
             `INSERT INTO group_finances 
-       (group_id, transaction_type, amount, description, category, transaction_date, recorded_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       (group_id, transaction_type, amount, description, transaction_date, recorded_by)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-            [groupId, transactionType, amount, description, category, transactionDate || new Date(), recordedBy]
+            [groupId, transactionType, amount, description, transactionDate || new Date(), recordedBy]
         );
 
         logger.info('Group transaction recorded:', { groupId, transactionType, amount });

@@ -68,6 +68,41 @@ class AuthController {
     }
 
     /**
+     * Create member login (Admin only)
+     */
+    async createMemberLogin(req, res, next) {
+        try {
+            const { memberId, email, password, role } = req.body;
+
+            // Should be protected by middleware to ensure admin access
+            const result = await authService.createMemberLogin(memberId, email, password, role);
+
+            res.status(201).json({
+                message: 'Login created successfully',
+                user: result
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    /**
+     * Admin reset password (Admin only)
+     */
+    async adminResetPassword(req, res, next) {
+        try {
+            const { userId, newPassword } = req.body;
+
+            // Should be protected by middleware to ensure admin access
+            const result = await authService.adminResetPassword(userId, newPassword);
+
+            res.json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    /**
      * Logout (client-side - just return success)
      */
     async logout(req, res) {

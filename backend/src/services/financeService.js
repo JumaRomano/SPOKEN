@@ -10,8 +10,8 @@ class FinanceService {
             `SELECT f.*,
               COALESCE((SELECT SUM(amount) FROM contributions WHERE fund_id = f.id), 0) as total_received
        FROM funds f
-       WHERE is_active = true
-       ORDER BY fund_name`
+       WHERE f.is_active = true
+       ORDER BY f.fund_name`
         );
 
         return result.rows;
@@ -21,13 +21,18 @@ class FinanceService {
      * Create fund
      */
     async createFund(fundData) {
-        const { fundName, description, fundType, targetAmount = null } = fundData;
+        // Accept both camelCase and snake_case
+        const fundName = fundData.fundName || fundData.fund_name;
+        const fundType = fundData.fundType || fundData.fund_type;
+        const targetAmount = fundData.targetAmount || fundData.target_amount || null;
+        const description = fundData.description;
+        const isActive = fundData.isActive !== undefined ? fundData.isActive : (fundData.is_active !== undefined ? fundData.is_active : true);
 
         const result = await db.query(
             `INSERT INTO funds (fund_name, description, fund_type, target_amount, is_active)
-       VALUES ($1, $2, $3, $4, true)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-            [fundName, description, fundType, targetAmount]
+            [fundName, description, fundType, targetAmount, isActive]
         );
 
         logger.info('Fund created:', { fundId: result.rows[0].id, fundName });
@@ -35,27 +40,137 @@ class FinanceService {
     }
 
     /**
+     * Update fund
+     */
+    async updateFund(id, fundData) {
+        const fundName = fundData.fundName || fundData.fund_name;
+        const fundType = fundData.fundType || fundData.fund_type;
+        const targetAmount = fundData.targetAmount || fundData.target_amount || null;
+        const description = fundData.description;
+        const isActive = fundData.isActive !== undefined ? fundData.isActive : (fundData.is_active !== undefined ? fundData.is_active : true);
+
+        const result = await db.query(
+            `UPDATE funds 
+       SET fund_name = $1, description = $2, fund_type = $3, target_amount = $4, is_active = $5, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $6
+       RETURNING *`,
+            [fundName, description, fundType, targetAmount, isActive, id]
+        );
+
+        if (result.rows.length === 0) {
+            throw new Error('Fund not found');
+        }
+
+        logger.info('Fund updated:', { fundId: id });
+        return result.rows[0];
+    }
+
+    /**
+     * Reassign fund (move contributions and pledges to another fund)
+     */
+    async reassignFund(fromFundId, toFundId) {
+        // First verify both funds exist
+        const fromFund = await db.query('SELECT * FROM funds WHERE id = $1', [fromFundId]);
+        const toFund = await db.query('SELECT * FROM funds WHERE id = $1', [toFundId]);
+
+        if (fromFund.rows.length === 0) {
+            const error = new Error('Source fund not found');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        if (toFund.rows.length === 0) {
+            const error = new Error('Target fund not found');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        // Reassign contributions
+        const contributionsResult = await db.query(
+            'UPDATE contributions SET fund_id = $1 WHERE fund_id = $2 RETURNING id',
+            [toFundId, fromFundId]
+        );
+
+        // Reassign pledges
+        const pledgesResult = await db.query(
+            'UPDATE pledges SET fund_id = $1 WHERE fund_id = $2 RETURNING id',
+            [toFundId, fromFundId]
+        );
+
+        logger.info('Fund reassigned:', {
+            fromFundId,
+            toFundId,
+            contributionsReassigned: contributionsResult.rows.length,
+            pledgesReassigned: pledgesResult.rows.length
+        });
+
+        return {
+            contributionsReassigned: contributionsResult.rows.length,
+            pledgesReassigned: pledgesResult.rows.length
+        };
+    }
+
+    /**
+     * Delete fund
+     */
+    async deleteFund(id) {
+        // First check if fund has contributions
+        const contributionsCheck = await db.query(
+            'SELECT COUNT(*) as count FROM contributions WHERE fund_id = $1',
+            [id]
+        );
+
+        if (parseInt(contributionsCheck.rows[0].count) > 0) {
+            const error = new Error('Cannot delete fund with existing contributions. Please remove or reassign contributions first.');
+            error.statusCode = 400;
+            throw error;
+        }
+
+        // Check if fund has pledges
+        const pledgesCheck = await db.query(
+            'SELECT COUNT(*) as count FROM pledges WHERE fund_id = $1',
+            [id]
+        );
+
+        if (parseInt(pledgesCheck.rows[0].count) > 0) {
+            const error = new Error('Cannot delete fund with existing pledges. Please remove or reassign pledges first.');
+            error.statusCode = 400;
+            throw error;
+        }
+
+        const result = await db.query('DELETE FROM funds WHERE id = $1 RETURNING id', [id]);
+
+        if (result.rows.length === 0) {
+            const error = new Error('Fund not found');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        logger.info('Fund deleted:', { fundId: id });
+        return result.rows[0];
+    }
+
+    /**
      * Record contribution
      */
     async recordContribution(contributionData, recordedBy) {
-        const {
-            memberId = null,
-            fundId,
-            amount,
-            paymentMethod,
-            transactionRef = null,
-            contributionDate = new Date(),
-            isAnonymous = false,
-            notes = null,
-        } = contributionData;
+        // Handle both camelCase and snake_case
+        const memberId = contributionData.memberId || contributionData.member_id || null;
+        const fundId = contributionData.fundId || contributionData.fund_id;
+        const amount = contributionData.amount;
+        const contributionType = contributionData.contributionType || contributionData.contribution_type || 'offering';
+        const paymentMethod = contributionData.paymentMethod || contributionData.payment_method;
+        const transactionRef = contributionData.transactionRef || contributionData.transaction_ref || null;
+        const contributionDate = contributionData.contributionDate || contributionData.contribution_date || new Date();
+        const notes = contributionData.notes || null;
 
         const result = await db.query(
             `INSERT INTO contributions 
-       (member_id, fund_id, amount, payment_method, reference_number, contribution_date, 
-        recorded_by, notes)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       (member_id, fund_id, amount, contribution_type, payment_method, reference_number, 
+        contribution_date, recorded_by, notes)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
-            [memberId, fundId, amount, paymentMethod, transactionRef, contributionDate, recordedBy, notes]
+            [memberId, fundId, amount, contributionType, paymentMethod, transactionRef, contributionDate, recordedBy, notes]
         );
 
         logger.info('Contribution recorded:', { contributionId: result.rows[0].id, amount, fundId });
@@ -169,17 +284,42 @@ class FinanceService {
      * Create pledge
      */
     async createPledge(pledgeData) {
-        const { memberId, fundId, pledgeAmount, frequency, startDate, endDate = null } = pledgeData;
+        // Handle both camelCase and snake_case
+        const memberId = pledgeData.memberId || pledgeData.member_id;
+        const fundId = pledgeData.fundId || pledgeData.fund_id;
+        const pledgeAmount = pledgeData.pledgeAmount || pledgeData.pledge_amount;
+        const pledgeDate = pledgeData.pledgeDate || pledgeData.pledge_date || new Date();
+        const dueDate = pledgeData.dueDate || pledgeData.due_date || null;
+        const notes = pledgeData.notes || null;
 
         const result = await db.query(
-            `INSERT INTO pledges (member_id, fund_id, pledge_amount, start_date, due_date, status)
-       VALUES ($1, $2, $3, $4, $5, 'active')
+            `INSERT INTO pledges (member_id, fund_id, pledge_amount, pledge_date, due_date, status, notes)
+       VALUES ($1, $2, $3, $4, $5, 'active', $6)
        RETURNING *`,
-            [memberId, fundId, pledgeAmount, startDate, endDate]
+            [memberId, fundId, pledgeAmount, pledgeDate, dueDate, notes]
         );
 
         logger.info('Pledge created:', { pledgeId: result.rows[0].id, memberId, pledgeAmount });
         return result.rows[0];
+    }
+
+    /**
+     * Get all pledges
+     */
+    async getAllPledges() {
+        const result = await db.query(
+            `SELECT p.*, f.fund_name, m.first_name, m.last_name,
+              COALESCE((SELECT SUM(amount) FROM contributions 
+                        WHERE member_id = p.member_id AND fund_id = p.fund_id 
+                        AND contribution_date >= p.pledge_date), 0) as total_paid
+       FROM pledges p
+       JOIN funds f ON p.fund_id = f.id
+       JOIN members m ON p.member_id = m.id
+       WHERE p.status = 'active'
+       ORDER BY p.pledge_date DESC`
+        );
+
+        return result.rows;
     }
 
     /**

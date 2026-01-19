@@ -34,19 +34,20 @@ class ReportingService {
     }
 
     async getTotalMembers() {
-        const result = await db.query('SELECT COUNT(*) FROM members WHERE status = $1', ['active']);
+        const result = await db.query('SELECT COUNT(*) FROM members WHERE membership_status = $1', ['active']);
         return parseInt(result.rows[0].count);
     }
 
     async getTotalGroups() {
-        const result = await db.query('SELECT COUNT(*) FROM groups WHERE status = $1', ['active']);
+        // Schema uses is_active boolean
+        const result = await db.query('SELECT COUNT(*) FROM groups WHERE is_active = $1', [true]);
         return parseInt(result.rows[0].count);
     }
 
     async getUpcomingEventsCount() {
+        // Schema doesn't have status for events
         const result = await db.query(
-            'SELECT COUNT(*) FROM events WHERE start_date >= CURRENT_DATE AND status != $1',
-            ['cancelled']
+            'SELECT COUNT(*) FROM events WHERE start_date >= CURRENT_DATE'
         );
         return parseInt(result.rows[0].count);
     }
@@ -65,8 +66,9 @@ class ReportingService {
     }
 
     async getMonthlyAttendance() {
+        // Schema uses attendance_count
         const result = await db.query(
-            `SELECT COALESCE(AVG(total_attendance), 0) as avg_attendance
+            `SELECT COALESCE(AVG(attendance_count), 0) as avg_attendance
        FROM services
        WHERE service_date >= DATE_TRUNC('month', CURRENT_DATE)`
         );
@@ -74,8 +76,9 @@ class ReportingService {
     }
 
     async getPendingPledges() {
+        // Schema uses amount_paid
         const result = await db.query(
-            `SELECT COUNT(*) FROM pledges WHERE status = $1 AND total_paid < pledge_amount`,
+            `SELECT COUNT(*) FROM pledges WHERE status = $1 AND amount_paid < pledge_amount`,
             ['active']
         );
         return parseInt(result.rows[0].count);
@@ -86,9 +89,10 @@ class ReportingService {
         if (memberResult.rows.length === 0) return 0;
 
         const memberId = memberResult.rows[0].id;
+        // Schema group_members doesn't have status
         const result = await db.query(
-            'SELECT COUNT(*) FROM group_members WHERE member_id = $1 AND status = $2',
-            [memberId, 'active']
+            'SELECT COUNT(*) FROM group_members WHERE member_id = $1',
+            [memberId]
         );
         return parseInt(result.rows[0].count);
     }
@@ -156,11 +160,11 @@ class ReportingService {
         g.id,
         g.name,
         g.group_type as category,
-        (SELECT COUNT(*) FROM group_members WHERE group_id = g.id AND status = 'active') as member_count,
+        (SELECT COUNT(*) FROM group_members WHERE group_id = g.id) as member_count,
         (SELECT COUNT(*) FROM group_attendance WHERE group_id = g.id AND meeting_date >= CURRENT_DATE - INTERVAL '3 months') as recent_meetings,
         (SELECT COALESCE(SUM(amount), 0) FROM group_finances WHERE group_id = g.id AND transaction_type = 'income') as total_income
        FROM groups g
-       WHERE g.status = 'active'
+       WHERE g.is_active = true
        ORDER BY member_count DESC`
         );
 
@@ -176,13 +180,13 @@ class ReportingService {
         m.id,
         m.first_name || ' ' || m.last_name as name,
         (SELECT COUNT(*) FROM attendance_records ar JOIN services s ON ar.service_id = s.id 
-         WHERE ar.member_id = m.id AND ar.status = 'present' AND s.service_date >= CURRENT_DATE - INTERVAL '3 months') as attendance_count,
-        (SELECT COUNT(*) FROM event_registrations WHERE member_id = m.id AND status != 'cancelled') as event_count,
-        (SELECT COUNT(*) FROM group_members WHERE member_id = m.id AND status = 'active') as group_count,
+         WHERE ar.member_id = m.id AND ar.attendance_status = 'present' AND s.service_date >= CURRENT_DATE - INTERVAL '3 months') as attendance_count,
+        (SELECT COUNT(*) FROM event_registrations WHERE member_id = m.id AND attendance_status != 'cancelled') as event_count,
+        (SELECT COUNT(*) FROM group_members WHERE member_id = m.id) as group_count,
         (SELECT COALESCE(SUM(amount), 0) FROM contributions WHERE member_id = m.id 
          AND contribution_date >= CURRENT_DATE - INTERVAL '1 year') as annual_giving
        FROM members m
-       WHERE m.status = 'active'
+       WHERE m.membership_status = 'active'
        ORDER BY attendance_count DESC, annual_giving DESC
        LIMIT 100`
         );

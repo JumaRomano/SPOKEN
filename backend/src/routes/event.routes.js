@@ -5,6 +5,9 @@ const authenticate = require('../middleware/auth');
 const rbac = require('../middleware/rbac');
 const auditLog = require('../middleware/auditLog');
 
+// Public routes
+router.get('/public', eventController.getAll);
+
 router.use(authenticate);
 
 // Event CRUD

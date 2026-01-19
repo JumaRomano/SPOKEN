@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import clsx from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { FiGrid, FiUsers, FiCalendar, FiDollarSign, FiCheckSquare, FiVideo, FiHome, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
+import { BiGroup } from 'react-icons/bi';
 
 const MainLayout = ({ children }) => {
     const { user, logout } = useAuth();
@@ -21,13 +22,14 @@ const MainLayout = ({ children }) => {
     };
 
     const navigation = [
-        { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-        { path: '/members', label: 'Members', icon: '👥' },
-        { path: '/groups', label: 'Groups', icon: '👪' },
-        { path: '/finance', label: 'Finance', icon: '💰', roles: ['finance', 'admin', 'sysadmin'] },
-        { path: '/events', label: 'Events', icon: '📅' },
-        { path: '/attendance', label: 'Attendance', icon: '✅', roles: ['leader', 'admin', 'sysadmin'] },
-        { path: '/', label: 'Back to Website', icon: '🏠' },
+        { path: '/dashboard', label: 'Dashboard', icon: <FiGrid /> },
+        { path: '/members', label: 'Members', icon: <FiUsers /> },
+        { path: '/groups', label: 'Groups', icon: <BiGroup /> },
+        { path: '/finance', label: 'Finance', icon: <FiDollarSign />, roles: ['finance', 'admin', 'sysadmin'] },
+        { path: '/events', label: 'Events', icon: <FiCalendar /> },
+        { path: '/attendance', label: 'Attendance', icon: <FiCheckSquare />, roles: ['leader', 'admin', 'sysadmin'] },
+        { path: '/sermons-management', label: 'Sermons', icon: <FiVideo />, roles: ['admin', 'sysadmin'] },
+        { path: '/', label: 'Back to Website', icon: <FiHome /> },
     ];
 
     const filteredNav = navigation.filter(item =>
@@ -43,7 +45,7 @@ const MainLayout = ({ children }) => {
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                     className="p-1 rounded hover:bg-white/10"
                 >
-                    {isSidebarOpen ? '✕' : '☰'}
+                    {isSidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
                 </button>
             </div>
 
@@ -98,8 +100,9 @@ const MainLayout = ({ children }) => {
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="w-full py-2.5 bg-white/20 rounded-lg text-sm font-semibold hover:bg-white/30 transition-colors"
+                        className="w-full py-2.5 bg-white/20 rounded-lg text-sm font-semibold hover:bg-white/30 transition-colors flex items-center justify-center gap-2"
                     >
+                        <FiLogOut />
                         Logout
                     </button>
                 </div>

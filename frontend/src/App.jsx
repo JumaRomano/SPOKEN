@@ -10,6 +10,7 @@ import AttendanceTracking from './pages/attendance/AttendanceTracking';
 import MemberDetail from './pages/members/MemberDetail';
 import GroupDetail from './pages/groups/GroupDetail';
 import EventDetail from './pages/events/EventDetail';
+import SermonManager from './pages/sermons/SermonManager';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './components/layout/MainLayout';
 import LandingPage from './pages/public/LandingPage';
@@ -20,6 +21,7 @@ import Sermons from './pages/public/Sermons';
 import Events from './pages/public/Events';
 import Giving from './pages/public/Giving';
 import Contact from './pages/public/Contact';
+import Communication from './pages/communication/Communication';
 import './App.css';
 
 function App() {
@@ -51,10 +53,12 @@ function App() {
                     <Route path="/groups" element={<GroupList />} />
                     <Route path="/finance" element={<FinanceOverview />} />
                     <Route path="/events" element={<EventList />} />
+                    <Route path="/sermons-management" element={<SermonManager />} />
                     <Route path="/members/:id" element={<MemberDetail />} />
                     <Route path="/groups/:id" element={<GroupDetail />} />
-                    <Route path="/events/:id" element={<EventDetail />} />
+                    {/* <Route path="/events/:id" element={<EventDetail />} /> */}
                     <Route path="/attendance" element={<AttendanceTracking />} />
+                    <Route path="/communication" element={<Communication />} />
                     <Route path="*" element={<Navigate to="/dashboard" replace />} />
                   </Routes>
                 </MainLayout>

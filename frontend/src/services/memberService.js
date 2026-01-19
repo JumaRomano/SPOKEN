@@ -42,6 +42,12 @@ const memberService = {
         const response = await api.get(`/members/${id}/attendance`, { params });
         return response.data;
     },
+
+    // Get member groups
+    async getGroups(id) {
+        const response = await api.get(`/members/${id}/groups`);
+        return response.data;
+    },
 };
 
 export default memberService;

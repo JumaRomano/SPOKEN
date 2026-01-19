@@ -12,8 +12,54 @@ class FinanceController {
 
     async createFund(req, res, next) {
         try {
+            console.log('=== CREATE FUND REQUEST ===');
+            console.log('Request body:', JSON.stringify(req.body, null, 2));
+            console.log('User:', req.user);
+
             const fund = await financeService.createFund(req.body);
+
+            console.log('Fund created successfully:', fund);
             res.status(201).json(fund);
+        } catch (error) {
+            console.error('CREATE FUND ERROR:', error);
+            next(error);
+        }
+    }
+
+    async updateFund(req, res, next) {
+        try {
+            const { id } = req.params;
+            const fund = await financeService.updateFund(id, req.body);
+            res.json(fund);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async reassignFund(req, res, next) {
+        try {
+            const { fromFundId, toFundId } = req.body;
+            const result = await financeService.reassignFund(fromFundId, toFundId);
+            res.json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async deleteFund(req, res, next) {
+        try {
+            const { id } = req.params;
+            await financeService.deleteFund(id);
+            res.status(204).send();
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAllPledges(req, res, next) {
+        try {
+            const pledges = await financeService.getAllPledges();
+            res.json(pledges);
         } catch (error) {
             next(error);
         }

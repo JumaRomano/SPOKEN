@@ -10,6 +10,12 @@ router.use(authenticate);
 // Funds
 router.get('/funds', rbac('funds', 'read'), financeController.getFunds);
 router.post('/funds', rbac('funds', 'create'), auditLog('create', 'funds'), financeController.createFund);
+router.put('/funds/:id', rbac('funds', 'update'), auditLog('update', 'funds'), financeController.updateFund);
+router.post('/funds/reassign', rbac('funds', 'update'), auditLog('update', 'funds'), financeController.reassignFund);
+router.delete('/funds/:id', rbac('funds', 'delete'), auditLog('delete', 'funds'), financeController.deleteFund);
+
+// Pledges - get all
+router.get('/pledges', rbac('pledges', 'read'), financeController.getAllPledges);
 
 // Contributions
 router.get('/contributions', rbac('contributions', 'read'), financeController.getContributions);

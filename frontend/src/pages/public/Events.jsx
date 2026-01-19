@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import eventService from '../../services/eventService';
+import Button from '../../components/common/Button';
 
 const Events = () => {
     const [events, setEvents] = useState([]);
@@ -8,9 +10,7 @@ const Events = () => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                // Fetch public upcoming events
-                // For now fetching all, assuming backend filters or we filter here
-                const data = await eventService.getAll({ upcoming: true });
+                const data = await eventService.getPublicEvents({ upcoming: true });
                 setEvents(data);
             } catch (error) {
                 console.error('Failed to fetch events', error);
@@ -23,74 +23,100 @@ const Events = () => {
     }, []);
 
     const formatDate = (dateString) => {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        const date = new Date(dateString);
+        return {
+            month: date.toLocaleString('default', { month: 'short' }),
+            day: date.getDate(),
+            full: date.toLocaleDateString('default', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+            time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
     };
 
     return (
-        <div className="page-container">
-            <div className="container">
-                <section className="page-header">
-                    <h1>Upcoming Events</h1>
-                    <p className="lead">Join us for worship, fellowship, and special gatherings.</p>
-                </section>
+        <div className="flex flex-col min-h-screen bg-gray-50">
+            {/* Header */}
+            <section className="bg-primary text-white py-20 px-6 text-center">
+                <div className="max-w-4xl mx-auto">
+                    <h1 className="text-4xl lg:text-5xl font-extrabold mb-6">Upcoming Events</h1>
+                    <p className="text-xl opacity-90 max-w-2xl mx-auto">
+                        Join us for worship, fellowship, and special gatherings. We'd love to see you there.
+                    </p>
+                </div>
+            </section>
 
-                {loading ? (
-                    <div className="loading">Loading calendar...</div>
-                ) : (
-                    <div className="events-list">
-                        {events.length > 0 ? events.map(event => (
-                            <div key={event.id} className="event-item">
-                                <div className="event-date-box">
-                                    <span className="month">{new Date(event.start_date).toLocaleString('default', { month: 'short' }).toUpperCase()}</span>
-                                    <span className="day">{new Date(event.start_date).getDate()}</span>
-                                </div>
-                                <div className="event-content">
-                                    <h2>{event.title}</h2>
-                                    <p className="event-time">🕒 {formatDate(event.start_date)} {event.start_time ? `at ${event.start_time}` : ''}</p>
-                                    <p className="event-location">📍 {event.location || 'Main Sanctuary'}</p>
-                                    <p className="event-desc">{event.description}</p>
-                                    {event.registration_required && (
-                                        <button className="btn-rsvp">RSVP Required</button>
-                                    )}
-                                </div>
-                            </div>
-                        )) : (
-                            <div className="no-data">
-                                <p>No upcoming events scheduled at this time.</p>
-                            </div>
-                        )}
-                    </div>
-                )}
+            {/* Events List */}
+            <section className="py-20 px-6">
+                <div className="max-w-5xl mx-auto">
+                    {loading ? (
+                        <div className="flex justify-center items-center py-20">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                        </div>
+                    ) : events.length > 0 ? (
+                        <div className="space-y-8">
+                            {events.map((event) => (
+                                <div key={event.id} className="bg-white rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col md:flex-row gap-8">
+                                    {/* Date Badge */}
+                                    <div className="flex flex-col items-center justify-center bg-blue-50 text-primary p-6 rounded-2xl min-w-[120px] h-fit self-start md:self-center">
+                                        <span className="text-sm font-bold uppercase tracking-wider">{formatDate(event.start_date).month}</span>
+                                        <span className="text-4xl font-black my-1">{formatDate(event.start_date).day}</span>
+                                        <span className="text-sm font-medium text-gray-500">{new Date(event.start_date).getFullYear()}</span>
+                                    </div>
 
-                <style>{`
-                    .page-container { padding: 4rem 0; }
-                    .page-header { text-align: center; margin-bottom: 4rem; }
-                    .page-header h1 { font-size: 3rem; color: #1f2937; margin-bottom: 1rem; }
-                    .lead { font-size: 1.25rem; color: #6b7280; }
-                    .loading, .no-data { text-align: center; padding: 3rem; color: #6b7280; }
-                    
-                    .events-list { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
-                    .event-item { display: flex; background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-                    .event-date-box { background: #eff6ff; color: #2563eb; padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 100px; border-right: 1px solid #e5e7eb; }
-                    .event-date-box .month { font-size: 1rem; font-weight: 700; }
-                    .event-date-box .day { font-size: 2rem; font-weight: 800; line-height: 1; margin-top: 0.25rem; }
-                    
-                    .event-content { padding: 2rem; flex: 1; }
-                    .event-content h2 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #1f2937; }
-                    .event-time, .event-location { color: #4b5563; margin-bottom: 0.5rem; font-size: 0.95rem; }
-                    .event-desc { color: #6b7280; margin-top: 1rem; line-height: 1.6; }
-                    
-                    .btn-rsvp { margin-top: 1.5rem; background: #2563eb; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
-                    .btn-rsvp:hover { background: #1d4ed8; }
-                    
-                    @media (max-width: 640px) {
-                        .event-item { flex-direction: column; }
-                        .event-date-box { flex-direction: row; gap: 1rem; padding: 1rem; border-right: none; border-bottom: 1px solid #e5e7eb; }
-                        .event-date-box .day { margin-top: 0; font-size: 1.5rem; }
-                    }
-                `}</style>
-            </div>
+                                    {/* Content */}
+                                    <div className="flex-1">
+                                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                                            <h2 className="text-2xl font-bold text-gray-900">{event.event_name}</h2>
+                                            {event.registration_required && (
+                                                <span className="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider rounded-full">
+                                                    Registration Required
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-x-6 gap-y-2 text-gray-600 mb-4 text-sm font-medium">
+                                            <span className="flex items-center gap-1">
+                                                🕒 {formatDate(event.start_date).full} • {formatDate(event.start_date).time}
+                                            </span>
+                                            <span className="flex items-center gap-1">
+                                                📍 {event.location || 'Main Sanctuary'}
+                                            </span>
+                                        </div>
+
+                                        <p className="text-gray-600 mb-6 leading-relaxed">
+                                            {event.description}
+                                        </p>
+
+                                        <div className="flex flex-wrap gap-4">
+                                            {event.registration_required ? (
+                                                <Button to={`/events/${event.id}/register`} variant="primary" size="medium">
+                                                    Register Now
+                                                </Button>
+                                            ) : (
+                                                <Button to="/contact" variant="outline" size="medium">
+                                                    Contact for Details
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-gray-100">
+                            <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <span className="text-3xl">📅</span>
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-2">No Upcoming Events</h3>
+                            <p className="text-gray-500 mb-8 max-w-md mx-auto">
+                                We don't have any events scheduled right now. Please check back later or join us for our regular Sunday services.
+                            </p>
+                            <Button to="/contact" variant="primary">
+                                Contact Us
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            </section>
         </div>
     );
 };

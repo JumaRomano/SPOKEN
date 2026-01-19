@@ -2,12 +2,14 @@ import api from './api';
 
 const authService = {
     // Login
-    async login(email, password) {
+    async login(email, password, rememberMe = false) {
         const response = await api.post('/auth/login', { email, password });
         if (response.data.accessToken) {
             const { accessToken, user } = response.data;
-            localStorage.setItem('token', accessToken);
-            localStorage.setItem('user', JSON.stringify(user));
+            const storage = rememberMe ? localStorage : sessionStorage;
+
+            storage.setItem('token', accessToken);
+            storage.setItem('user', JSON.stringify(user));
             return user;
         }
         throw new Error('Login failed');
@@ -22,21 +24,35 @@ const authService = {
         throw new Error('Registration failed');
     },
 
+    // Create Login for Member (Admin)
+    async createMemberLogin(memberId, email, password, role) {
+        const response = await api.post('/auth/create-member-login', { memberId, email, password, role });
+        return response.data;
+    },
+
+    // Admin Reset Password
+    async adminResetPassword(userId, newPassword) {
+        const response = await api.post('/auth/admin-reset-password', { userId, newPassword });
+        return response.data;
+    },
+
     // Logout
     logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
     },
 
     // Get current user
     getCurrentUser() {
-        const userStr = localStorage.getItem('user');
+        const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
         return userStr ? JSON.parse(userStr) : null;
     },
 
     // Check if authenticated
     isAuthenticated() {
-        return !!localStorage.getItem('token');
+        return !!(localStorage.getItem('token') || sessionStorage.getItem('token'));
     },
 };
 

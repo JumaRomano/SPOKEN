@@ -52,7 +52,7 @@ class EventService {
      */
     async create(eventData, createdBy) {
         const {
-            title,
+            event_name,
             description,
             eventType,
             startDate,
@@ -65,15 +65,15 @@ class EventService {
 
         const result = await db.query(
             `INSERT INTO events 
-       (title, description, event_type, start_date, end_date, location, 
+       (event_name, description, event_type, start_date, end_date, location, 
         max_participants, registration_required, registration_deadline, created_by)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
-            [title, description, eventType, startDate, endDate, location,
+            [event_name, description, eventType, startDate, endDate, location,
                 maxParticipants, registrationRequired, registrationDeadline, createdBy]
         );
 
-        logger.info('Event created:', { eventId: result.rows[0].id, title });
+        logger.info('Event created:', { eventId: result.rows[0].id, event_name });
         return result.rows[0];
     }
 
@@ -81,11 +81,11 @@ class EventService {
      * Update event
      */
     async update(id, eventData) {
-        const { title, description, eventType, startDate, endDate, location, maxParticipants, registrationDeadline, status } = eventData;
+        const { event_name, description, eventType, startDate, endDate, location, maxParticipants, registrationDeadline, status } = eventData;
 
         const result = await db.query(
             `UPDATE events SET
-        title = COALESCE($1, title),
+        event_name = COALESCE($1, event_name),
         description = COALESCE($2, description),
         event_type = COALESCE($3, event_type),
         start_date = COALESCE($4, start_date),
@@ -96,7 +96,7 @@ class EventService {
         updated_at = CURRENT_TIMESTAMP
        WHERE id = $9
        RETURNING *`,
-            [title, description, eventType, startDate, endDate, location, maxParticipants, registrationDeadline, id]
+            [event_name, description, eventType, startDate, endDate, location, maxParticipants, registrationDeadline, id]
         );
 
         if (result.rows.length === 0) {

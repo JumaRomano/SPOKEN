@@ -1,84 +1,155 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import sermonService from '../../services/sermonService';
 
 const Sermons = () => {
-    // Mock data for sermons
-    const sermons = [
-        { id: 1, title: 'Walking in Faith', series: 'The Book of James', date: 'Oct 15, 2025', speaker: 'Pastor 2', views: 245 },
-        { id: 2, title: 'Power of Prayer', series: 'Spiritual Disciplines', date: 'Oct 08, 2025', speaker: 'Pastor 1', views: 189 },
-        { id: 3, title: 'Community Life', series: 'One Body', date: 'Oct 01, 2025', speaker: 'Deacon 2', views: 156 },
-        { id: 4, title: 'Grace Abounds', series: 'Romans', date: 'Sep 24, 2025', speaker: 'Pastor 1', views: 302 },
-    ];
+    const [sermons, setSermons] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [filters, setFilters] = useState({
+        search: '',
+        series: '',
+        speaker: ''
+    });
+
+    useEffect(() => {
+        const fetchSermons = async () => {
+            try {
+                const data = await sermonService.getAll();
+                setSermons(data);
+            } catch (error) {
+                console.error('Failed to fetch sermons', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchSermons();
+    }, []);
+
+    const getTikTokEmbedUrl = (url) => {
+        try {
+            const videoIdMatch = url.match(/\/video\/(\d+)/);
+            if (videoIdMatch && videoIdMatch[1]) {
+                return `https://www.tiktok.com/embed/v2/${videoIdMatch[1]}?lang=en-US`;
+            }
+            return null;
+        } catch (e) {
+            return null;
+        }
+    };
+
+    const filteredSermons = sermons.filter(sermon => {
+        const matchSearch = sermon.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+            (sermon.speaker && sermon.speaker.toLowerCase().includes(filters.search.toLowerCase()));
+        const matchSeries = !filters.series || sermon.series === filters.series;
+        const matchSpeaker = !filters.speaker || sermon.speaker === filters.speaker;
+        return matchSearch && matchSeries && matchSpeaker;
+    });
+
+    // Extract unique series and speakers for filters
+    const allSeries = [...new Set(sermons.map(s => s.series).filter(Boolean))];
+    const allSpeakers = [...new Set(sermons.map(s => s.speaker).filter(Boolean))];
 
     return (
-        <div className="page-container">
-            <div className="container">
-                <section className="page-header">
-                    <h1>Sermon Library</h1>
-                    <p className="lead">Watch and listen to recent messages.</p>
-                </section>
+        <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
+            {/* Header */}
+            <div className="bg-white border-b border-gray-200 py-16 text-center px-4">
+                <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">Sermon Library</h1>
+                <p className="text-xl text-gray-500 max-w-2xl mx-auto">Watch and listen to recent messages from our recent services.</p>
+            </div>
 
-                <div className="filters-bar">
-                    <input type="text" placeholder="Search sermons..." className="search-input" />
-                    <select className="filter-select">
-                        <option>All Series</option>
-                        <option>The Book of James</option>
-                        <option>Spiritual Disciplines</option>
+            <div className="max-w-7xl mx-auto px-4 w-full py-12">
+                {/* Filters */}
+                <div className="flex flex-col md:flex-row gap-4 mb-12 justify-center">
+                    <input
+                        type="text"
+                        placeholder="Search sermons..."
+                        className="p-3 border border-gray-300 rounded-lg w-full md:w-80 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                        value={filters.search}
+                        onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                    />
+                    <select
+                        className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                        value={filters.series}
+                        onChange={(e) => setFilters({ ...filters, series: e.target.value })}
+                    >
+                        <option value="">All Series</option>
+                        {allSeries.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
-                    <select className="filter-select">
-                        <option>All Speakers</option>
-                        <option>Pastor 1</option>
-                        <option>Pastor 2</option>
+                    <select
+                        className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                        value={filters.speaker}
+                        onChange={(e) => setFilters({ ...filters, speaker: e.target.value })}
+                    >
+                        <option value="">All Speakers</option>
+                        {allSpeakers.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                 </div>
 
-                <div className="sermons-grid">
-                    {sermons.map(sermon => (
-                        <div key={sermon.id} className="sermon-card">
-                            <div className="video-placeholder">
-                                <span className="play-icon">▶</span>
-                            </div>
-                            <div className="sermon-info">
-                                <span className="series-tag">{sermon.series}</span>
-                                <h3>{sermon.title}</h3>
-                                <p className="sermon-meta">{sermon.speaker} • {sermon.date}</p>
-                                <div className="sermon-actions">
-                                    <button className="btn-watch">Watch</button>
-                                    <button className="btn-audio">🎧 Audio</button>
+                {loading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden h-96 animate-pulse">
+                                <div className="bg-gray-200 h-48 w-full"></div>
+                                <div className="p-6">
+                                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
+                                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                ) : filteredSermons.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {filteredSermons.map(sermon => {
+                            const embedUrl = getTikTokEmbedUrl(sermon.video_url);
 
-                <style>{`
-                    .page-container { padding: 4rem 0; }
-                    .page-header { text-align: center; margin-bottom: 3rem; }
-                    .page-header h1 { font-size: 3rem; color: #1f2937; margin-bottom: 1rem; }
-                    .lead { font-size: 1.25rem; color: #6b7280; }
-                    
-                    .filters-bar { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; }
-                    .search-input, .filter-select { padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem; }
-                    .search-input { width: 300px; }
-                    
-                    .sermons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-                    .sermon-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; transition: transform 0.2s; }
-                    .sermon-card:hover { transform: translateY(-4px); }
-                    
-                    .video-placeholder { aspect-ratio: 16/9; background: #1f2937; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-                    .play-icon { font-size: 3rem; color: white; opacity: 0.8; transition: opacity 0.2s; }
-                    .video-placeholder:hover .play-icon { opacity: 1; transform: scale(1.1); }
-                    
-                    .sermon-info { padding: 1.5rem; }
-                    .series-tag { font-size: 0.75rem; text-transform: uppercase; color: #2563eb; font-weight: 700; display: block; margin-bottom: 0.5rem; }
-                    .sermon-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: #111827; }
-                    .sermon-meta { color: #6b7280; font-size: 0.9rem; margin-bottom: 1.5rem; }
-                    
-                    .sermon-actions { display: flex; gap: 0.5rem; }
-                    .btn-watch { flex: 1; background: #2563eb; color: white; border: none; padding: 0.5rem; border-radius: 4px; cursor: pointer; font-weight: 600; }
-                    .btn-audio { background: #f3f4f6; color: #374151; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: 500; }
-                    .btn-watch:hover { background: #1d4ed8; }
-                    .btn-audio:hover { background: #e5e7eb; }
-                `}</style>
+                            return (
+                                <div key={sermon.id} className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                                    <div className="relative aspect-[9/16] bg-black">
+                                        {embedUrl ? (
+                                            <iframe
+                                                src={embedUrl}
+                                                className="absolute inset-0 w-full h-full"
+                                                allowFullScreen
+                                                scrolling="no"
+                                                title={sermon.title}
+                                            ></iframe>
+                                        ) : (
+                                            <a href={sermon.video_url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center bg-gray-800 text-white hover:bg-gray-700 transition-colors group">
+                                                <div className="text-center p-4">
+                                                    <span className="text-4xl mb-2 block group-hover:scale-110 transition-transform">▶</span>
+                                                    <span className="font-semibold">Watch on TikTok</span>
+                                                </div>
+                                            </a>
+                                        )}
+                                    </div>
+                                    <div className="p-6 flex-1 flex flex-col">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <span className="text-xs font-bold uppercase tracking-wider text-primary bg-blue-50 px-2 py-1 rounded">
+                                                {sermon.series || 'Single Message'}
+                                            </span>
+                                            <span className="text-xs text-gray-500 font-medium">
+                                                {new Date(sermon.date).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{sermon.title}</h3>
+                                        <p className="text-sm text-gray-600 mb-4 flex-1 line-clamp-3">{sermon.description}</p>
+                                        <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+                                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600">
+                                                {sermon.speaker ? sermon.speaker.charAt(0) : 'S'}
+                                            </div>
+                                            <span className="text-sm font-medium text-gray-700">{sermon.speaker || 'Guest Speaker'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="text-center py-24 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+                        <div className="text-6xl mb-4">🔍</div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">No Sermons Found</h3>
+                        <p className="text-gray-500">Try adjusting your filters or search terms.</p>
+                    </div>
+                )}
             </div>
         </div>
     );

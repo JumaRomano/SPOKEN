@@ -1,13 +1,23 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import eventService from '../../services/eventService';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
+import CreateEventModal from '../../components/events/CreateEventModal';
+import EditEventModal from '../../components/events/EditEventModal';
+import EventDetailModal from '../../components/events/EventDetailModal';
 import './EventList.css';
 
 const EventList = () => {
+    const { user } = useAuth();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showDetailModal, setShowDetailModal] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [message, setMessage] = useState({ type: '', text: '' });
 
     useEffect(() => {
         fetchEvents();
@@ -49,12 +59,65 @@ const EventList = () => {
         });
     };
 
+    const handleCreateEvent = async (eventData) => {
+        try {
+            await eventService.create(eventData);
+            setMessage({ type: 'success', text: 'Event created successfully!' });
+            fetchEvents();
+        } catch (err) {
+            setMessage({ type: 'error', text: 'Failed to create event' });
+        }
+    };
+
+    const handleUpdateEvent = async (eventData) => {
+        try {
+            await eventService.update(selectedEvent.id, eventData);
+            setMessage({ type: 'success', text: 'Event updated successfully!' });
+            setShowEditModal(false);
+            setSelectedEvent(null);
+            fetchEvents();
+        } catch (err) {
+            setMessage({ type: 'error', text: 'Failed to update event' });
+        }
+    };
+
+    const handleDeleteEvent = async (eventId, eventTitle) => {
+        if (window.confirm(`Are you sure you want to delete "${eventTitle}"? This action cannot be undone.`)) {
+            try {
+                await eventService.delete(eventId);
+                setMessage({ type: 'success', text: 'Event deleted successfully!' });
+                fetchEvents();
+            } catch (err) {
+                setMessage({ type: 'error', text: 'Failed to delete event' });
+            }
+        }
+    };
+
+    const canEdit = () => {
+        return user?.role === 'admin' || user?.role === 'secretary';
+    };
+
+    const canDelete = () => {
+        return user?.role === 'admin';
+    };
+
     return (
         <div className="event-list-container">
+            {message.text && (
+                <div
+                    className={`mb-4 px-4 py-3 rounded ${message.type === 'success'
+                        ? 'bg-green-50 border border-green-200 text-green-700'
+                        : 'bg-red-50 border border-red-200 text-red-700'
+                        }`}
+                >
+                    {message.text}
+                </div>
+            )}
+
             <Card
                 title="Events & Programs"
                 subtitle={`${events.length} events`}
-                actions={<Button variant="primary">Create Event</Button>}
+                actions={<Button variant="primary" onClick={() => setShowCreateModal(true)}>Create Event</Button>}
             >
                 {loading ? (
                     <div className="loading-state">Loading events...</div>
@@ -107,9 +170,54 @@ const EventList = () => {
                                     </div>
 
                                     <div className="event-actions">
-                                        <Button variant="secondary" size="small">View Details</Button>
+                                        {canEdit() && (
+                                            <Button
+                                                variant="secondary"
+                                                size="small"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedEvent(event);
+                                                    setShowEditModal(true);
+                                                }}
+                                            >
+                                                Edit
+                                            </Button>
+                                        )}
+                                        {canDelete() && (
+                                            <Button
+                                                variant="secondary"
+                                                size="small"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteEvent(event.id, event.title);
+                                                }}
+                                            >
+                                                Delete
+                                            </Button>
+                                        )}
+                                        <Button
+                                            variant="secondary"
+                                            size="small"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedEvent(event);
+                                                setShowDetailModal(true);
+                                            }}
+                                        >
+                                            View Details
+                                        </Button>
                                         {isUpcoming(event.eventStartDate) && (
-                                            <Button variant="primary" size="small">Register</Button>
+                                            <Button
+                                                variant="primary"
+                                                size="small"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedEvent(event);
+                                                    setShowDetailModal(true);
+                                                }}
+                                            >
+                                                Register
+                                            </Button>
                                         )}
                                     </div>
                                 </div>
@@ -118,8 +226,34 @@ const EventList = () => {
                     </div>
                 )}
             </Card>
+
+            <CreateEventModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onEventCreated={handleCreateEvent}
+            />
+
+            <EditEventModal
+                event={selectedEvent}
+                isOpen={showEditModal}
+                onClose={() => {
+                    setShowEditModal(false);
+                    setSelectedEvent(null);
+                }}
+                onEventUpdated={handleUpdateEvent}
+            />
+
+            <EventDetailModal
+                event={selectedEvent}
+                isOpen={showDetailModal}
+                onClose={() => {
+                    setShowDetailModal(false);
+                    setSelectedEvent(null);
+                }}
+            />
         </div>
     );
 };
 
 export default EventList;
+

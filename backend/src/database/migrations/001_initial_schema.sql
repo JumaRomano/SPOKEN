@@ -205,6 +205,7 @@ CREATE TABLE funds (
     fund_name VARCHAR(255) NOT NULL UNIQUE,
     description TEXT,
     fund_type VARCHAR(50) CHECK (fund_type IN ('general', 'building', 'missions', 'benevolence', 'special', 'other')),
+    target_amount DECIMAL(12, 2) DEFAULT NULL,
     is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -473,15 +474,27 @@ INSERT INTO permissions (role, resource, action, is_allowed) VALUES
 ('admin', 'events', 'update', true),
 ('admin', 'users', 'create', true),
 ('admin', 'users', 'read', true),
-('admin', 'users', 'update', true);
+('admin', 'users', 'update', true),
+('admin', 'funds', 'create', true),
+('admin', 'funds', 'read', true),
+('admin', 'funds', 'update', true),
+('admin', 'funds', 'delete', true);
 
 -- Finance permissions
 INSERT INTO permissions (role, resource, action, is_allowed) VALUES
+('finance', 'funds', 'create', true),
+('finance', 'funds', 'read', true),
+('finance', 'funds', 'update', true),
+('finance', 'funds', 'delete', true),
 ('finance', 'contributions', 'create', true),
 ('finance', 'contributions', 'read', true),
 ('finance', 'expenses', 'create', true),
 ('finance', 'expenses', 'read', true),
-('finance', 'reports', 'read', true);
+('finance', 'reports', 'read', true),
+('finance', 'pledges', 'create', true),
+('finance', 'pledges', 'read', true),
+('finance', 'members', 'read', true),
+('finance', 'groups', 'read', true);
 
 -- Leader permissions
 INSERT INTO permissions (role, resource, action, is_allowed) VALUES
@@ -492,7 +505,18 @@ INSERT INTO permissions (role, resource, action, is_allowed) VALUES
 ('leader', 'group_finances', 'create', true),
 ('leader', 'group_finances', 'read', true),
 ('leader', 'levies', 'create', true),
-('leader', 'levies', 'read', true);
+('leader', 'levies', 'read', true),
+('leader', 'members', 'read', true),
+('leader', 'events', 'create', true),
+('leader', 'events', 'read', true);
+
+-- Secretary permissions
+INSERT INTO permissions (role, resource, action, is_allowed) VALUES
+('secretary', 'events', 'create', true),
+('secretary', 'events', 'read', true),
+('secretary', 'events', 'update', true),
+('secretary', 'members', 'read', true),
+('secretary', 'groups', 'read', true);
 
 -- Member permissions (basic)
 INSERT INTO permissions (role, resource, action, is_allowed) VALUES

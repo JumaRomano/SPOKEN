@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
@@ -6,14 +6,23 @@ import Select from '../../components/common/Select';
 import groupService from '../../services/groupService';
 
 const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
-    const [formData, setFormData] = useState({
+    const initialFormState = {
         name: '',
         description: '',
         groupType: 'ministry',
         meetingSchedule: ''
-    });
+    };
+
+    const [formData, setFormData] = useState(initialFormState);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (isOpen) {
+            setFormData(initialFormState);
+            setError('');
+        }
+    }, [isOpen]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,13 +38,6 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
             await groupService.create(formData);
             onGroupCreated();
             onClose();
-            // Reset form
-            setFormData({
-                name: '',
-                description: '',
-                groupType: 'ministry',
-                meetingSchedule: ''
-            });
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.error || 'Failed to create group');
@@ -53,7 +55,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
         >
             <form onSubmit={handleSubmit} className="space-y-4">
                 {error && (
-                    <div className="bg-danger-light/10 text-danger text-sm p-3 rounded-md">
+                    <div className="bg-red-50 text-red-600 text-sm p-3 rounded-md border border-red-100">
                         {error}
                     </div>
                 )}
@@ -64,7 +66,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    placeholder="e.g. Youth Ministry"
+                    placeholder="Enter group name"
                 />
 
                 <Select
@@ -87,7 +89,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
                     value={formData.description}
                     onChange={handleChange}
                     textarea
-                    placeholder="Brief description of the group's purpose..."
+                    placeholder="Enter group description"
                 />
 
                 <Input
@@ -95,10 +97,10 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
                     name="meetingSchedule"
                     value={formData.meetingSchedule}
                     onChange={handleChange}
-                    placeholder="e.g. Every Friday at 6pm"
+                    placeholder="Enter meeting schedule (e.g. Every Friday)"
                 />
 
-                <div className="flex justify-end gap-3 pt-4">
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 mt-4">
                     <Button variant="ghost" type="button" onClick={onClose} disabled={loading}>
                         Cancel
                     </Button>

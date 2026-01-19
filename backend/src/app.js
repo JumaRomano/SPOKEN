@@ -16,6 +16,7 @@ const eventRoutes = require('./routes/event.routes');
 const financeRoutes = require('./routes/finance.routes');
 const reportingRoutes = require('./routes/reporting.routes');
 const communicationRoutes = require('./routes/communication.routes');
+const sermonRoutes = require('./routes/sermon.routes');
 
 // Initialize Express app
 const app = express();
@@ -101,6 +102,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/reports', reportingRoutes);
 app.use('/api/communication', communicationRoutes);
+app.use('/api/sermons', sermonRoutes);
 
 // 404 handler
 app.use(notFound);

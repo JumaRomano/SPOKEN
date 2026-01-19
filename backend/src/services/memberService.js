@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const logger = require('../utils/logger');
 
+
 class MemberService {
     /**
      * Get all members with pagination and filters
@@ -66,7 +67,7 @@ class MemberService {
      */
     async getById(id) {
         const result = await db.query(
-            `SELECT m.*, f.family_name, f.head_of_family_id,
+            `SELECT m.*, f.family_name,
               u.email as user_email, u.role as user_role, u.is_active as user_status
        FROM members m
        LEFT JOIN families f ON m.family_id = f.id
@@ -220,7 +221,7 @@ class MemberService {
      */
     async getAttendance(memberId, limit = 20) {
         const result = await db.query(
-            `SELECT s.service_date, s.service_type, s.description, ar.status
+            `SELECT s.service_date, s.service_type, ar.attendance_status as status
        FROM attendance_records ar
        JOIN services s ON ar.service_id = s.id
        WHERE ar.member_id = $1
