@@ -129,6 +129,81 @@ sudo systemctl restart postgresql
 
 ---
 
+## Backend Deployment (Cloud Platform - Render)
+
+This section outlines how to deploy the backend API to Render.com, a cloud platform that simplifies deployment.
+
+### 1. Prerequisites
+
+- A [Render](https://render.com) account.
+- The backend code pushed to a GitHub or GitLab repository.
+- An external PostgreSQL database (e.g., Aiven, Supabase, or Render's own managed PostgreSQL).
+
+### 2. Create a Web Service
+
+1.  Log in to the Render Dashboard.
+2.  Click **New +** and select **Web Service**.
+3.  Connect your GitHub/GitLab repository.
+4.  Select the repository containing the `spoken-word-chms` code.
+
+### 3. Configure the Service
+
+Fill in the following details:
+
+-   **Name**: `spoken-word-chms-backend`
+-   **Region**: Select a region close to your database/users.
+-   **Branch**: `main` (or your production branch)
+-   **Root Directory**: `backend` (Important: since the repo contains both frontend and backend)
+-   **Runtime**: `Node`
+-   **Build Command**: `npm install --production`
+-   **Start Command**: `npm start`
+-   **Instance Type**: `Free` (for testing) or `Starter`/`Standard` (for production)
+
+### 4. Environment Variables
+
+Click on **Advanced** or **Environment** tab and add the following variables:
+
+| Key | Value |
+| :--- | :--- |
+| `NODE_ENV` | `production` |
+| `PORT` | `10000` (Render default, or leave empty if code handles it gracefully, but usually explicit is safe) |
+| `DB_HOST` | Your Database Host (e.g., `spoken01-mzitohcreatives-d2f2.e.aivencloud.com`) |
+| `DB_PORT` | `22417` (or your DB port) |
+| `DB_NAME` | `defaultdb` (or your DB name) |
+| `DB_USER` | `avnadmin` (or your DB user) |
+| `DB_PASSWORD` | Your Database Password |
+| `DB_SSL` | `true` (Required for Aiven/Cloud DBs) |
+| `JWT_SECRET` | A long secure random string |
+| `JWT_EXPIRATION` | `24h` |
+| `CORS_ORIGIN` | Your Frontend URL (e.g., `https://your-frontend.onrender.com`) |
+
+*Note: For Aiven specifically, ensure you use the SSL mode required (usually `require`). You might need to adjust your database connection code to handle SSL correctly if it doesn't already.*
+
+### 5. Create & Deploy
+
+1.  Click **Create Web Service**.
+2.  Render will start building your application.
+3.  Watch the logs for any errors.
+4.  Once deployed, Render will provide a URL (e.g., `https://spoken-word-chms-backend.onrender.com`).
+
+### 6. Database Migrations on Render
+
+You have two options to run migrations:
+
+**Option A: Build Command (Automatic)**
+Update the **Build Command** to run migrations during build:
+```bash
+npm install --production && npm run migrate
+```
+*Note: This runs migrations on every deploy. Ensure your migration scripts are idempotent.*
+
+**Option B: Shell (Manual)**
+1.  Go to the **Shell** tab in your Render service dashboard.
+2.  Run: `npm run migrate`
+3.  Run: `npm run seed` (if setting up for the first time)
+
+---
+
 ## Backend Deployment
 
 ### 1. Install Node.js
@@ -359,6 +434,66 @@ rsync -avz dist/ user@your-server:/var/www/spoken-word-chms/frontend/
 ```bash
 sudo chown -R www-data:www-data /var/www/spoken-word-chms/frontend
 sudo chmod -R 755 /var/www/spoken-word-chms/frontend
+```
+
+---
+
+## Frontend Deployment (Cloud Platform - Vercel)
+
+This section outlines how to deploy the frontend React application to Vercel, which is optimized for frontend performance.
+
+### 1. Prerequisites
+
+- A [Vercel](https://vercel.com) account.
+- The frontend code pushed to a GitHub or GitLab repository.
+
+### 2. Import Project
+
+1.  Log in to the Vercel Dashboard.
+2.  Click **Add New...** -> **Project**.
+3.  Import the Git repository containing your project.
+
+### 3. Configure the Project
+
+Vercel will attempt to auto-detect settings, but you must configure the following manually since this is a monorepo structure:
+
+-   **Framework Preset**: `Vite`
+-   **Root Directory**: Click "Edit" and select `frontend`.
+-   **Build Command**: `npm run build` (default)
+-   **Output Directory**: `dist` (default)
+-   **Install Command**: `npm install` (default)
+
+### 4. Environment Variables
+
+Expand the **Environment Variables** section and add:
+
+| Key | Value |
+| :--- | :--- |
+| `VITE_API_URL` | The URL of your deployed Backend (e.g., `https://spoken-word-chms-backend.onrender.com`) |
+
+*Note: In Vite, environment variables exposed to the client must start with `VITE_`.*
+
+### 5. Deploy
+
+1.  Click **Deploy**.
+2.  Vercel will build your application.
+3.  Once complete, your site will be live (e.g., `https://spoken-word-chms.vercel.app`).
+
+### 6. Configure Rewrites (Optional but Recommended)
+
+If you have client-side routing (React Router) issues on refresh, you may need a `vercel.json` file in your `frontend` directory.
+
+Create `frontend/vercel.json`:
+
+```json
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
 ```
 
 ---

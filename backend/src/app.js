@@ -25,20 +25,26 @@ const app = express();
 app.use(helmet());
 
 // CORS - Allow multiple origins for development
+// CORS - Allow multiple origins for development and production
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:5173',
-    'http://localhost:5174'
+    'http://localhost:5174',
 ];
+
+if (process.env.CORS_ORIGIN) {
+    allowedOrigins.push(process.env.CORS_ORIGIN);
+}
 
 app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
 
-        if (allowedOrigins.indexOf(origin) !== -1) {
+        if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
             callback(null, true);
         } else {
+            logger.warn(`CORS blocked request from origin: ${origin}`);
             callback(new Error('Not allowed by CORS'));
         }
     },
@@ -60,6 +66,9 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+// Prevent favicon 404s
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 // Request logging
 app.use((req, res, next) => {
     logger.info('Incoming request', {
@@ -69,6 +78,15 @@ app.use((req, res, next) => {
         userAgent: req.get('user-agent'),
     });
     next();
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Welcome to Spoken Word Of God Ministries ChMS API',
+        status: 'active',
+        documentation: '/api/docs' // Optional if we had docs
+    });
 });
 
 // Health check endpoint
