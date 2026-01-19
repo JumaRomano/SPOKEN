@@ -5,6 +5,8 @@ import clsx from 'clsx';
 import { FiGrid, FiUsers, FiCalendar, FiDollarSign, FiCheckSquare, FiVideo, FiHome, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
 import { BiGroup } from 'react-icons/bi';
 
+import logo from '../../assets/logo.png';
+
 const MainLayout = ({ children }) => {
     const { user, logout } = useAuth();
     const location = useLocation();
@@ -64,7 +66,7 @@ const MainLayout = ({ children }) => {
                 )}
             >
                 <div className="p-8 border-b border-white/10 flex flex-col items-center text-center">
-                    <img src="/src/assets/logo.png" alt="Logo" className="w-16 h-auto mb-3" />
+                    <img src={logo} alt="Logo" className="w-16 h-auto mb-3" />
                     <h2 className="text-xl font-bold m-0 leading-tight">The Spoken Word</h2>
                     <p className="text-[10px] opacity-70 tracking-[0.2em] mt-1 uppercase">of God Ministries</p>
                 </div>
