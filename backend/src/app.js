@@ -90,7 +90,7 @@ app.get('/', (req, res) => {
 });
 
 // Health check endpoint
-app.get('/health', async (req, res) => {
+app.get('/api/health', async (req, res) => {
     try {
         // Test database connection
         const db = require('./config/database');
