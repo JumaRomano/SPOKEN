@@ -90,7 +90,6 @@ class GroupService {
             category,
             groupType,
             leaderId = null,
-            parentGroupId = null,
             meetingSchedule,
         } = groupData;
 
@@ -98,10 +97,10 @@ class GroupService {
         const type = groupType || category;
 
         const result = await db.query(
-            `INSERT INTO groups (name, description, group_type, leader_id, parent_group_id, meeting_schedule, is_active)
-       VALUES ($1, $2, $3, $4, $5, $6, true)
+            `INSERT INTO groups (name, description, group_type, leader_id, meeting_schedule, is_active)
+       VALUES ($1, $2, $3, $4, $5, true)
        RETURNING *`,
-            [name, description, type, leaderId, parentGroupId, meetingSchedule]
+            [name, description, type, leaderId, meetingSchedule]
         );
 
         logger.info('Group created:', { groupId: result.rows[0].id, name });
@@ -118,7 +117,6 @@ class GroupService {
             category,
             groupType,
             leaderId,
-            parentGroupId,
             meetingSchedule,
             status
         } = groupData;
@@ -131,13 +129,12 @@ class GroupService {
         description = COALESCE($2, description),
         group_type = COALESCE($3, group_type),
         leader_id = COALESCE($4, leader_id),
-        parent_group_id = COALESCE($5, parent_group_id),
-        meeting_schedule = COALESCE($6, meeting_schedule),
-        is_active = COALESCE($7, is_active),
+        meeting_schedule = COALESCE($5, meeting_schedule),
+        is_active = COALESCE($6, is_active),
         updated_at = CURRENT_TIMESTAMP
-       WHERE id = $8
+       WHERE id = $7
        RETURNING *`,
-            [name, description, type, leaderId, parentGroupId, meetingSchedule, status === 'active', id]
+            [name, description, type, leaderId, meetingSchedule, status === 'active', id]
         );
 
         if (result.rows.length === 0) {

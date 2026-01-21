@@ -200,7 +200,9 @@ npm install --production && npm run migrate
 **Option B: Shell (Manual)**
 1.  Go to the **Shell** tab in your Render service dashboard.
 2.  Run: `npm run migrate`
-3.  Run: `npm run seed` (if setting up for the first time)
+3.  **First time only**: Run `npm run seed:prod` (creates admin user - NO sample data!)
+    - ⚠️ **DO NOT** run `npm run seed` in production - it creates fake test users!
+
 
 ---
 
@@ -309,9 +311,19 @@ npm run migrate
 
 ### 6. Seed Initial Data (First Time Only)
 
+⚠️ **IMPORTANT**: Use the production seed script, NOT the development seed!
+
 ```bash
-npm run seed
+# For PRODUCTION - Only creates admin user and essential data (NO SAMPLE DATA)
+npm run seed:prod
+
+# For DEVELOPMENT - Creates admin + sample members/test data
+# npm run seed  # ❌ DO NOT USE THIS IN PRODUCTION!
 ```
+
+**What's the difference?**
+- `npm run seed:prod` - Creates only admin user and default funds (safe for production)
+- `npm run seed` - Creates admin + 6 sample members with fake data (development only!)
 
 **Save the admin credentials printed to the console!**
 

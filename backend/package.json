@@ -8,11 +8,21 @@
     "dev": "nodemon src/app.js",
     "migrate": "node src/database/migrate.js",
     "seed": "node src/database/seed.js",
+    "seed:prod": "node src/database/seed_production.js",
+    "check:users": "node src/database/check_users.js",
+    "clean:sample": "node src/database/clean_sample_data.js",
+    "prod:check": "node scripts/check_production_users.js",
+    "prod:clean": "node scripts/run_production_cleanup.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
-  "keywords": ["church", "management", "api", "postgresql"],
+  "keywords": [
+    "church",
+    "management",
+    "api",
+    "postgresql"
+  ],
   "author": "Spoken Word Of God Ministries",
   "license": "MIT",
   "dependencies": {
