@@ -561,6 +561,7 @@ const UserAccountCard = ({ member, onUpdate }) => {
                                 <option value="member">Member</option>
                                 <option value="leader">Leader</option>
                                 <option value="finance">Finance</option>
+                                <option value="secretary">Secretary</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>

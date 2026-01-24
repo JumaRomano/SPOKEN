@@ -22,16 +22,27 @@ async function runMigrations() {
             ALTER TABLE events ADD COLUMN IF NOT EXISTS registration_required BOOLEAN DEFAULT false;
         `);
 
-        // 3. Nullability fixes
+        // 3. User Role Constraint
+        await db.query(`
+            ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;
+            ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('member', 'leader', 'finance', 'admin', 'sysadmin', 'secretary'));
+        `);
+
+        // 4. Nullability fixes
         await db.query(`
             ALTER TABLE group_attendance ALTER COLUMN member_id DROP NOT NULL;
         `);
 
-        // 4. Critical Permissions for Dashboard & Groups
+        // 5. Critical Permissions for Dashboard & Groups
         const permissions = [
             ['member', 'groups', 'read'],
             ['member', 'members', 'read'],
-            ['member', 'members', 'update']
+            ['member', 'members', 'update'],
+            ['secretary', 'events', 'create'],
+            ['secretary', 'events', 'read'],
+            ['secretary', 'events', 'update'],
+            ['secretary', 'members', 'read'],
+            ['secretary', 'groups', 'read']
         ];
 
         for (const [role, resource, action] of permissions) {

@@ -10,7 +10,7 @@ const registerSchema = {
     body: Joi.object({
         email: Joi.string().email().required(),
         password: Joi.string().min(8).required(),
-        role: Joi.string().valid('member', 'leader', 'finance', 'admin').optional(),
+        role: Joi.string().valid('member', 'leader', 'finance', 'admin', 'secretary').optional(),
     }),
 };
 
@@ -41,7 +41,7 @@ const createLoginSchema = {
         memberId: Joi.string().uuid().required(),
         email: Joi.string().email().required(),
         password: Joi.string().min(8).required(),
-        role: Joi.string().valid('member', 'leader', 'finance', 'admin', 'sysadmin').default('member'),
+        role: Joi.string().valid('member', 'leader', 'finance', 'admin', 'sysadmin', 'secretary').default('member'),
     }),
 };
 
