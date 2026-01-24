@@ -53,9 +53,10 @@ const MemberDetail = () => {
         const fetchAllGroups = async () => {
             try {
                 const res = await groupService.getAll();
-                setAllGroups(res);
+                setAllGroups(res.groups || []); // Extract groups array
             } catch (err) {
                 console.error("Failed to fetch groups", err);
+                setAllGroups([]); // Ensure it's always an array
             }
         };
         fetchAllGroups();
