@@ -55,7 +55,10 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated }) => {
             });
             onClose();
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to create event');
+            console.error('Modal create event error:', err);
+            const data = err.response?.data;
+            const errorMsg = data?.details || data?.message || data?.error || err.message || 'Failed to create event';
+            setError(errorMsg);
         } finally {
             setLoading(false);
         }
