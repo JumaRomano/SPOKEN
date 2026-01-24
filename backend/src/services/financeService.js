@@ -185,7 +185,7 @@ class FinanceService {
 
         let query = `
       SELECT c.*, f.fund_name, f.fund_type,
-             CASE WHEN c.member_id IS NULL THEN 'Anonymous' ELSE m.first_name || ' ' || m.last_name END as donor_name
+             CASE WHEN c.member_id IS NULL THEN 'Anonymous' ELSE m.first_name || ' ' || m.last_name END as member_name
       FROM contributions c
       JOIN funds f ON c.fund_id = f.id
       LEFT JOIN members m ON c.member_id = m.id
