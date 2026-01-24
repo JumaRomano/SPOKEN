@@ -130,10 +130,14 @@ app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
+const runMigrations = require('./database/migrationHandler');
+
+const server = app.listen(PORT, async () => {
     logger.info(`🚀 Spoken Word Of God Ministries ChMS API running on port ${PORT}`);
     logger.info(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-    logger.info(`🔗 Health check: http://localhost:${PORT}/health`);
+
+    // Run DB fixes on startup for environments without shell access (Render Free)
+    await runMigrations();
 });
 
 // Graceful shutdown

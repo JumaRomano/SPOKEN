@@ -10,6 +10,21 @@ const rbac = (resource, action) => {
         try {
             const { role, id: userId } = req.user;
 
+            // Special case: members can always read/update their own profile
+            if (role === 'member' && resource === 'members' && (action === 'read' || action === 'update')) {
+                const targetId = req.params.id;
+
+                // Get member record associated with this user
+                const memberResult = await db.query(
+                    'SELECT id FROM members WHERE user_id = $1',
+                    [userId]
+                );
+
+                if (memberResult.rows.length > 0 && memberResult.rows[0].id === targetId) {
+                    return next();
+                }
+            }
+
             // Check if permission exists in database (exact match or wildcard)
             const result = await db.query(
                 `SELECT is_allowed FROM permissions 

@@ -6,7 +6,7 @@ import Select from '../common/Select';
 
 const CreateEventModal = ({ isOpen, onClose, onEventCreated }) => {
     const [formData, setFormData] = useState({
-        title: '',
+        event_name: '',
         description: '',
         event_type: 'service',
         start_date: '',
@@ -44,7 +44,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated }) => {
         try {
             await onEventCreated(formData);
             setFormData({
-                title: '',
+                event_name: '',
                 description: '',
                 event_type: 'service',
                 start_date: '',
@@ -74,9 +74,9 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated }) => {
                 )}
 
                 <Input
-                    label="Event Title"
-                    name="title"
-                    value={formData.title}
+                    label="Event Name"
+                    name="event_name"
+                    value={formData.event_name}
                     onChange={handleChange}
                     placeholder="e.g., Sunday Worship Service"
                     required

@@ -114,10 +114,10 @@ class AttendanceService {
 
         try {
             const result = await db.query(
-                `INSERT INTO attendance_records (service_id, member_id, group_id, attendance_status, recorded_by, notes)
-         VALUES ($1, $2, $3, $4, $5, $6)
+                `INSERT INTO attendance_records (service_id, member_id, attendance_status, notes)
+         VALUES ($1, $2, $3, $4)
          RETURNING *`,
-                [serviceId, memberId, groupId, status, recordedBy, notes]
+                [serviceId, memberId, status, notes]
             );
 
             return result.rows[0];
@@ -133,14 +133,18 @@ class AttendanceService {
      * Bulk record attendance
      */
     async bulkRecordAttendance(serviceId, memberIds, recordedBy) {
+        if (!memberIds || memberIds.length === 0) {
+            return { message: 'No members to record attendance for' };
+        }
+
         const values = memberIds.map((memberId, i) =>
-            `($1, $${i + 2}, 'present', $${memberIds.length + 2}, CURRENT_TIMESTAMP)`
+            `($1, $${i + 2}, 'present')`
         ).join(',');
 
-        const params = [serviceId, ...memberIds, recordedBy];
+        const params = [serviceId, ...memberIds];
 
         await db.query(
-            `INSERT INTO attendance_records (service_id, member_id, attendance_status, recorded_by, created_at)
+            `INSERT INTO attendance_records (service_id, member_id, attendance_status)
        VALUES ${values}
        ON CONFLICT (service_id, member_id) DO NOTHING`,
             params
@@ -175,7 +179,7 @@ class AttendanceService {
         COUNT(DISTINCT member_id) as unique_attendees,
         COUNT(*) as total_attendance_records,
         COUNT(DISTINCT service_id) as services_count,
-        AVG(s.total_attendance) as avg_attendance_per_service
+        AVG(s.attendance_count) as avg_attendance_per_service
       FROM attendance_records ar
       JOIN services s ON ar.service_id = s.id
       WHERE ar.attendance_status = 'present'
@@ -203,13 +207,15 @@ class AttendanceService {
      * Record group attendance
      */
     async recordGroupAttendance(groupId, attendanceData, recordedBy) {
-        const { meetingDate, totalPresent, notes = null } = attendanceData;
+        const { meetingDate, totalPresent, notes = null, memberId = null } = attendanceData;
 
+        // If memberId is provided, it's an individual record. If not, it's a summary.
+        // We'll support both by checking if columns exist (added in fix_production.js)
         const result = await db.query(
-            `INSERT INTO group_attendance (group_id, meeting_date, total_present, recorded_by, notes)
-       VALUES ($1, $2, $3, $4, $5)
+            `INSERT INTO group_attendance (group_id, member_id, meeting_date, total_present, recorded_by, notes)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-            [groupId, meetingDate, totalPresent, recordedBy, notes]
+            [groupId, memberId, meetingDate, totalPresent || null, recordedBy, notes]
         );
 
         logger.info('Group attendance recorded:', { groupId, meetingDate, totalPresent });

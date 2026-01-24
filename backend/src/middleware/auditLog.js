@@ -22,7 +22,7 @@ const auditLog = (actionType, tableName = null) => {
 
                         await db.query(
                             `INSERT INTO audit_logs 
-               (user_id, action_type, table_name, record_id, new_values, ip_address, user_agent)
+               (user_id, action, table_name, record_id, new_values, ip_address, user_agent)
                VALUES ($1, $2, $3, $4, $5, $6, $7)`,
                             [
                                 req.user?.id || null,

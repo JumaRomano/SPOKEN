@@ -52,7 +52,7 @@ class EventService {
      */
     async create(eventData, createdBy) {
         const {
-            title,
+            event_name,
             description,
             event_type,
             start_date,
@@ -74,11 +74,11 @@ class EventService {
         max_participants, registration_required, registration_deadline, created_by)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
-            [title, description, event_type, start_date, sanitizedEndDate, location,
+            [event_name, description, event_type, start_date, sanitizedEndDate, location,
                 maxParticipants, registration_required, sanitizedDeadline, createdBy]
         );
 
-        logger.info('Event created:', { eventId: result.rows[0].id, event_name: title });
+        logger.info('Event created:', { eventId: result.rows[0].id, event_name });
         return result.rows[0];
     }
 
@@ -87,13 +87,14 @@ class EventService {
      */
     async update(id, eventData) {
         const {
-            title,
+            event_name,
             description,
             event_type,
             start_date,
             end_date,
             location,
             max_participants,
+            registration_required,
             registration_deadline
         } = eventData;
 
@@ -111,11 +112,12 @@ class EventService {
         end_date = COALESCE($5, end_date),
         location = COALESCE($6, location),
         max_participants = COALESCE($7, max_participants),
-        registration_deadline = COALESCE($8, registration_deadline),
+        registration_required = COALESCE($8, registration_required),
+        registration_deadline = COALESCE($9, registration_deadline),
         updated_at = CURRENT_TIMESTAMP
-       WHERE id = $9
+       WHERE id = $10
        RETURNING *`,
-            [title, description, event_type, start_date, sanitizedEndDate, location, maxParticipants, sanitizedDeadline, id]
+            [event_name, description, event_type, start_date, sanitizedEndDate, location, maxParticipants, registration_required, sanitizedDeadline, id]
         );
 
         if (result.rows.length === 0) {

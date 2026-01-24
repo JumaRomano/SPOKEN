@@ -6,34 +6,30 @@ import Select from '../common/Select';
 
 const EditEventModal = ({ event, isOpen, onClose, onEventUpdated }) => {
     const [formData, setFormData] = useState({
-        title: '',
+        event_name: '',
         description: '',
-        eventStartDate: '',
-        eventEndDate: '',
-        startTime: '',
-        endTime: '',
+        start_date: '',
+        end_date: '',
         location: '',
-        eventType: 'service',
-        requiresRegistration: false,
-        maxParticipants: '',
-        registrationDeadline: '',
+        event_type: 'service',
+        registration_required: false,
+        max_participants: '',
+        registration_deadline: '',
         cost: '',
     });
 
     useEffect(() => {
         if (event) {
             setFormData({
-                title: event.title || '',
+                event_name: event.event_name || '',
                 description: event.description || '',
-                eventStartDate: event.eventStartDate ? event.eventStartDate.split('T')[0] : '',
-                eventEndDate: event.eventEndDate ? event.eventEndDate.split('T')[0] : '',
-                startTime: event.startTime || '',
-                endTime: event.endTime || '',
+                start_date: event.start_date ? event.start_date.slice(0, 16) : '',
+                end_date: event.end_date ? event.end_date.slice(0, 16) : '',
                 location: event.location || '',
-                eventType: event.eventType || 'service',
-                requiresRegistration: event.requiresRegistration || false,
-                maxParticipants: event.maxParticipants || '',
-                registrationDeadline: event.registrationDeadline ? event.registrationDeadline.split('T')[0] : '',
+                event_type: event.event_type || 'service',
+                registration_required: event.registration_required || false,
+                max_participants: event.max_participants || '',
+                registration_deadline: event.registration_deadline ? event.registration_deadline.slice(0, 16) : '',
                 cost: event.cost || '',
             });
         }
@@ -69,9 +65,9 @@ const EditEventModal = ({ event, isOpen, onClose, onEventUpdated }) => {
         <Modal isOpen={isOpen} onClose={onClose} title="Edit Event">
             <form onSubmit={handleSubmit} className="space-y-4">
                 <Input
-                    label="Event Title"
-                    name="title"
-                    value={formData.title}
+                    label="Event Name"
+                    name="event_name"
+                    value={formData.event_name}
                     onChange={handleChange}
                     required
                 />
@@ -91,38 +87,23 @@ const EditEventModal = ({ event, isOpen, onClose, onEventUpdated }) => {
 
                 <div className="grid grid-cols-2 gap-4">
                     <Input
-                        label="Start Date"
-                        type="date"
-                        name="eventStartDate"
-                        value={formData.eventStartDate}
+                        label="Start Date & Time"
+                        type="datetime-local"
+                        name="start_date"
+                        value={formData.start_date}
                         onChange={handleChange}
                         required
                     />
                     <Input
-                        label="End Date"
-                        type="date"
-                        name="eventEndDate"
-                        value={formData.eventEndDate}
+                        label="End Date & Time"
+                        type="datetime-local"
+                        name="end_date"
+                        value={formData.end_date}
                         onChange={handleChange}
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <Input
-                        label="Start Time"
-                        type="time"
-                        name="startTime"
-                        value={formData.startTime}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        label="End Time"
-                        type="time"
-                        name="endTime"
-                        value={formData.endTime}
-                        onChange={handleChange}
-                    />
-                </div>
+
 
                 <Input
                     label="Location"
@@ -134,8 +115,8 @@ const EditEventModal = ({ event, isOpen, onClose, onEventUpdated }) => {
 
                 <Select
                     label="Event Type"
-                    name="eventType"
-                    value={formData.eventType}
+                    name="event_type"
+                    value={formData.event_type}
                     onChange={handleChange}
                     options={eventTypes}
                     required
@@ -144,32 +125,32 @@ const EditEventModal = ({ event, isOpen, onClose, onEventUpdated }) => {
                 <div className="flex items-center gap-2">
                     <input
                         type="checkbox"
-                        id="requiresRegistration"
-                        name="requiresRegistration"
-                        checked={formData.requiresRegistration}
+                        id="registration_required"
+                        name="registration_required"
+                        checked={formData.registration_required}
                         onChange={handleChange}
                         className="rounded border-gray-300"
                     />
-                    <label htmlFor="requiresRegistration" className="text-sm font-medium text-gray-700">
-                        Requires Registration
+                    <label htmlFor="registration_required" className="text-sm font-medium text-gray-700">
+                        Registration Required
                     </label>
                 </div>
 
-                {formData.requiresRegistration && (
+                {formData.registration_required && (
                     <div className="grid grid-cols-2 gap-4 pl-6 border-l-2 border-blue-200">
                         <Input
                             label="Max Participants"
                             type="number"
-                            name="maxParticipants"
-                            value={formData.maxParticipants}
+                            name="max_participants"
+                            value={formData.max_participants}
                             onChange={handleChange}
                             min="1"
                         />
                         <Input
                             label="Registration Deadline"
-                            type="date"
-                            name="registrationDeadline"
-                            value={formData.registrationDeadline}
+                            type="datetime-local"
+                            name="registration_deadline"
+                            value={formData.registration_deadline}
                             onChange={handleChange}
                         />
                         <Input

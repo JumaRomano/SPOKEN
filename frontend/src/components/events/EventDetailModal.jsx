@@ -24,25 +24,25 @@ const EventDetailModal = ({ event, isOpen, onClose }) => {
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title={event.title}>
+        <Modal isOpen={isOpen} onClose={onClose} title={event.event_name}>
             <div className="space-y-4">
                 {/* Event Details */}
                 <div className="bg-blue-50 border border-blue-200 p-4 rounded-md">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <p className="text-sm font-medium text-gray-600">Date</p>
-                            <p className="text-base text-gray-900">{formatDate(event.eventStartDate)}</p>
-                            {event.eventEndDate && event.eventEndDate !== event.eventStartDate && (
-                                <p className="text-sm text-gray-600">to {formatDate(event.eventEndDate)}</p>
+                            <p className="text-base text-gray-900">{formatDate(event.start_date)}</p>
+                            {event.end_date && event.end_date !== event.start_date && (
+                                <p className="text-sm text-gray-600">to {formatDate(event.end_date)}</p>
                             )}
                         </div>
 
-                        {event.startTime && (
+                        {event.start_date && (
                             <div>
                                 <p className="text-sm font-medium text-gray-600">Time</p>
                                 <p className="text-base text-gray-900">
-                                    {formatTime(event.startTime)}
-                                    {event.endTime && ` - ${formatTime(event.endTime)}`}
+                                    {new Date(event.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                                    {event.end_date && ` - ${new Date(event.end_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
                                 </p>
                             </div>
                         )}
@@ -69,19 +69,19 @@ const EventDetailModal = ({ event, isOpen, onClose }) => {
                 <div>
                     <p className="text-sm font-medium text-gray-600 mb-1">Event Type</p>
                     <span className="inline-block px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full">
-                        {event.eventType?.replace('_', ' ').toUpperCase()}
+                        {event.event_type?.replace('_', ' ').toUpperCase()}
                     </span>
                 </div>
 
                 {/* Registration */}
-                {event.requiresRegistration && (
+                {event.registration_required && (
                     <div className="bg-green-50 border border-green-200 p-3 rounded-md">
                         <p className="text-sm font-medium text-green-800">
                             🎫 Registration Required
                         </p>
-                        {event.maxParticipants && (
+                        {event.max_participants && (
                             <p className="text-sm text-green-700 mt-1">
-                                Limited to {event.maxParticipants} participants
+                                Limited to {event.max_participants} participants
                             </p>
                         )}
                     </div>
@@ -92,7 +92,7 @@ const EventDetailModal = ({ event, isOpen, onClose }) => {
                     <Button variant="secondary" onClick={onClose}>
                         Close
                     </Button>
-                    {new Date(event.eventStartDate) > new Date() && event.requiresRegistration && (
+                    {new Date(event.start_date) > new Date() && event.registration_required && (
                         <Button variant="primary">
                             Register Now
                         </Button>

@@ -135,22 +135,22 @@ const EventList = () => {
                         {events.map((event) => (
                             <div
                                 key={event.id}
-                                className={`event-card ${isUpcoming(event.eventStartDate) ? 'upcoming' : 'past'}`}
+                                className={`event-card ${isUpcoming(event.start_date) ? 'upcoming' : 'past'}`}
                             >
                                 <div className="event-date-badge">
                                     <div className="badge-day">
-                                        {new Date(event.eventStartDate).getDate()}
+                                        {new Date(event.start_date).getDate()}
                                     </div>
                                     <div className="badge-month">
-                                        {new Date(event.eventStartDate).toLocaleDateString('en-US', { month: 'short' })}
+                                        {new Date(event.start_date).toLocaleDateString('en-US', { month: 'short' })}
                                     </div>
                                 </div>
 
                                 <div className="event-content">
                                     <div className="event-header-row">
-                                        <h3 className="event-title">{event.title}</h3>
-                                        <span className={`event-status ${isUpcoming(event.eventStartDate) ? 'upcoming' : 'past'}`}>
-                                            {isUpcoming(event.eventStartDate) ? 'Upcoming' : 'Past'}
+                                        <h3 className="event-title">{event.event_name}</h3>
+                                        <span className={`event-status ${isUpcoming(event.start_date) ? 'upcoming' : 'past'}`}>
+                                            {isUpcoming(event.start_date) ? 'Upcoming' : 'Past'}
                                         </span>
                                     </div>
 
@@ -160,11 +160,11 @@ const EventList = () => {
 
                                     <div className="event-details">
                                         <span className="event-detail">
-                                            📅 {formatDate(event.eventStartDate)}
+                                            📅 {formatDate(event.start_date)}
                                         </span>
-                                        {event.startTime && (
+                                        {event.start_date && (
                                             <span className="event-detail">
-                                                🕐 {formatTime(event.startTime)}
+                                                🕐 {new Date(event.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                                             </span>
                                         )}
                                         {event.location && (
@@ -194,7 +194,7 @@ const EventList = () => {
                                                 size="small"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    handleDeleteEvent(event.id, event.title);
+                                                    handleDeleteEvent(event.id, event.event_name);
                                                 }}
                                             >
                                                 Delete
@@ -211,7 +211,7 @@ const EventList = () => {
                                         >
                                             View Details
                                         </Button>
-                                        {isUpcoming(event.eventStartDate) && (
+                                        {isUpcoming(event.start_date) && (
                                             <Button
                                                 variant="primary"
                                                 size="small"
