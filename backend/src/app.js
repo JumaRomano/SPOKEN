@@ -17,6 +17,7 @@ const financeRoutes = require('./routes/finance.routes');
 const reportingRoutes = require('./routes/reporting.routes');
 const communicationRoutes = require('./routes/communication.routes');
 const sermonRoutes = require('./routes/sermon.routes');
+const migrationRoutes = require('./routes/migration.routes'); // TEMPORARY - delete after migration
 
 // Initialize Express app
 const app = express();
@@ -121,6 +122,7 @@ app.use('/api/finance', financeRoutes);
 app.use('/api/reports', reportingRoutes);
 app.use('/api/communication', communicationRoutes);
 app.use('/api/sermons', sermonRoutes);
+app.use('/api/migrations', migrationRoutes); // TEMPORARY - delete after migration
 
 // 404 handler
 app.use(notFound);
