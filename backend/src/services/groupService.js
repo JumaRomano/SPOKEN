@@ -210,8 +210,8 @@ class GroupService {
     async addMember(groupId, memberId, role = 'member') {
         try {
             const result = await db.query(
-                `INSERT INTO group_members (group_id, member_id, role)
-         VALUES ($1, $2, $3)
+                `INSERT INTO group_members (group_id, member_id, role, joined_date)
+         VALUES ($1, $2, $3, CURRENT_DATE)
          RETURNING *`,
                 [groupId, memberId, role]
             );
@@ -222,6 +222,10 @@ class GroupService {
             if (error.code === '23505') { // Unique violation
                 throw new Error('Member already in this group');
             }
+            if (error.code === '23503') { // Foreign key violation
+                throw new Error('Invalid group or member ID');
+            }
+            logger.error('Error adding member to group:', error);
             throw error;
         }
     }

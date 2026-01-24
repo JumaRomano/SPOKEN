@@ -71,9 +71,11 @@ const MemberDetail = () => {
             const updatedGroups = await memberService.getGroups(member.id);
             setMemberGroups(updatedGroups);
             setSelectedGroupId('');
+            alert('Member assigned to group successfully!');
         } catch (err) {
             console.error('Error assigning group:', err);
-            // potentially show toast
+            const errorMsg = err.response?.data?.error || err.message || 'Failed to assign member to group';
+            alert(`Error: ${errorMsg}`);
         } finally {
             setAssigningGroup(false);
         }
