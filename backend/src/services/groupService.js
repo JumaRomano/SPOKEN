@@ -1,5 +1,6 @@
 const db = require('../config/database');
 const logger = require('../utils/logger');
+const AppError = require('../utils/AppError');
 
 class GroupService {
     /**
@@ -229,10 +230,10 @@ class GroupService {
             return result.rows[0];
         } catch (error) {
             if (error.code === '23505') { // Unique violation
-                throw new Error('Member already in this group');
+                throw new AppError('Member already in this group', 400);
             }
             if (error.code === '23503') { // Foreign key violation
-                throw new Error('Invalid group or member ID');
+                throw new AppError('Invalid group or member ID', 400);
             }
             logger.error('Error adding member to group:', error);
             throw error;

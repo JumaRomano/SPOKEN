@@ -174,33 +174,46 @@ class AttendanceService {
      * Get attendance statistics
      */
     async getStatistics(startDate = null, endDate = null) {
-        let query = `
-      SELECT 
-        COUNT(DISTINCT member_id) as unique_attendees,
-        COUNT(*) as total_attendance_records,
-        COUNT(DISTINCT service_id) as services_count,
-        AVG(s.attendance_count) as avg_attendance_per_service
-      FROM attendance_records ar
-      JOIN services s ON ar.service_id = s.id
-      WHERE ar.attendance_status = 'present'
-    `;
+        let whereClause = "WHERE ar.attendance_status = 'present'";
         const params = [];
         let paramCount = 1;
 
         if (startDate) {
-            query += ` AND s.service_date >= $${paramCount}`;
+            whereClause += ` AND s.service_date >= $${paramCount}`;
             params.push(startDate);
             paramCount++;
         }
 
         if (endDate) {
-            query += ` AND s.service_date <= $${paramCount}`;
+            whereClause += ` AND s.service_date <= $${paramCount}`;
             params.push(endDate);
             paramCount++;
         }
 
+        const query = `
+            SELECT 
+                COUNT(DISTINCT ar.member_id) as unique_attendees,
+                COUNT(ar.id) as total_attendance_records,
+                COUNT(DISTINCT ar.service_id) as services_count,
+                COALESCE(AVG(service_counts.count), 0) as avg_attendance_per_service
+            FROM attendance_records ar
+            JOIN services s ON ar.service_id = s.id
+            LEFT JOIN (
+                SELECT service_id, COUNT(*) as count 
+                FROM attendance_records 
+                WHERE attendance_status = 'present' 
+                GROUP BY service_id
+            ) service_counts ON ar.service_id = service_counts.service_id
+            ${whereClause}
+        `;
+
         const result = await db.query(query, params);
-        return result.rows[0];
+        return {
+            unique_attendees: parseInt(result.rows[0].unique_attendees || 0),
+            total_attendance_records: parseInt(result.rows[0].total_attendance_records || 0),
+            services_count: parseInt(result.rows[0].services_count || 0),
+            avg_attendance_per_service: parseFloat(result.rows[0].avg_attendance_per_service || 0).toFixed(2)
+        };
     }
 
     /**

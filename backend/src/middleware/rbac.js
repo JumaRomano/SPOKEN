@@ -10,17 +10,28 @@ const rbac = (resource, action) => {
         try {
             const { role, id: userId } = req.user;
 
-            // Special case: members can always read/update their own profile
-            if (role === 'member' && resource === 'members' && (action === 'read' || action === 'update')) {
-                const targetId = req.params.id;
-
-                // Get member record associated with this user
+            // 1. Get member ID associated with this user (for self-access checks)
+            let userMemberId = null;
+            if (role !== 'admin' && role !== 'sysadmin') {
                 const memberResult = await db.query(
                     'SELECT id FROM members WHERE user_id = $1',
                     [userId]
                 );
+                if (memberResult.rows.length > 0) {
+                    userMemberId = memberResult.rows[0].id;
+                }
+            }
 
-                if (memberResult.rows.length > 0 && memberResult.rows[0].id === targetId) {
+            // 2. Special cases for self-access
+            const targetMemberId = req.params.id || req.params.memberId;
+
+            // If the user is accessing their own member record or sub-resources of their member record
+            if (userMemberId && targetMemberId === userMemberId) {
+                const allowedSelfResources = ['members', 'contributions', 'attendance', 'groups', 'events', 'family'];
+                if (allowedSelfResources.includes(resource) && action === 'read') {
+                    return next();
+                }
+                if (resource === 'members' && action === 'update') {
                     return next();
                 }
             }
