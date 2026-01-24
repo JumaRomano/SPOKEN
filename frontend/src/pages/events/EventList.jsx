@@ -94,11 +94,11 @@ const EventList = () => {
     };
 
     const canEdit = () => {
-        return user?.role === 'admin' || user?.role === 'secretary';
+        return user?.role === 'admin' || user?.role === 'sysadmin';
     };
 
     const canDelete = () => {
-        return user?.role === 'admin';
+        return user?.role === 'admin' || user?.role === 'sysadmin';
     };
 
     return (
@@ -117,7 +117,7 @@ const EventList = () => {
             <Card
                 title="Events & Programs"
                 subtitle={`${events.length} events`}
-                actions={<Button variant="primary" onClick={() => setShowCreateModal(true)}>Create Event</Button>}
+                actions={canEdit() && <Button variant="primary" onClick={() => setShowCreateModal(true)}>Create Event</Button>}
             >
                 {loading ? (
                     <div className="loading-state">Loading events...</div>
