@@ -57,7 +57,7 @@ function App() {
                     } />
                     <Route path="/groups" element={<GroupList />} />
                     <Route path="/finance" element={<FinanceOverview />} />
-                    <Route path="/events" element={<EventList />} />
+                    <Route path="/events-management" element={<EventList />} />
                     <Route path="/sermons-management" element={<SermonManager />} />
                     <Route path="/members/:id" element={
                       <RoleProtectedRoute allowedRoles={['admin', 'sysadmin']}>
