@@ -1,139 +1,227 @@
 .event-list-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 24px;
+    padding: 32px;
+    animation: fadeIn 0.6s ease-out;
 }
 
-.events-timeline {
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.events-premium-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 32px;
+}
+
+.event-card-premium {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 20px;
 }
 
-.event-card {
-    background: white;
+.event-card-premium:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.event-banner {
+    height: 200px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.event-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.event-card-premium:hover .event-banner img {
+    transform: scale(1.1);
+}
+
+.event-date-overlay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    padding: 8px 16px;
     border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    gap: 20px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    border-left: 4px solid #667eea;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 2;
 }
 
-.event-card.past {
-    border-left-color: #cbd5e0;
-    opacity: 0.8;
-}
-
-.event-card:hover {
-    transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.event-date-badge {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    width: 70px;
-    height: 70px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.event-card.past .event-date-badge {
-    background: #a0aec0;
-}
-
-.badge-day {
-    font-size: 28px;
-    font-weight: 700;
+.overlay-day {
+    display: block;
+    font-size: 24px;
+    font-weight: 800;
+    color: #4f46e5;
     line-height: 1;
 }
 
-.badge-month {
-    font-size: 12px;
+.overlay-month {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #4b5563;
+    letter-spacing: 1px;
+}
+
+.event-type-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 6px 14px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    color: white;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    z-index: 2;
 }
 
-.event-content {
-    flex: 1;
+.event-body {
+    padding: 24px;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 12px;
 }
 
-.event-header-row {
+.event-title-row {
+    margin-bottom: 12px;
+}
+
+.event-title-row h3 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.event-meta {
     display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.meta-item svg {
+    color: #6366f1;
+    font-size: 16px;
+}
+
+.event-footer {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
+    padding-top: 18px;
+    border-top: 1px solid #f3f4f6;
+    margin-top: auto;
 }
 
-.event-title {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 600;
-    color: #1a202c;
-}
-
-.event-status {
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    flex-shrink: 0;
-}
-
-.event-status.upcoming {
-    background: #c6f6d5;
-    color: #22543d;
-}
-
-.event-status.past {
-    background: #e2e8f0;
-    color: #4a5568;
-}
-
-.event-description {
-    margin: 0;
-    color: #718096;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-.event-details {
+.reg-stat {
+    font-size: 13px;
+    color: #6b7280;
     display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
+    align-items: center;
+    gap: 6px;
 }
 
-.event-detail {
-    font-size: 14px;
-    color: #4a5568;
+.reg-count {
+    font-weight: 700;
+    color: #4f46e5;
 }
 
-.event-actions {
+.premium-btn-group {
     display: flex;
     gap: 8px;
-    margin-top: 4px;
+}
+
+.event-search-bar {
+    background: white;
+    border-radius: 20px;
+    padding: 20px 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    display: flex;
+    gap: 16px;
+    margin-bottom: 40px;
+    align-items: center;
+    border: 1px solid #f3f4f6;
+}
+
+.search-input-wrap {
+    flex-grow: 1;
+    position: relative;
+}
+
+.search-input-wrap input {
+    width: 100%;
+    padding: 12px 16px;
+    padding-left: 44px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.search-input-wrap input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
 }
 
 @media (max-width: 640px) {
-    .event-card {
+    .events-premium-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .event-list-container {
+        padding: 16px;
+    }
+
+    .event-search-bar {
         flex-direction: column;
-    }
-
-    .event-date-badge {
-        width: 60px;
-        height: 60px;
-    }
-
-    .badge-day {
-        font-size: 24px;
+        padding: 16px;
     }
 }

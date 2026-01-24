@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import eventService from '../../services/eventService';
-import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import CreateEventModal from '../../components/events/CreateEventModal';
 import EditEventModal from '../../components/events/EditEventModal';
 import EventDetailModal from '../../components/events/EventDetailModal';
+import { FiSearch, FiPlus, FiMapPin, FiClock, FiCalendar, FiUsers, FiEdit2, FiTrash2, FiExternalLink } from 'react-icons/fi';
 import './EventList.css';
 
 const EventList = () => {
@@ -13,252 +13,226 @@ const EventList = () => {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [search, setSearch] = useState('');
+    const [eventType, setEventType] = useState('');
+
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
-    const [message, setMessage] = useState({ type: '', text: '' });
 
-    useEffect(() => {
-        fetchEvents();
-    }, []);
-
-    const fetchEvents = async () => {
+    const fetchEvents = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await eventService.getAll();
-            // Backend returns array directly, not wrapped in data
-            setEvents(Array.isArray(response) ? response : (response.data || []));
+            const data = await eventService.getAll({
+                search,
+                eventType,
+                upcoming: false // Fetch all for management
+            });
+            setEvents(data);
+            setError('');
         } catch (err) {
-            setError('Failed to load events');
-            console.error('Fetch events error:', err);
+            setError('Failed to load events. Please try again.');
+            console.error(err);
         } finally {
             setLoading(false);
         }
-    };
+    }, [search, eventType]);
 
-    const isUpcoming = (eventDate) => {
-        return new Date(eventDate) > new Date();
-    };
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchEvents();
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [fetchEvents]);
 
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            weekday: 'short',
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-        });
-    };
-
-    const formatTime = (timeString) => {
-        if (!timeString) return '';
-        return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true,
-        });
-    };
-
-    const handleCreateEvent = async (eventData) => {
+    const handleDelete = async (id, name) => {
+        if (!window.confirm(`Are you sure you want to delete "${name}"?`)) return;
         try {
-            await eventService.create(eventData);
-            setMessage({ type: 'success', text: 'Event created successfully!' });
+            await eventService.delete(id);
             fetchEvents();
         } catch (err) {
-            console.error('Create event error:', err);
-            const data = err.response?.data;
-            const errorMsg = data?.details || data?.message || data?.error || err.message || 'Failed to create event';
-            setMessage({ type: 'error', text: errorMsg });
-            alert(`Error creating event: ${errorMsg}`);
+            alert('Failed to delete event');
         }
     };
 
-    const handleUpdateEvent = async (eventData) => {
-        try {
-            await eventService.update(selectedEvent.id, eventData);
-            setMessage({ type: 'success', text: 'Event updated successfully!' });
-            setShowEditModal(false);
-            setSelectedEvent(null);
-            fetchEvents();
-        } catch (err) {
-            setMessage({ type: 'error', text: 'Failed to update event' });
-        }
+    const isUpcoming = (date) => new Date(date) > new Date();
+
+    const formatDateShort = (dateStr) => {
+        const date = new Date(dateStr);
+        return {
+            day: date.getDate(),
+            month: date.toLocaleDateString('en-US', { month: 'short' })
+        };
     };
 
-    const handleDeleteEvent = async (eventId, eventTitle) => {
-        if (window.confirm(`Are you sure you want to delete "${eventTitle}"? This action cannot be undone.`)) {
-            try {
-                await eventService.delete(eventId);
-                setMessage({ type: 'success', text: 'Event deleted successfully!' });
-                fetchEvents();
-            } catch (err) {
-                setMessage({ type: 'error', text: 'Failed to delete event' });
-            }
-        }
-    };
-
-    const canEdit = () => {
-        return user?.role === 'admin' || user?.role === 'sysadmin';
-    };
-
-    const canDelete = () => {
-        return user?.role === 'admin' || user?.role === 'sysadmin';
-    };
+    const isAdmin = user?.role === 'admin' || user?.role === 'sysadmin' || user?.role === 'secretary';
 
     return (
         <div className="event-list-container">
-            {message.text && (
-                <div
-                    className={`mb-4 px-4 py-3 rounded ${message.type === 'success'
-                        ? 'bg-green-50 border border-green-200 text-green-700'
-                        : 'bg-red-50 border border-red-200 text-red-700'
-                        }`}
-                >
-                    {message.text}
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div>
+                    <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Events Management</h1>
+                    <p className="text-gray-500 mt-1">Manage church services, programs, and community events.</p>
                 </div>
-            )}
+                {isAdmin && (
+                    <Button
+                        variant="primary"
+                        onClick={() => setShowCreateModal(true)}
+                        className="flex items-center gap-2 px-6 py-3 rounded-2xl shadow-lg shadow-indigo-100"
+                    >
+                        <FiPlus /> Create Event
+                    </Button>
+                )}
+            </div>
 
-            <Card
-                title="Events & Programs"
-                subtitle={`${events.length} events`}
-                actions={canEdit() && <Button variant="primary" onClick={() => setShowCreateModal(true)}>Create Event</Button>}
-            >
-                {loading ? (
-                    <div className="loading-state">Loading events...</div>
-                ) : error ? (
-                    <div className="error-state">{error}</div>
-                ) : events.length === 0 ? (
-                    <div className="empty-state">No events scheduled</div>
-                ) : (
-                    <div className="events-timeline">
-                        {events.map((event) => (
-                            <div
-                                key={event.id}
-                                className={`event-card ${isUpcoming(event.start_date) ? 'upcoming' : 'past'}`}
-                            >
-                                <div className="event-date-badge">
-                                    <div className="badge-day">
-                                        {new Date(event.start_date).getDate()}
+            {/* Filters Bar */}
+            <div className="event-search-bar">
+                <div className="search-input-wrap">
+                    <FiSearch className="search-icon" />
+                    <input
+                        type="text"
+                        placeholder="Search events by name or description..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
+                <select
+                    className="px-4 py-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-100 transition-all cursor-pointer"
+                    value={eventType}
+                    onChange={(e) => setEventType(e.target.value)}
+                >
+                    <option value="">All Types</option>
+                    <option value="service">Worship Service</option>
+                    <option value="ministry">Ministry Meeting</option>
+                    <option value="outreach">Community Outreach</option>
+                    <option value="other">Other Events</option>
+                </select>
+            </div>
+
+            {/* Main Grid */}
+            {loading && events.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+                    <p className="text-gray-500 font-medium">Fetching upcoming events...</p>
+                </div>
+            ) : error ? (
+                <div className="bg-red-50 p-6 rounded-2xl text-center border border-red-100">
+                    <p className="text-red-600 font-bold mb-3">{error}</p>
+                    <Button variant="outline" onClick={fetchEvents}>Retry</Button>
+                </div>
+            ) : events.length === 0 ? (
+                <div className="text-center py-20 bg-gray-50 rounded-3xl border border-dashed border-gray-300">
+                    <p className="text-gray-400 text-lg">No events found matching your criteria.</p>
+                </div>
+            ) : (
+                <div className="events-premium-grid">
+                    {events.map((event) => {
+                        const dateInfo = formatDateShort(event.start_date);
+                        return (
+                            <div key={event.id} className="event-card-premium">
+                                <div className="event-banner">
+                                    <img
+                                        src={event.banner_url || "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=1400&auto=format&fit=crop"}
+                                        alt={event.event_name}
+                                    />
+                                    <div className="event-date-overlay">
+                                        <span className="overlay-day">{dateInfo.day}</span>
+                                        <span className="overlay-month">{dateInfo.month}</span>
                                     </div>
-                                    <div className="badge-month">
-                                        {new Date(event.start_date).toLocaleDateString('en-US', { month: 'short' })}
-                                    </div>
+                                    <span className="event-type-badge">{event.event_type}</span>
                                 </div>
 
-                                <div className="event-content">
-                                    <div className="event-header-row">
-                                        <h3 className="event-title">{event.event_name}</h3>
-                                        <span className={`event-status ${isUpcoming(event.start_date) ? 'upcoming' : 'past'}`}>
+                                <div className="event-body">
+                                    <div className="event-title-row">
+                                        <h3>{event.event_name}</h3>
+                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${isUpcoming(event.start_date) ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                                             {isUpcoming(event.start_date) ? 'Upcoming' : 'Past'}
                                         </span>
                                     </div>
 
-                                    {event.description && (
-                                        <p className="event-description">{event.description}</p>
-                                    )}
-
-                                    <div className="event-details">
-                                        <span className="event-detail">
-                                            📅 {formatDate(event.start_date)}
-                                        </span>
-                                        {event.start_date && (
-                                            <span className="event-detail">
-                                                🕐 {new Date(event.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
-                                            </span>
-                                        )}
-                                        {event.location && (
-                                            <span className="event-detail">
-                                                📍 {event.location}
-                                            </span>
+                                    <div className="event-meta">
+                                        <div className="meta-item">
+                                            <FiClock /> {new Date(event.start_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </div>
+                                        <div className="meta-item">
+                                            <FiMapPin /> {event.location || 'Spoken Word Ministry'}
+                                        </div>
+                                        {event.max_participants && (
+                                            <div className="meta-item">
+                                                <FiUsers /> Capacity: {event.registration_count}/{event.max_participants}
+                                            </div>
                                         )}
                                     </div>
 
-                                    <div className="event-actions">
-                                        {canEdit() && (
+                                    <div className="event-footer">
+                                        <div className="reg-stat">
+                                            <FiExternalLink />
+                                            <span>
+                                                <span className="reg-count">{event.registration_count || 0}</span> Registered
+                                            </span>
+                                        </div>
+
+                                        <div className="premium-btn-group">
+                                            {isAdmin && (
+                                                <>
+                                                    <button
+                                                        onClick={() => { setSelectedEvent(event); setShowEditModal(true); }}
+                                                        className="p-2 text-gray-400 hover:text-indigo-600 transition-colors"
+                                                        title="Edit Event"
+                                                    >
+                                                        <FiEdit2 size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(event.id, event.event_name)}
+                                                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                                                        title="Delete Event"
+                                                    >
+                                                        <FiTrash2 size={18} />
+                                                    </button>
+                                                </>
+                                            )}
                                             <Button
-                                                variant="secondary"
+                                                variant="outline"
                                                 size="small"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setSelectedEvent(event);
-                                                    setShowEditModal(true);
-                                                }}
+                                                onClick={() => { setSelectedEvent(event); setShowDetailModal(true); }}
+                                                className="!rounded-xl border-gray-200"
                                             >
-                                                Edit
+                                                Details
                                             </Button>
-                                        )}
-                                        {canDelete() && (
-                                            <Button
-                                                variant="secondary"
-                                                size="small"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleDeleteEvent(event.id, event.event_name);
-                                                }}
-                                            >
-                                                Delete
-                                            </Button>
-                                        )}
-                                        <Button
-                                            variant="secondary"
-                                            size="small"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setSelectedEvent(event);
-                                                setShowDetailModal(true);
-                                            }}
-                                        >
-                                            View Details
-                                        </Button>
-                                        {isUpcoming(event.start_date) && (
-                                            <Button
-                                                variant="primary"
-                                                size="small"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setSelectedEvent(event);
-                                                    setShowDetailModal(true);
-                                                }}
-                                            >
-                                                Register
-                                            </Button>
-                                        )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                )}
-            </Card>
+                        );
+                    })}
+                </div>
+            )}
 
+            {/* Modals */}
             <CreateEventModal
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
-                onEventCreated={handleCreateEvent}
+                onEventCreated={fetchEvents}
             />
-
-            <EditEventModal
-                event={selectedEvent}
-                isOpen={showEditModal}
-                onClose={() => {
-                    setShowEditModal(false);
-                    setSelectedEvent(null);
-                }}
-                onEventUpdated={handleUpdateEvent}
-            />
-
-            <EventDetailModal
-                event={selectedEvent}
-                isOpen={showDetailModal}
-                onClose={() => {
-                    setShowDetailModal(false);
-                    setSelectedEvent(null);
-                }}
-            />
+            {selectedEvent && (
+                <EditEventModal
+                    isOpen={showEditModal}
+                    event={selectedEvent}
+                    onClose={() => { setShowEditModal(false); setSelectedEvent(null); }}
+                    onEventUpdated={fetchEvents}
+                />
+            )}
+            {selectedEvent && (
+                <EventDetailModal
+                    isOpen={showDetailModal}
+                    event={selectedEvent}
+                    onClose={() => { setShowDetailModal(false); setSelectedEvent(null); }}
+                />
+            )}
         </div>
     );
 };
 
 export default EventList;
-

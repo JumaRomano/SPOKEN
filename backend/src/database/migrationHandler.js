@@ -20,6 +20,10 @@ async function runMigrations() {
         // 2. Event Columns
         await db.query(`
             ALTER TABLE events ADD COLUMN IF NOT EXISTS registration_required BOOLEAN DEFAULT false;
+            ALTER TABLE events ADD COLUMN IF NOT EXISTS banner_url TEXT;
+            ALTER TABLE events ADD COLUMN IF NOT EXISTS cost DECIMAL(10, 2) DEFAULT 0;
+            ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS notes TEXT;
+            ALTER TABLE volunteer_signups ADD COLUMN IF NOT EXISTS notes TEXT;
         `);
 
         // 3. User Role Constraint

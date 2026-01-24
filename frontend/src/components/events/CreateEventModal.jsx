@@ -14,6 +14,9 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated }) => {
         location: '',
         max_participants: '',
         registration_required: false,
+        registration_deadline: '',
+        cost: 0,
+        banner_url: ''
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -52,6 +55,9 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated }) => {
                 location: '',
                 max_participants: '',
                 registration_required: false,
+                registration_deadline: '',
+                cost: 0,
+                banner_url: ''
             });
             onClose();
         } catch (err) {
@@ -136,26 +142,59 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated }) => {
                 />
 
                 <Input
-                    label="Max Participants (Optional)"
-                    type="number"
-                    name="max_participants"
-                    value={formData.max_participants}
+                    label="Banner Image URL (Optional)"
+                    name="banner_url"
+                    value={formData.banner_url}
                     onChange={handleChange}
-                    min="1"
-                    placeholder="Leave empty for unlimited"
+                    placeholder="https://images.unsplash.com/..."
                 />
 
-                <div className="flex items-center">
-                    <input
-                        type="checkbox"
-                        name="registration_required"
-                        checked={formData.registration_required}
+                <div className="grid grid-cols-2 gap-4">
+                    <Input
+                        label="Max Participants"
+                        type="number"
+                        name="max_participants"
+                        value={formData.max_participants}
                         onChange={handleChange}
-                        className="h-4 w-4 text-blue-600 rounded"
+                        min="1"
+                        placeholder="Unlimited"
                     />
-                    <label className="ml-2 text-sm text-gray-700">
-                        Registration required
-                    </label>
+
+                    <Input
+                        label="Event Cost (KES)"
+                        type="number"
+                        name="cost"
+                        value={formData.cost}
+                        onChange={handleChange}
+                        min="0"
+                    />
+                </div>
+
+                <div className="flex flex-col gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div className="flex items-center">
+                        <input
+                            type="checkbox"
+                            name="registration_required"
+                            id="registration_required"
+                            checked={formData.registration_required}
+                            onChange={handleChange}
+                            className="h-4 w-4 text-indigo-600 rounded cursor-pointer"
+                        />
+                        <label htmlFor="registration_required" className="ml-2 text-sm font-semibold text-gray-700 cursor-pointer">
+                            Registration Required
+                        </label>
+                    </div>
+
+                    {formData.registration_required && (
+                        <Input
+                            label="Registration Deadline"
+                            type="datetime-local"
+                            name="registration_deadline"
+                            value={formData.registration_deadline}
+                            onChange={handleChange}
+                            required
+                        />
+                    )}
                 </div>
 
                 <div className="flex gap-2 justify-end mt-6">

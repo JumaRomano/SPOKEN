@@ -1,62 +1,78 @@
 import api from './api';
 
 const eventService = {
-    async getAll(params = {}) {
-        const response = await api.get('/events', { params });
+    // Get all events
+    async getAll(filters = {}) {
+        const { eventType, status, upcoming, search } = filters;
+        const params = new URLSearchParams();
+        if (eventType) params.set('eventType', eventType);
+        if (status) params.set('status', status);
+        if (upcoming) params.set('upcoming', upcoming);
+        if (search) params.set('search', search);
+
+        const response = await api.get(`/events?${params.toString()}`);
         return response.data;
     },
 
-    async getPublicEvents(params = {}) {
-        const response = await api.get('/events/public', { params });
-        return response.data;
-    },
-
+    // Get event by ID
     async getById(id) {
         const response = await api.get(`/events/${id}`);
         return response.data;
     },
 
+    // Create event
     async create(eventData) {
         const response = await api.post('/events', eventData);
         return response.data;
     },
 
+    // Update event
     async update(id, eventData) {
         const response = await api.put(`/events/${id}`, eventData);
         return response.data;
     },
 
+    // Delete event
     async delete(id) {
         const response = await api.delete(`/events/${id}`);
         return response.data;
     },
 
-    async register(eventId, memberData) {
-        const response = await api.post(`/events/${eventId}/register`, memberData);
+    // Register for event
+    async register(eventId, data) {
+        const response = await api.post(`/events/${eventId}/register`, data);
         return response.data;
     },
 
-    async getRegistrations(id) {
-        const response = await api.get(`/events/${id}/registrations`);
+    // Cancel registration
+    async cancelRegistration(eventId, memberId) {
+        const response = await api.delete(`/events/${eventId}/register/${memberId}`);
         return response.data;
     },
 
-    // Volunteer Management
+    // Get event registrations
+    async getRegistrations(eventId) {
+        const response = await api.get(`/events/${eventId}/registrations`);
+        return response.data;
+    },
+
+    // Volunteer roles
     async getVolunteerRoles(eventId) {
         const response = await api.get(`/events/${eventId}/volunteers`);
         return response.data;
     },
 
+    // Create volunteer role
     async createVolunteerRole(eventId, roleData) {
         const response = await api.post(`/events/${eventId}/volunteers`, roleData);
         return response.data;
     },
 
-    async volunteerSignup(roleId, memberId) {
-        const response = await api.post(`/events/volunteers/${roleId}/signup`, { memberId });
+    // Volunteer signup
+    async volunteerSignup(roleId, data) {
+        const response = await api.post(`/events/volunteers/${roleId}/signup`, data);
         return response.data;
-    },
+    }
 };
 
 export default eventService;
-

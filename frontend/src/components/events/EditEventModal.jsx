@@ -16,6 +16,7 @@ const EditEventModal = ({ event, isOpen, onClose, onEventUpdated }) => {
         max_participants: '',
         registration_deadline: '',
         cost: '',
+        banner_url: ''
     });
 
     useEffect(() => {
@@ -31,6 +32,7 @@ const EditEventModal = ({ event, isOpen, onClose, onEventUpdated }) => {
                 max_participants: event.max_participants || '',
                 registration_deadline: event.registration_deadline ? event.registration_deadline.slice(0, 16) : '',
                 cost: event.cost || '',
+                banner_url: event.banner_url || '',
             });
         }
     }, [event]);
@@ -111,6 +113,14 @@ const EditEventModal = ({ event, isOpen, onClose, onEventUpdated }) => {
                     value={formData.location}
                     onChange={handleChange}
                     placeholder="e.g., Main Sanctuary, Fellowship Hall"
+                />
+
+                <Input
+                    label="Banner Image URL"
+                    name="banner_url"
+                    value={formData.banner_url}
+                    onChange={handleChange}
+                    placeholder="https://..."
                 />
 
                 <Select

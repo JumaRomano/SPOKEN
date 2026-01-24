@@ -9,6 +9,7 @@ class EventController {
                 eventType: req.query.eventType || null,
                 status: req.query.status || null,
                 upcoming: req.query.upcoming === 'true',
+                search: req.query.search || '',
             };
 
             const events = await eventService.getAll(filters);
@@ -61,8 +62,8 @@ class EventController {
     async register(req, res, next) {
         try {
             const { id: eventId } = req.params;
-            const { memberId, paymentAmount } = req.body;
-            const registration = await eventService.register(eventId, memberId, paymentAmount);
+            const { memberId, paymentAmount, notes } = req.body;
+            const registration = await eventService.register(eventId, memberId, paymentAmount, notes);
             res.status(201).json(registration);
         } catch (error) {
             next(error);
