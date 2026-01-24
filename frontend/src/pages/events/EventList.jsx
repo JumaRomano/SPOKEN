@@ -27,10 +27,11 @@ const EventList = () => {
         try {
             setLoading(true);
             const response = await eventService.getAll();
-            setEvents(response.data || []);
+            // Backend returns array directly, not wrapped in data
+            setEvents(Array.isArray(response) ? response : (response.data || []));
         } catch (err) {
             setError('Failed to load events');
-            console.error(err);
+            console.error('Fetch events error:', err);
         } finally {
             setLoading(false);
         }
@@ -65,7 +66,10 @@ const EventList = () => {
             setMessage({ type: 'success', text: 'Event created successfully!' });
             fetchEvents();
         } catch (err) {
-            setMessage({ type: 'error', text: 'Failed to create event' });
+            console.error('Create event error:', err);
+            const errorMsg = err.response?.data?.message || err.message || 'Failed to create event';
+            setMessage({ type: 'error', text: errorMsg });
+            alert(`Error creating event: ${errorMsg}`);
         }
     };
 
