@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import groupService from '../../services/groupService';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -6,6 +7,7 @@ import CreateGroupModal from './CreateGroupModal';
 import './GroupList.css';
 
 const GroupList = () => {
+    const navigate = useNavigate();
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -95,7 +97,11 @@ const GroupList = () => {
                                         )}
                                     </div>
                                     <div className="group-actions">
-                                        <Button variant="secondary" size="small">
+                                        <Button
+                                            variant="secondary"
+                                            size="small"
+                                            onClick={() => navigate(`/groups/${group.id}`)}
+                                        >
                                             View Details
                                         </Button>
                                     </div>
