@@ -62,4 +62,33 @@ router.post('/run-sermons-migration', async (req, res) => {
     }
 });
 
+/**
+ * TEMPORARY MIGRATION ENDPOINT - NO AUTH REQUIRED
+ * Run this once to create the events tables
+ * DELETE THIS FILE after migration is complete
+ */
+router.post('/run-events-migration', async (req, res) => {
+    try {
+        console.log('🔄 Starting events tables migration...');
+
+        const { runEventsMigration } = require('../scripts/run-events-migration');
+        const result = await runEventsMigration();
+
+        console.log('✅ Events tables migration completed successfully!');
+
+        res.json({
+            success: true,
+            message: 'Events tables created successfully',
+            note: 'Please delete this migration endpoint after use'
+        });
+
+    } catch (error) {
+        console.error('❌ Migration failed:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;
