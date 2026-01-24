@@ -7,40 +7,49 @@ class GroupService {
      * For admin/sysadmin: returns all groups
      * For other roles: returns only groups the user is a member of
      */
-    async getAll(filters = {}) {
+    async getAll(filters = {}, userId = null, userRole = 'member') {
         const {
             limit = 20,
             offset = 0,
             category = null,
             status = 'active',
             search = '',
-            userId = null,
-            userRole = null,
         } = filters;
 
-        // Check if user is admin or sysadmin
-        const isAdmin = ['admin', 'sysadmin'].includes(userRole);
+        const isActive = status === 'active';
+        const isAdmin = userRole === 'admin' || userRole === 'sysadmin';
 
-        // Base query - different for admin vs non-admin
-        let query = `
-      SELECT DISTINCT g.*, 
-             m.first_name || ' ' || m.last_name as leader_name,
-             (SELECT COUNT(*) FROM group_members WHERE group_id = g.id) as member_count
-      FROM groups g
-      LEFT JOIN members m ON g.leader_id = m.id
-    `;
-
-        // For non-admin users, only show groups they are members of
+        // For non-admin users, we need to get their member_id from user_id
+        let memberId = null;
         if (!isAdmin && userId) {
-            query += `
-        INNER JOIN group_members gm ON g.id = gm.group_id AND gm.member_id = $1
-      `;
+            const memberResult = await db.query(
+                'SELECT id FROM members WHERE user_id = $1',
+                [userId]
+            );
+            if (memberResult.rows.length > 0) {
+                memberId = memberResult.rows[0].id;
+            } else {
+                // User doesn't have a member record, return empty
+                return { groups: [], total: 0, limit, offset };
+            }
         }
 
-        query += ` WHERE g.is_active = $${isAdmin ? '1' : '2'}`;
+        let query = `
+            SELECT g.*, 
+                   m.first_name || ' ' || m.last_name as leader_name,
+                   (SELECT COUNT(*) FROM group_members WHERE group_id = g.id) as member_count
+            FROM groups g
+            LEFT JOIN members m ON g.leader_id = m.id
+        `;
 
-        const isActive = status === 'active';
-        const params = isAdmin ? [isActive] : [userId, isActive];
+        // If non-admin, add JOIN to filter by membership
+        if (!isAdmin && memberId) {
+            query += ` INNER JOIN group_members gm ON g.id = gm.group_id WHERE gm.member_id = $1 AND g.is_active = $2`;
+        } else {
+            query += ` WHERE g.is_active = $1`;
+        }
+
+        const params = !isAdmin && memberId ? [memberId, isActive] : [isActive];
         let paramCount = params.length + 1;
 
         if (category) {
@@ -64,9 +73,9 @@ class GroupService {
         let countQuery = 'SELECT COUNT(DISTINCT g.id) FROM groups g';
         let countParams = [];
 
-        if (!isAdmin && userId) {
+        if (!isAdmin && memberId) {
             countQuery += ' INNER JOIN group_members gm ON g.id = gm.group_id WHERE gm.member_id = $1 AND g.is_active = $2';
-            countParams = [userId, isActive];
+            countParams = [memberId, isActive];
         } else {
             countQuery += ' WHERE g.is_active = $1';
             countParams = [isActive];
