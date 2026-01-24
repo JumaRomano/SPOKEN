@@ -70,16 +70,13 @@ const errorHandler = (err, req, res, next) => {
         });
     }
 
-    // Default error - include details for debugging
+    // Default error
     const statusCode = err.statusCode || 500;
     const message = err.message || 'Internal server error';
 
     res.status(statusCode).json({
         error: message,
-        message: err.message,
-        // Include stack trace for debugging (remove after fixing)
-        stack: err.stack,
-        code: err.code,
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
     });
 };
 
