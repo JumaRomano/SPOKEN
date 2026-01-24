@@ -54,6 +54,12 @@ async function runMigrations() {
         await db.query(`
             ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;
             ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('member', 'leader', 'finance', 'admin', 'sysadmin', 'secretary'));
+            
+            -- Relax event_type constraints
+            ALTER TABLE events DROP CONSTRAINT IF EXISTS events_event_type_check;
+            
+            -- Relax service_type constraints (for attendance)
+            ALTER TABLE services DROP CONSTRAINT IF EXISTS services_service_type_check;
         `);
 
         // 4. Nullability fixes

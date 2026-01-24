@@ -46,6 +46,29 @@ const EventList = () => {
         return () => clearTimeout(timer);
     }, [fetchEvents]);
 
+    const handleCreateEvent = async (formData) => {
+        try {
+            await eventService.create(formData);
+            fetchEvents();
+            setShowCreateModal(false);
+        } catch (err) {
+            console.error('Error creating event:', err);
+            throw err; // Re-throw so modal can show error
+        }
+    };
+
+    const handleUpdateEvent = async (formData) => {
+        try {
+            await eventService.update(selectedEvent.id, formData);
+            fetchEvents();
+            setShowEditModal(false);
+            setSelectedEvent(null);
+        } catch (err) {
+            console.error('Error updating event:', err);
+            throw err; // Re-throw so modal can show error
+        }
+    };
+
     const handleDelete = async (id, name) => {
         if (!window.confirm(`Are you sure you want to delete "${name}"?`)) return;
         try {
@@ -214,14 +237,14 @@ const EventList = () => {
             <CreateEventModal
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
-                onEventCreated={fetchEvents}
+                onEventCreated={handleCreateEvent}
             />
             {selectedEvent && (
                 <EditEventModal
                     isOpen={showEditModal}
                     event={selectedEvent}
                     onClose={() => { setShowEditModal(false); setSelectedEvent(null); }}
-                    onEventUpdated={fetchEvents}
+                    onEventUpdated={handleUpdateEvent}
                 />
             )}
             {selectedEvent && (
