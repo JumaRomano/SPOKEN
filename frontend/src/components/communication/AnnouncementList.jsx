@@ -3,11 +3,13 @@ import communicationService from '../../services/communicationService';
 import Card from '../common/Card';
 import Button from '../common/Button';
 import CreateAnnouncementModal from './CreateAnnouncementModal';
+import BroadcastModal from './BroadcastModal';
 
 const AnnouncementList = () => {
     const [announcements, setAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [broadcastModal, setBroadcastModal] = useState({ isOpen: false, id: null, title: '' });
     const [message, setMessage] = useState({ type: '', text: '' });
 
     useEffect(() => {
@@ -17,7 +19,7 @@ const AnnouncementList = () => {
     const fetchAnnouncements = async () => {
         setLoading(true);
         try {
-            const data = await communicationService.getAnnouncements({ limit: 50 });
+            const data = await communicationService.getAnnouncements({ limit: 50, status: 'all' });
             setAnnouncements(data);
         } catch (err) {
             console.error('Error fetching announcements:', err);
@@ -43,9 +45,18 @@ const AnnouncementList = () => {
         }
     };
 
-    const handleBroadcast = async (id) => {
+    const handleBroadcastClick = (announcement) => {
+        setBroadcastModal({
+            isOpen: true,
+            id: announcement.id,
+            title: announcement.title
+        });
+    };
+
+    const handleSendBroadcast = async (channels) => {
+        const { id } = broadcastModal;
         try {
-            await communicationService.sendBroadcast(id, ['email', 'sms']);
+            await communicationService.sendBroadcast(id, channels);
             setMessage({ type: 'success', text: 'Broadcast sent successfully!' });
         } catch (err) {
             setMessage({ type: 'error', text: 'Failed to send broadcast' });
@@ -81,8 +92,8 @@ const AnnouncementList = () => {
             {message.text && (
                 <div
                     className={`px-4 py-3 rounded ${message.type === 'success'
-                            ? 'bg-green-50 border border-green-200 text-green-700'
-                            : 'bg-red-50 border border-red-200 text-red-700'
+                        ? 'bg-green-50 border border-green-200 text-green-700'
+                        : 'bg-red-50 border border-red-200 text-red-700'
                         }`}
                 >
                     {message.text}
@@ -131,7 +142,7 @@ const AnnouncementList = () => {
                                             >
                                                 {announcement.priority?.toUpperCase()}
                                             </span>
-                                            {announcement.is_published && (
+                                            {announcement.status === 'published' && (
                                                 <span className="px-2 py-1 text-xs font-semibold rounded bg-green-100 text-green-700">
                                                     PUBLISHED
                                                 </span>
@@ -153,7 +164,7 @@ const AnnouncementList = () => {
                                 </div>
 
                                 <div className="flex gap-2 pt-3 border-t">
-                                    {!announcement.is_published && (
+                                    {announcement.status !== 'published' && (
                                         <button
                                             onClick={() => handlePublish(announcement.id)}
                                             className="text-sm text-blue-600 hover:text-blue-800 font-medium"
@@ -161,9 +172,9 @@ const AnnouncementList = () => {
                                             Publish
                                         </button>
                                     )}
-                                    {announcement.is_published && (
+                                    {announcement.status === 'published' && (
                                         <button
-                                            onClick={() => handleBroadcast(announcement.id)}
+                                            onClick={() => handleBroadcastClick(announcement)}
                                             className="text-sm text-green-600 hover:text-green-800 font-medium"
                                         >
                                             Send Broadcast
@@ -186,6 +197,12 @@ const AnnouncementList = () => {
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
                 onAnnouncementCreated={handleCreateAnnouncement}
+            />
+            <BroadcastModal
+                isOpen={broadcastModal.isOpen}
+                onClose={() => setBroadcastModal({ ...broadcastModal, isOpen: false })}
+                onSend={handleSendBroadcast}
+                announcementTitle={broadcastModal.title}
             />
         </div>
     );
