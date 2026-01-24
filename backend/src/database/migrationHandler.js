@@ -81,7 +81,11 @@ async function runMigrations() {
             ['secretary', 'groups', 'update'],
             ['secretary', 'attendance', 'read'],
             ['secretary', 'attendance', 'create'],
-            ['secretary', 'attendance', 'update']
+            ['secretary', 'attendance', 'update'],
+
+            // Critical wildcards
+            ['admin', '*', '*'],
+            ['sysadmin', '*', '*']
         ];
 
         for (const [role, resource, action] of permissions) {
