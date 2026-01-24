@@ -111,6 +111,27 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
+// TEMPORARY: Fix events table date columns
+app.post('/api/fix-events-dates', async (req, res) => {
+    try {
+        const db = require('./config/database');
+
+        await db.query(`
+            ALTER TABLE events 
+            ALTER COLUMN start_date TYPE TIMESTAMP USING start_date::TIMESTAMP
+        `);
+
+        await db.query(`
+            ALTER TABLE events 
+            ALTER COLUMN end_date TYPE TIMESTAMP USING end_date::TIMESTAMP
+        `);
+
+        res.json({ success: true, message: 'Events date columns fixed' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
