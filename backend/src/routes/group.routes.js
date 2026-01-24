@@ -26,4 +26,7 @@ router.post('/:id/finances', rbac('group_finances', 'create'), auditLog('create'
 // Group attendance
 router.get('/:id/attendance', rbac('groups', 'read'), groupController.getAttendance);
 
+// Group member contributions
+router.get('/:id/contributions', rbac('groups', 'read'), groupController.getMemberContributions);
+
 module.exports = router;

@@ -7,7 +7,8 @@ const GroupDetail = () => {
     const navigate = useNavigate();
     const [group, setGroup] = useState(null);
     const [members, setMembers] = useState([]);
-    const [finances, setFinances] = useState([]);
+    const [contributions, setContributions] = useState([]);
+    const [memberTotals, setMemberTotals] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
     const [error, setError] = useState(null);
@@ -16,8 +17,6 @@ const GroupDetail = () => {
         const fetchGroupData = async () => {
             try {
                 setLoading(true);
-                // Finances might fail if user is not leader/admin, so we handle it gracefully or let the API decide
-                // For now, allow parallel fetch but handle potential failures if needed
                 const [groupData, membersData] = await Promise.all([
                     groupService.getById(id),
                     groupService.getMembers(id)
@@ -26,12 +25,13 @@ const GroupDetail = () => {
                 setGroup(groupData);
                 setMembers(membersData || []);
 
-                // Fetch finances separately to avoid blocking if 403
+                // Fetch member contributions
                 try {
-                    const financeData = await groupService.getFinances(id);
-                    setFinances(financeData || []);
+                    const contributionData = await groupService.getMemberContributions(id);
+                    setContributions(contributionData.contributions || []);
+                    setMemberTotals(contributionData.memberTotals || []);
                 } catch (err) {
-                    console.warn('Could not fetch group finances (likely permission issue)', err);
+                    console.warn('Could not fetch member contributions', err);
                 }
 
             } catch (err) {
@@ -55,8 +55,8 @@ const GroupDetail = () => {
         <button
             onClick={() => setActiveTab(name)}
             className={`px-4 py-2 font-medium text-sm rounded-t-lg ${activeTab === name
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
         >
             {label}
@@ -132,43 +132,80 @@ const GroupDetail = () => {
                 )}
 
                 {activeTab === 'finance' && (
-                    <div>
-                        <h3 className="text-lg font-semibold mb-4 text-gray-700">Financial Records</h3>
-                        {finances.length === 0 ? (
-                            <p className="text-gray-500 italic">No financial records visible.</p>
-                        ) : (
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {finances.map((tx) => (
-                                        <tr key={tx.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {new Date(tx.transaction_date).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {tx.description}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                    ${tx.transaction_type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                                    {tx.transaction_type}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                ${parseFloat(tx.amount).toFixed(2)}
-                                            </td>
+                    <div className="space-y-8">
+                        {/* Member Contribution Totals */}
+                        <div>
+                            <h3 className="text-lg font-semibold mb-4 text-gray-700">Member Contributions Summary</h3>
+                            {memberTotals.length === 0 ? (
+                                <p className="text-gray-500 italic">No contribution data available.</p>
+                            ) : (
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member Name</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Contributions</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Count</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {memberTotals.map((member) => (
+                                            <tr key={member.id} className="hover:bg-gray-50">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                    {member.member_name}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
+                                                    KES {parseFloat(member.total_amount || 0).toLocaleString()}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {member.contribution_count || 0} contributions
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+
+                        {/* Recent Contributions */}
+                        <div>
+                            <h3 className="text-lg font-semibold mb-4 text-gray-700">Recent Contributions</h3>
+                            {contributions.length === 0 ? (
+                                <p className="text-gray-500 italic">No recent contributions from group members.</p>
+                            ) : (
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fund</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {contributions.map((contrib) => (
+                                            <tr key={contrib.id} className="hover:bg-gray-50">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {new Date(contrib.contribution_date).toLocaleDateString()}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                    {contrib.member_name}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                    {contrib.fund_name}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
+                                                    KES {parseFloat(contrib.amount).toLocaleString()}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                                                    {contrib.payment_method?.replace('_', ' ')}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
                     </div>
                 )}
             </div>

@@ -40,6 +40,11 @@ const groupService = {
         const response = await api.delete(`/groups/${groupId}/members/${memberId}`);
         return response.data;
     },
+
+    async getMemberContributions(groupId) {
+        const response = await api.get(`/groups/${groupId}/contributions`);
+        return response.data;
+    },
 };
 
 export default groupService;

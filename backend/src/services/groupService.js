@@ -334,6 +334,46 @@ class GroupService {
 
         return result.rows;
     }
+
+    /**
+     * Get contributions from group members
+     */
+    async getMemberContributions(groupId, limit = 50) {
+        // Get recent contributions from group members
+        const contributionsResult = await db.query(
+            `SELECT c.*, 
+                    m.first_name || ' ' || m.last_name as member_name,
+                    f.fund_name
+             FROM contributions c
+             JOIN group_members gm ON c.member_id = gm.member_id
+             JOIN members m ON c.member_id = m.id
+             JOIN funds f ON c.fund_id = f.id
+             WHERE gm.group_id = $1
+             ORDER BY c.contribution_date DESC
+             LIMIT $2`,
+            [groupId, limit]
+        );
+
+        // Get contribution totals by member
+        const totalsResult = await db.query(
+            `SELECT m.id,
+                    m.first_name || ' ' || m.last_name as member_name,
+                    COUNT(c.id) as contribution_count,
+                    SUM(c.amount) as total_amount
+             FROM group_members gm
+             JOIN members m ON gm.member_id = m.id
+             LEFT JOIN contributions c ON m.id = c.member_id
+             WHERE gm.group_id = $1
+             GROUP BY m.id, m.first_name, m.last_name
+             ORDER BY total_amount DESC NULLS LAST`,
+            [groupId]
+        );
+
+        return {
+            contributions: contributionsResult.rows,
+            memberTotals: totalsResult.rows
+        };
+    }
 }
 
 module.exports = new GroupService();

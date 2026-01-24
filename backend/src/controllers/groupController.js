@@ -121,6 +121,17 @@ class GroupController {
             next(error);
         }
     }
+
+    async getMemberContributions(req, res, next) {
+        try {
+            const { id } = req.params;
+            const limit = parseInt(req.query.limit) || 50;
+            const contributions = await groupService.getMemberContributions(id, limit);
+            res.json(contributions);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = new GroupController();
