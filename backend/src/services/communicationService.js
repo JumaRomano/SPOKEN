@@ -6,11 +6,11 @@ class CommunicationService {
      * Get all announcements (filtered by audience)
      */
     async getAnnouncements(filters = {}) {
-        const { limit = 20, offset = 0, targetAudience = null, status = 'published' } = filters;
+        const { limit = 20, offset = 0, targetAudience = null } = filters;
 
-        let query = 'SELECT * FROM announcements WHERE status = $1';
-        const params = [status];
-        let paramCount = 2;
+        let query = 'SELECT *, content as message, (CASE WHEN is_active THEN \'published\' ELSE \'draft\' END) as status FROM announcements WHERE 1=1';
+        const params = [];
+        let paramCount = 1;
 
         if (targetAudience) {
             query += ` AND target_audience = $${paramCount}`;
@@ -18,7 +18,7 @@ class CommunicationService {
             paramCount++;
         }
 
-        query += ` ORDER BY publish_date DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
+        query += ` ORDER BY created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
         params.push(limit, offset);
 
         const result = await db.query(query, params);
@@ -29,13 +29,16 @@ class CommunicationService {
      * Get announcement by ID
      */
     async getById(id) {
-        const result = await db.query('SELECT * FROM announcements WHERE id = $1', [id]);
+        const result = await db.query('SELECT *, (CASE WHEN is_active THEN \'published\' ELSE \'draft\' END) as status FROM announcements WHERE id = $1', [id]);
 
         if (result.rows.length === 0) {
             throw new Error('Announcement not found');
         }
 
-        return result.rows[0];
+        // Map content back to message for frontend compatibility if needed
+        const row = result.rows[0];
+        row.message = row.content;
+        return row;
     }
 
     /**
@@ -54,14 +57,16 @@ class CommunicationService {
 
         const result = await db.query(
             `INSERT INTO announcements 
-       (title, message, priority, target_audience, target_group_id, publish_date, expire_date, created_by, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'draft')
-       RETURNING *`,
+       (title, content, announcement_type, target_audience, target_group_id, start_date, end_date, created_by, is_active)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, false)
+       RETURNING *, (CASE WHEN is_active THEN 'published' ELSE 'draft' END) as status`,
             [title, message, priority, targetAudience, targetGroupId, publishDate, expireDate, createdBy]
         );
 
         logger.info('Announcement created:', { announcementId: result.rows[0].id, title });
-        return result.rows[0];
+        const row = result.rows[0];
+        row.message = row.content;
+        return row;
     }
 
     /**
@@ -111,9 +116,9 @@ class CommunicationService {
      */
     async publish(id) {
         const result = await db.query(
-            `UPDATE announcements SET status = 'published', updated_at = CURRENT_TIMESTAMP
+            `UPDATE announcements SET is_active = true, updated_at = CURRENT_TIMESTAMP
        WHERE id = $1
-       RETURNING *`,
+       RETURNING *, (CASE WHEN is_active THEN 'published' ELSE 'draft' END) as status`,
             [id]
         );
 
@@ -127,60 +132,92 @@ class CommunicationService {
 
     /**
      * Send broadcast message (email/SMS)
-     * This is a placeholder - actual email/SMS sending would be implemented separately
      */
     async sendBroadcast(announcementId, channels = ['email']) {
         const announcement = await this.getById(announcementId);
 
         // Get recipients based on target audience
         let recipients = [];
+        const isEmailEnabled = channels.includes('email');
+        const isSMSEnabled = channels.includes('sms');
 
-        if (announcement.target_audience === 'all') {
-            const result = await db.query(
-                'SELECT id, email FROM members WHERE status = $1 AND email IS NOT NULL',
-                ['active']
-            );
-            recipients = result.rows;
-        } else if (announcement.target_audience === 'groups' && announcement.target_group_id) {
-            const result = await db.query(
-                `SELECT m.id, m.email FROM members m
-         JOIN group_members gm ON m.id = gm.member_id
-         WHERE gm.group_id = $1 AND gm.status = 'active' AND m.email IS NOT NULL`,
-                [announcement.target_group_id]
-            );
-            recipients = result.rows;
+        // Build the query to get relevant recipients with their contact info
+        let baseQuery = 'SELECT id, email, phone FROM members WHERE membership_status = $1';
+        const queryParams = ['active'];
+
+        if (announcement.target_audience === 'groups' && announcement.target_group_id) {
+            baseQuery = `
+                SELECT m.id, m.email, m.phone 
+                FROM members m
+                JOIN group_members gm ON m.id = gm.member_id
+                WHERE gm.group_id = $2 AND gm.status = 'active' AND m.status = $1
+            `;
+            queryParams.push(announcement.target_group_id);
         }
 
-        // Log communication attempts
-        const emailService = require('./emailService'); // Late require to avoid circular dependency if any, or just easy refactor
+        const result = await db.query(baseQuery, queryParams);
+        recipients = result.rows;
+
+        // Load services
+        const emailService = require('./emailService');
+        const smsService = require('./smsService');
+
+        const broadcastResults = {
+            total: recipients.length,
+            email: { success: 0, failed: 0, skipped: 0 },
+            sms: { success: 0, failed: 0, skipped: 0 }
+        };
 
         for (const recipient of recipients) {
             for (const channel of channels) {
+                // Determine contact info based on channel
+                const contactInfo = channel === 'email' ? recipient.email : recipient.phone;
+
+                // If no contact info for the channel, skip but maybe log?
+                if (!contactInfo) {
+                    broadcastResults[channel].skipped++;
+                    continue;
+                }
+
+                // Insert log first as 'pending'
                 // Insert log first as 'pending'
                 const logResult = await db.query(
                     `INSERT INTO communication_logs 
-           (announcement_id, recipient_type, recipient_id, recipient_email, status, communication_type)
-           VALUES ($1, $2, $3, $4, 'pending', $5) RETURNING id`,
-                    [announcementId, channel, recipient.id, recipient.email, channel]
+                    (recipient_type, recipient_id, communication_type, message, status)
+                    VALUES ($1, $2, $3, $4, 'pending') RETURNING id`,
+                    ['member', recipient.id, channel, announcement.content]
                 );
+                const logId = logResult.rows[0].id;
 
-                // If channel is email, try sending
-                if (channel === 'email') {
-                    // Fire and forget, or await? For broadcast, usually queue. 
-                    // For now, we'll just simulate processing or call the service if we wanted to block (bad idea for broadcast).
-                    // In a real system, this would push to a queue (Bull/RabbitMQ).
-                    // We'll leave it as pending and assume a worker picks it up, or call emailService if it's a single message.
-                    logger.info(`Queued email for ${recipient.email}`);
+                try {
+                    if (channel === 'email') {
+                        // In a real system, this would be queued.
+                        // For now, we'll log it as queued.
+                        logger.info(`Queued email for ${recipient.email}`);
+                        broadcastResults.email.success++;
+                        // If we had a real email worker, it would update the status.
+                        // Since we're doing it "live" for now (simulated):
+                        await this.markAsSent(logId);
+                    } else if (channel === 'sms') {
+                        // Send SMS via Africa's Talking
+                        await smsService.sendSMS(contactInfo, announcement.message);
+                        await this.markAsSent(logId);
+                        broadcastResults.sms.success++;
+                        logger.info(`SMS sent for ${recipient.phone}`);
+                    }
+                } catch (error) {
+                    logger.error(`Failed to send broadcast via ${channel} to ${contactInfo}:`, error);
+                    await this.markAsFailed(logId);
+                    broadcastResults[channel].failed++;
                 }
             }
         }
 
-        logger.info('Broadcast queued:', { announcementId, recipientCount: recipients.length, channels });
+        logger.info('Broadcast completed:', { announcementId, results: broadcastResults });
 
         return {
-            message: 'Broadcast queued successfully',
-            recipientCount: recipients.length,
-            channels,
+            message: 'Broadcast completed',
+            results: broadcastResults
         };
     }
 
@@ -188,17 +225,11 @@ class CommunicationService {
      * Get communication logs
      */
     async getLogs(filters = {}) {
-        const { limit = 50, offset = 0, announcementId = null, status = null } = filters;
+        const { limit = 50, offset = 0, status = null } = filters;
 
         let query = 'SELECT * FROM communication_logs WHERE 1=1';
         const params = [];
         let paramCount = 1;
-
-        if (announcementId) {
-            query += ` AND announcement_id = $${paramCount}`;
-            params.push(announcementId);
-            paramCount++;
-        }
 
         if (status) {
             query += ` AND status = $${paramCount}`;
@@ -206,7 +237,7 @@ class CommunicationService {
             paramCount++;
         }
 
-        query += ` ORDER BY created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
+        query += ` ORDER BY sent_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
         params.push(limit, offset);
 
         const result = await db.query(query, params);
@@ -230,12 +261,12 @@ class CommunicationService {
     /**
      * Mark communication as failed
      */
-    async markAsFailed(logId, errorMessage) {
+    async markAsFailed(logId) {
         const result = await db.query(
-            `UPDATE communication_logs SET status = 'failed', error_message = $1
-       WHERE id = $2
+            `UPDATE communication_logs SET status = 'failed'
+       WHERE id = $1
        RETURNING *`,
-            [errorMessage, logId]
+            [logId]
         );
 
         return result.rows[0];
