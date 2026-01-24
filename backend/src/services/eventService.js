@@ -202,7 +202,8 @@ class EventService {
      */
     async getRegistrations(eventId) {
         const result = await db.query(
-            `SELECT er.*, m.first_name, m.last_name, m.email, m.phone
+            `SELECT er.*, m.first_name, m.last_name, m.email, m.phone,
+                    m.first_name || ' ' || m.last_name as member_name
        FROM event_registrations er
        JOIN members m ON er.member_id = m.id
        WHERE er.event_id = $1

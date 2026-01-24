@@ -65,7 +65,7 @@ function App() {
                       </RoleProtectedRoute>
                     } />
                     <Route path="/groups/:id" element={<GroupDetail />} />
-                    {/* <Route path="/events/:id" element={<EventDetail />} /> */}
+                    <Route path="/events-management/:id" element={<EventDetail />} />
                     <Route path="/attendance" element={<AttendanceTracking />} />
                     <Route path="/communication" element={<Communication />} />
                     <Route path="*" element={<Navigate to="/dashboard" replace />} />

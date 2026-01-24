@@ -43,8 +43,8 @@ const EventDetail = () => {
         <button
             onClick={() => setActiveTab(name)}
             className={`px-4 py-2 font-medium text-sm rounded-t-lg ${activeTab === name
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
         >
             {label}
@@ -61,7 +61,7 @@ const EventDetail = () => {
                     </p>
                 </div>
                 <button
-                    onClick={() => navigate('/events')}
+                    onClick={() => navigate('/events-management')}
                     className="bg-white border border-gray-300 px-4 py-2 rounded shadow-sm hover:bg-gray-50 text-gray-700"
                 >
                     Back to List
