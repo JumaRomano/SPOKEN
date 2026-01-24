@@ -133,8 +133,8 @@ class AttendanceService {
      * Bulk record attendance
      */
     async bulkRecordAttendance(serviceId, memberIds, recordedBy) {
-        if (!memberIds || memberIds.length === 0) {
-            return { message: 'No members to record attendance for' };
+        if (!Array.isArray(memberIds) || memberIds.length === 0) {
+            return { message: 'No members to record attendance for', count: 0 };
         }
 
         const values = memberIds.map((memberId, i) =>
