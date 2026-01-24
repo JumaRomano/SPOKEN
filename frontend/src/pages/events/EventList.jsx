@@ -67,7 +67,8 @@ const EventList = () => {
             fetchEvents();
         } catch (err) {
             console.error('Create event error:', err);
-            const errorMsg = err.response?.data?.message || err.message || 'Failed to create event';
+            const data = err.response?.data;
+            const errorMsg = data?.details || data?.message || data?.error || err.message || 'Failed to create event';
             setMessage({ type: 'error', text: errorMsg });
             alert(`Error creating event: ${errorMsg}`);
         }
