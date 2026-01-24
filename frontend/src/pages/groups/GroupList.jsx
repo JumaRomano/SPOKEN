@@ -15,14 +15,26 @@ const GroupList = () => {
         fetchGroups();
     }, []);
 
+
     const fetchGroups = async () => {
         try {
             setLoading(true);
+            setError('');
             const response = await groupService.getAll();
-            setGroups(response.groups || []);
+
+            // Ensure we always have an array
+            if (response && Array.isArray(response.groups)) {
+                setGroups(response.groups);
+            } else if (response && typeof response === 'object') {
+                setGroups(response.groups || []);
+            } else {
+                console.error('Unexpected response format:', response);
+                setGroups([]);
+            }
         } catch (err) {
             setError('Failed to load groups');
-            console.error(err);
+            console.error('Error fetching groups:', err);
+            setGroups([]); // Ensure groups is always an array
         } finally {
             setLoading(false);
         }
