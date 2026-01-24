@@ -58,10 +58,13 @@ class EventService {
             start_date,
             end_date,
             location,
-            max_participants = null,
+            max_participants,
             registration_required = false,
             registration_deadline = null,
         } = eventData;
+
+        // Convert empty string to null for integer field
+        const maxParticipants = max_participants === '' || max_participants === null || max_participants === undefined ? null : parseInt(max_participants);
 
         const result = await db.query(
             `INSERT INTO events 
@@ -70,7 +73,7 @@ class EventService {
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
             [title, description, event_type, start_date, end_date, location,
-                max_participants, registration_required, registration_deadline, createdBy]
+                maxParticipants, registration_required, registration_deadline, createdBy]
         );
 
         logger.info('Event created:', { eventId: result.rows[0].id, event_name: title });
@@ -82,6 +85,9 @@ class EventService {
      */
     async update(id, eventData) {
         const { title, description, event_type, start_date, end_date, location, max_participants, registration_deadline } = eventData;
+
+        // Convert empty string to null for integer field
+        const maxParticipants = max_participants === '' || max_participants === null || max_participants === undefined ? null : parseInt(max_participants);
 
         const result = await db.query(
             `UPDATE events SET
@@ -96,7 +102,7 @@ class EventService {
         updated_at = CURRENT_TIMESTAMP
        WHERE id = $9
        RETURNING *`,
-            [title, description, event_type, start_date, end_date, location, max_participants, registration_deadline, id]
+            [title, description, event_type, start_date, end_date, location, maxParticipants, registration_deadline, id]
         );
 
         if (result.rows.length === 0) {
