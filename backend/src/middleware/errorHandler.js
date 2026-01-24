@@ -17,6 +17,7 @@ const errorHandler = (err, req, res, next) => {
     if (err.code === '23505') { // Unique violation
         return res.status(409).json({
             error: 'Resource already exists',
+            message: err.message,
             details: err.detail,
         });
     }
@@ -24,6 +25,7 @@ const errorHandler = (err, req, res, next) => {
     if (err.code === '23503') { // Foreign key violation
         return res.status(400).json({
             error: 'Referenced resource does not exist',
+            message: err.message,
             details: err.detail,
         });
     }
@@ -31,6 +33,23 @@ const errorHandler = (err, req, res, next) => {
     if (err.code === '23502') { // Not null violation
         return res.status(400).json({
             error: 'Required field missing',
+            message: err.message,
+            details: err.detail,
+        });
+    }
+
+    if (err.code === '42703') { // Undefined column
+        return res.status(400).json({
+            error: 'Database column error',
+            message: err.message,
+            details: err.detail,
+        });
+    }
+
+    if (err.code === '22P02') { // Invalid text representation
+        return res.status(400).json({
+            error: 'Invalid data format',
+            message: err.message,
             details: err.detail,
         });
     }
@@ -39,6 +58,7 @@ const errorHandler = (err, req, res, next) => {
     if (err.name === 'ValidationError') {
         return res.status(400).json({
             error: 'Validation failed',
+            message: err.message,
             details: err.details,
         });
     }
@@ -50,13 +70,16 @@ const errorHandler = (err, req, res, next) => {
         });
     }
 
-    // Default error
+    // Default error - include details for debugging
     const statusCode = err.statusCode || 500;
     const message = err.message || 'Internal server error';
 
     res.status(statusCode).json({
         error: message,
-        ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+        message: err.message,
+        // Include stack trace for debugging (remove after fixing)
+        stack: err.stack,
+        code: err.code,
     });
 };
 
