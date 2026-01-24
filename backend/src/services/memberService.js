@@ -205,10 +205,10 @@ class MemberService {
      */
     async getGroups(memberId) {
         const result = await db.query(
-            `SELECT g.*, gm.role as member_role, gm.joined_at
+            `SELECT g.*, gm.role as member_role, gm.joined_date as joined_at
        FROM groups g
        JOIN group_members gm ON g.id = gm.group_id
-       WHERE gm.member_id = $1 AND gm.status = 'active'
+       WHERE gm.member_id = $1 AND g.is_active = true
        ORDER BY g.name`,
             [memberId]
         );

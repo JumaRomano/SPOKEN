@@ -25,7 +25,7 @@ const MainLayout = ({ children }) => {
 
     const navigation = [
         { path: '/dashboard', label: 'Dashboard', icon: <FiGrid /> },
-        { path: '/members', label: 'Members', icon: <FiUsers /> },
+        { path: '/members', label: 'Members', icon: <FiUsers />, roles: ['admin', 'sysadmin'] },
         { path: '/groups', label: 'Groups', icon: <BiGroup /> },
         { path: '/finance', label: 'Finance', icon: <FiDollarSign />, roles: ['finance', 'admin', 'sysadmin'] },
         { path: '/events', label: 'Events', icon: <FiCalendar /> },

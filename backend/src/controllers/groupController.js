@@ -9,6 +9,8 @@ class GroupController {
                 category: req.query.category || null,
                 status: req.query.status || 'active',
                 search: req.query.search || '',
+                userId: req.user.id,  // Pass user ID for filtering
+                userRole: req.user.role,  // Pass user role for admin check
             };
 
             const result = await groupService.getAll(filters);

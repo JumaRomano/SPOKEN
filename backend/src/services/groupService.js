@@ -4,6 +4,8 @@ const logger = require('../utils/logger');
 class GroupService {
     /**
      * Get all groups
+     * For admin/sysadmin: returns all groups
+     * For other roles: returns only groups the user is a member of
      */
     async getAll(filters = {}) {
         const {
@@ -12,20 +14,34 @@ class GroupService {
             category = null,
             status = 'active',
             search = '',
+            userId = null,
+            userRole = null,
         } = filters;
 
-        // Note: category filter maps to group_type column
+        // Check if user is admin or sysadmin
+        const isAdmin = ['admin', 'sysadmin'].includes(userRole);
+
+        // Base query - different for admin vs non-admin
         let query = `
-      SELECT g.*, 
+      SELECT DISTINCT g.*, 
              m.first_name || ' ' || m.last_name as leader_name,
              (SELECT COUNT(*) FROM group_members WHERE group_id = g.id) as member_count
       FROM groups g
       LEFT JOIN members m ON g.leader_id = m.id
-      WHERE g.is_active = $1
     `;
+
+        // For non-admin users, only show groups they are members of
+        if (!isAdmin && userId) {
+            query += `
+        INNER JOIN group_members gm ON g.id = gm.group_id AND gm.member_id = $1
+      `;
+        }
+
+        query += ` WHERE g.is_active = $${isAdmin ? '1' : '2'}`;
+
         const isActive = status === 'active';
-        const params = [isActive];
-        let paramCount = 2;
+        const params = isAdmin ? [isActive] : [userId, isActive];
+        let paramCount = params.length + 1;
 
         if (category) {
             query += ` AND g.group_type = $${paramCount}`;
@@ -44,10 +60,19 @@ class GroupService {
 
         const result = await db.query(query, params);
 
-        const countResult = await db.query(
-            'SELECT COUNT(*) FROM groups WHERE is_active = $1',
-            [isActive]
-        );
+        // Count total groups (filtered by membership if not admin)
+        let countQuery = 'SELECT COUNT(DISTINCT g.id) FROM groups g';
+        let countParams = [];
+
+        if (!isAdmin && userId) {
+            countQuery += ' INNER JOIN group_members gm ON g.id = gm.group_id WHERE gm.member_id = $1 AND g.is_active = $2';
+            countParams = [userId, isActive];
+        } else {
+            countQuery += ' WHERE g.is_active = $1';
+            countParams = [isActive];
+        }
+
+        const countResult = await db.query(countQuery, countParams);
 
         return {
             groups: result.rows,

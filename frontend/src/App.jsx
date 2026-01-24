@@ -12,6 +12,7 @@ import GroupDetail from './pages/groups/GroupDetail';
 import EventDetail from './pages/events/EventDetail';
 import SermonManager from './pages/sermons/SermonManager';
 import ProtectedRoute from './components/ProtectedRoute';
+import RoleProtectedRoute from './components/RoleProtectedRoute';
 import MainLayout from './components/layout/MainLayout';
 import LandingPage from './pages/public/LandingPage';
 import PublicLayout from './components/layout/PublicLayout';
@@ -49,12 +50,20 @@ function App() {
                 <MainLayout>
                   <Routes>
                     <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/members" element={<MemberList />} />
+                    <Route path="/members" element={
+                      <RoleProtectedRoute allowedRoles={['admin', 'sysadmin']}>
+                        <MemberList />
+                      </RoleProtectedRoute>
+                    } />
                     <Route path="/groups" element={<GroupList />} />
                     <Route path="/finance" element={<FinanceOverview />} />
                     <Route path="/events" element={<EventList />} />
                     <Route path="/sermons-management" element={<SermonManager />} />
-                    <Route path="/members/:id" element={<MemberDetail />} />
+                    <Route path="/members/:id" element={
+                      <RoleProtectedRoute allowedRoles={['admin', 'sysadmin']}>
+                        <MemberDetail />
+                      </RoleProtectedRoute>
+                    } />
                     <Route path="/groups/:id" element={<GroupDetail />} />
                     {/* <Route path="/events/:id" element={<EventDetail />} /> */}
                     <Route path="/attendance" element={<AttendanceTracking />} />
