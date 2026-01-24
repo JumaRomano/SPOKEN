@@ -24,14 +24,14 @@ const MainLayout = ({ children }) => {
     };
 
     const navigation = [
-        { path: '/dashboard', label: 'Dashboard', icon: <FiGrid /> },
+        { path: '/dashboard', label: 'Dashboard', icon: <FiGrid /> }, // Everyone sees dashboard
         { path: '/members', label: 'Members', icon: <FiUsers />, roles: ['admin', 'sysadmin'] },
-        { path: '/groups', label: 'Groups', icon: <BiGroup /> },
+        { path: '/groups', label: 'Groups', icon: <BiGroup /> }, // Everyone sees groups (filtered by backend)
         { path: '/finance', label: 'Finance', icon: <FiDollarSign />, roles: ['finance', 'admin', 'sysadmin'] },
-        { path: '/events', label: 'Events', icon: <FiCalendar /> },
+        { path: '/events', label: 'Events', icon: <FiCalendar /> }, // Everyone sees events
         { path: '/attendance', label: 'Attendance', icon: <FiCheckSquare />, roles: ['leader', 'admin', 'sysadmin'] },
         { path: '/sermons-management', label: 'Sermons', icon: <FiVideo />, roles: ['admin', 'sysadmin'] },
-        { path: '/', label: 'Back to Website', icon: <FiHome /> },
+        { path: '/', label: 'Back to Website', icon: <FiHome /> }, // Everyone can go back
     ];
 
     const filteredNav = navigation.filter(item =>
