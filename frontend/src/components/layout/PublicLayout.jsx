@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import Button from '../common/Button';
+import logo from '../../assets/logo.png';
 
 const PublicLayout = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,7 +24,7 @@ const PublicLayout = () => {
             <header className="sticky top-0 z-50 bg-white shadow-sm h-[70px]">
                 <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
                     <Link to="/" className="flex items-center gap-3 no-underline">
-                        <img src="/src/assets/logo.png" alt="Logo" className="w-12 h-12 object-contain" />
+                        <img src={logo} alt="Logo" className="w-12 h-12 object-contain" />
                         <div className="flex flex-col items-start">
                             <span className="text-xl font-extrabold text-primary leading-tight uppercase">The Spoken Word</span>
                             <span className="text-[10px] text-secondary font-bold tracking-widest uppercase">of God Ministries</span>

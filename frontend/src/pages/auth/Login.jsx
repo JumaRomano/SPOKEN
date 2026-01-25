@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button';
 import { FiMail, FiLock, FiArrowLeft, FiAlertCircle } from 'react-icons/fi';
+import logo from '../../assets/logo.png';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -66,7 +67,7 @@ const Login = () => {
                 <div className="relative z-20">
                     <div className="text-center mb-10">
                         <div className="inline-block p-4 rounded-full bg-blue-50/50 border border-blue-100 mb-4 shadow-sm">
-                            <img src="/src/assets/logo.png" alt="Ministry Logo" className="w-16 h-auto drop-shadow-md" />
+                            <img src={logo} alt="Ministry Logo" className="w-16 h-auto drop-shadow-md" />
                         </div>
                         <h1 className="text-3xl font-bold text-gray-800 mb-2 tracking-tight">The Spoken Word</h1>
                         <p className="text-primary/80 text-sm font-bold uppercase tracking-widest">Member Portal</p>
