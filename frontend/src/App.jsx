@@ -17,10 +17,10 @@ import MainLayout from './components/layout/MainLayout';
 import LandingPage from './pages/public/LandingPage';
 import PublicLayout from './components/layout/PublicLayout';
 import About from './pages/public/About';
-import Ministries from './pages/public/Ministries';
+// import Ministries from './pages/public/Ministries';
 import Sermons from './pages/public/Sermons';
 import Events from './pages/public/Events';
-import Giving from './pages/public/Giving';
+// import Giving from './pages/public/Giving';
 import Contact from './pages/public/Contact';
 import Communication from './pages/communication/Communication';
 import './App.css';
@@ -34,10 +34,10 @@ function App() {
           <Route element={<PublicLayout />}>
             <Route path="/" element={<LandingPage />} />
             <Route path="/about" element={<About />} />
-            <Route path="/ministries" element={<Ministries />} />
+            {/* <Route path="/ministries" element={<Ministries />} /> */}
             <Route path="/sermons" element={<Sermons />} />
             <Route path="/events" element={<Events />} />
-            <Route path="/giving" element={<Giving />} />
+            {/* <Route path="/giving" element={<Giving />} /> */}
             <Route path="/contact" element={<Contact />} />
           </Route>
 

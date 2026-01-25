@@ -8,7 +8,7 @@ const About = () => {
             {/* Hero Section */}
             <section className="relative bg-primary-dark text-white py-24 lg:py-32 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary-dark to-primary opacity-90"></div>
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1544427920-c49ccfb85579?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center mix-blend-overlay opacity-20"></div>
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
                 <div className="relative max-w-4xl mx-auto px-6 text-center z-10">
                     <h1 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-tight">
                         About Spoken Word
@@ -92,9 +92,9 @@ const About = () => {
 
                     <div className="grid md:grid-cols-3 gap-8">
                         {[
-                            { name: 'Pastor John Doe', role: 'Senior Pastor', img: null },
-                            { name: 'Pastor Jane Doe', role: 'Executive Pastor', img: null },
-                            { name: 'Bishop Smith', role: 'Head of Ministries', img: null },
+                            { name: 'Pastor ', role: 'Pastor', img: null },
+                            { name: 'Reverend  ', role: 'Reverend', img: null },
+                            { name: 'Bishop Joel Mandu ', role: 'Bishop', img: null },
                         ].map((leader, idx) => (
                             <div key={idx} className="group relative overflow-hidden rounded-2xl shadow-lg aspect-[3/4] bg-gray-200">
                                 {leader.img ? (

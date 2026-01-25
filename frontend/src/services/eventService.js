@@ -14,6 +14,11 @@ const eventService = {
         return response.data;
     },
 
+    // Get public events (alias for getAll, used by public pages)
+    async getPublicEvents(filters = {}) {
+        return this.getAll(filters);
+    },
+
     // Get event by ID
     async getById(id) {
         const response = await api.get(`/events/${id}`);

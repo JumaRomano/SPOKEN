@@ -200,7 +200,7 @@ class CommunicationService {
                         await this.markAsSent(logId);
                     } else if (channel === 'sms') {
                         // Send SMS via Africa's Talking
-                        await smsService.sendSMS(contactInfo, announcement.message);
+                        await smsService.sendSMS(contactInfo, announcement.content);
                         await this.markAsSent(logId);
                         broadcastResults.sms.success++;
                         logger.info(`SMS sent for ${recipient.phone}`);

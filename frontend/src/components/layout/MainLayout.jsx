@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import clsx from 'clsx';
-import { FiGrid, FiUsers, FiCalendar, FiDollarSign, FiCheckSquare, FiVideo, FiHome, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
+import { FiGrid, FiUsers, FiCalendar, FiDollarSign, FiCheckSquare, FiVideo, FiHome, FiLogOut, FiMenu, FiX, FiMessageSquare } from 'react-icons/fi';
 import { BiGroup } from 'react-icons/bi';
 
 import logo from '../../assets/logo.png';
@@ -30,6 +30,7 @@ const MainLayout = ({ children }) => {
         { path: '/finance', label: 'Finance', icon: <FiDollarSign />, roles: ['finance', 'admin', 'sysadmin'] },
         { path: '/events-management', label: 'Events', icon: <FiCalendar /> }, // Everyone sees events
         { path: '/attendance', label: 'Attendance', icon: <FiCheckSquare />, roles: ['leader', 'admin', 'sysadmin'] },
+        { path: '/communication', label: 'Communication', icon: <FiMessageSquare />, roles: ['secretary', 'admin', 'sysadmin'] },
         { path: '/sermons-management', label: 'Sermons', icon: <FiVideo />, roles: ['admin', 'sysadmin'] },
         { path: '/', label: 'Back to Website', icon: <FiHome /> }, // Everyone can go back
     ];

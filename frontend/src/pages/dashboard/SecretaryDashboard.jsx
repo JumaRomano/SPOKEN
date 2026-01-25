@@ -134,13 +134,13 @@ const SecretaryDashboard = () => {
                             <p className="text-orange-100 text-sm">Schedule events</p>
                         </div>
                     </Link>
-                    <button className="bg-purple-600 text-white p-6 rounded-2xl shadow-lg hover:bg-purple-700 transition-colors flex flex-col justify-between group text-left">
+                    <Link to="/communication" className="bg-purple-600 text-white p-6 rounded-2xl shadow-lg hover:bg-purple-700 transition-colors flex flex-col justify-between group text-left">
                         <FiMessageSquare className="w-8 h-8 opacity-80 group-hover:scale-110 transition-transform" />
                         <div>
                             <h3 className="font-bold text-lg">Send Notice</h3>
                             <p className="text-purple-100 text-sm">Email / SMS</p>
                         </div>
-                    </button>
+                    </Link>
                 </div>
             </div>
         </div>

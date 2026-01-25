@@ -36,14 +36,12 @@ const LandingPage = () => {
         <div className="flex flex-col min-h-screen font-sans">
             {/* Hero Section */}
             <section className="relative min-h-[90vh] flex items-center justify-center text-white overflow-hidden">
-                {/* Background Image & Gradient */}
+                {/* Background Gradient */}
                 <div className="absolute inset-0 z-0">
-                    <img
-                        src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
-                        alt="Worship Background"
-                        className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-dark/90 via-primary/80 to-black/60 mix-blend-multiply"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-sky-900 to-cyan-900"></div>
+                    <div className="absolute inset-0 bg-gradient-to-tr from-sky-600/40 via-transparent to-cyan-500/30"></div>
+                    {/* Animated subtle pattern overlay */}
+                    <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
                 </div>
 
                 {/* Content */}
@@ -81,12 +79,10 @@ const LandingPage = () => {
 
             {/* Quick Access Cards */}
             <section className="bg-gray-50 pb-24 pt-12 lg:-mt-24 relative z-20 px-6">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[
                         { title: 'Worship With Us', icon: <FiSun className="w-8 h-8" />, text: 'Join us every Sunday at 9:00 AM & 11:30 AM.', link: '/contact', linkText: 'Plan Your Visit', color: 'bg-amber-500' },
                         { title: 'Watch Sermons', icon: <FiVideo className="w-8 h-8" />, text: 'Catch up on recent messages and teachings.', link: '/sermons', linkText: 'Watch Now', color: 'bg-red-500' },
-                        { title: 'Get Involved', icon: <FiUsers className="w-8 h-8" />, text: 'Find a ministry or small group to belong to.', link: '/ministries', linkText: 'Explore Groups', color: 'bg-green-500' },
-                        { title: 'Give Online', icon: <FiHeart className="w-8 h-8" />, text: 'Support the work of the ministry securely.', link: '/giving', linkText: 'Give Now', color: 'bg-blue-500' },
                     ].map((card, index) => (
                         <div key={index} className="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 group">
                             <div className={`w-14 h-14 ${card.color} text-white rounded-2xl flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform duration-300`}>
@@ -199,13 +195,11 @@ const LandingPage = () => {
 
             {/* Call to Action */}
             <section className="py-24 px-6 relative overflow-hidden">
-                <div className="absolute inset-0 bg-primary-dark">
-                    <img
-                        src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-                        alt="Community"
-                        className="w-full h-full object-cover opacity-10"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <div className="absolute inset-0">
+                    <div className="absolute inset-0 bg-gradient-to-r from-sky-900 via-cyan-800 to-sky-800"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-600/20 to-slate-900/60"></div>
+                    {/* Subtle shine effect */}
+                    <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(45deg, transparent 40%, white 50%, transparent 60%)', backgroundSize: '200% 200%' }}></div>
                 </div>
 
                 <div className="max-w-4xl mx-auto relative z-10 text-center text-white">

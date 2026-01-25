@@ -58,8 +58,11 @@ const AnnouncementList = () => {
         try {
             await communicationService.sendBroadcast(id, channels);
             setMessage({ type: 'success', text: 'Broadcast sent successfully!' });
+            setBroadcastModal({ isOpen: false, id: null, title: '' });
+            fetchAnnouncements();
         } catch (err) {
-            setMessage({ type: 'error', text: 'Failed to send broadcast' });
+            console.error('Broadcast error:', err);
+            setMessage({ type: 'error', text: err.response?.data?.error || 'Failed to send broadcast' });
         }
     };
 

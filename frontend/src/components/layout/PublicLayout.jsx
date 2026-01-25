@@ -13,9 +13,7 @@ const PublicLayout = () => {
         { path: '/', label: 'Home' },
         { path: '/about', label: 'About' },
         { path: '/sermons', label: 'Sermons' },
-        { path: '/ministries', label: 'Ministries' },
         { path: '/events', label: 'Events' },
-        { path: '/giving', label: 'Giving' },
         { path: '/contact', label: 'Contact' },
     ];
 
@@ -104,13 +102,11 @@ const PublicLayout = () => {
                             <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
                             <li><Link to="/sermons" className="hover:text-white transition-colors">Sermons</Link></li>
                             <li><Link to="/events" className="hover:text-white transition-colors">Calendar</Link></li>
-                            <li><Link to="/giving" className="hover:text-white transition-colors">Give Online</Link></li>
                         </ul>
                     </div>
                     <div>
                         <h4 className="text-white text-lg font-semibold mb-4">Connect</h4>
                         <ul className="space-y-3">
-                            <li><Link to="/ministries" className="hover:text-white transition-colors">Ministries</Link></li>
                             <li><Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
                             <li><Link to="/login" className="hover:text-white transition-colors">Member Login</Link></li>
                         </ul>
@@ -118,7 +114,7 @@ const PublicLayout = () => {
                     <div>
                         <h4 className="text-white text-lg font-semibold mb-4">Contact Info</h4>
                         <div className="space-y-2">
-                            <p>123 Faith Avenue</p>
+                            <p>Githurai Rurii Road</p>
                             <p>Nairobi, Kenya</p>
                             <p>Phone: 0724 453 995</p>
                             <p>Email: spokenmediahq@gmail.com</p>
