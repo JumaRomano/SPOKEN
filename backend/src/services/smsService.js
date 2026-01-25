@@ -31,7 +31,8 @@ class SMSService {
      */
     async sendSMS(to, message) {
         if (!sms) {
-            logger.warn('SMS service simulation: Sending message to', to, ':', message);
+            logger.warn('⚠️ SMS service in simulation mode - API key not configured');
+            logger.warn('SMS simulation: Sending message to', to, ':', message);
             return {
                 status: 'simulated',
                 recipients: Array.isArray(to) ? to : [to],
@@ -40,10 +41,18 @@ class SMSService {
         }
 
         try {
+            // Validate inputs
+            if (!to || (Array.isArray(to) && to.length === 0)) {
+                throw new Error('No recipient phone number provided');
+            }
+            if (!message || message.trim() === '') {
+                throw new Error('Message content is empty');
+            }
+
             // Africa's Talking expects recipients as a comma-separated string or array
             const options = {
                 to: Array.isArray(to) ? to : [to],
-                message: message,
+                message: message.trim(),
             };
 
             // Add Sender ID if available
@@ -51,11 +60,36 @@ class SMSService {
                 options.from = process.env.AT_SENDER_ID;
             }
 
+            logger.info('📤 Sending SMS via Africa\'s Talking...');
+            logger.info(`Recipients: ${JSON.stringify(options.to)}`);
+            logger.info(`Message: ${message.substring(0, 50)}${message.length > 50 ? '...' : ''}`);
+            logger.info(`Username: ${username}`);
+            logger.info(`Sender ID: ${options.from || 'Default'}`);
+
             const response = await sms.send(options);
-            logger.info('SMS sent successfully:', response);
+
+            logger.info('✅ SMS API Response:', JSON.stringify(response, null, 2));
+
+            // Check for failures in response
+            if (response.SMSMessageData && response.SMSMessageData.Recipients) {
+                const recipients = response.SMSMessageData.Recipients;
+                const failed = recipients.filter(r => r.status !== 'Success');
+                const successful = recipients.filter(r => r.status === 'Success');
+
+                if (failed.length > 0) {
+                    logger.warn('⚠️ Some SMS failed to send:', failed);
+                }
+                if (successful.length > 0) {
+                    logger.info('✅ SMS sent successfully to:', successful.map(r => r.number).join(', '));
+                }
+            }
+
             return response;
         } catch (error) {
-            logger.error('Error sending SMS via Africa\'s Talking:', error);
+            logger.error('❌ Error sending SMS via Africa\'s Talking:');
+            logger.error('Error message:', error.message);
+            logger.error('Error details:', error.response?.data || error);
+            logger.error('Stack trace:', error.stack);
             throw error;
         }
     }

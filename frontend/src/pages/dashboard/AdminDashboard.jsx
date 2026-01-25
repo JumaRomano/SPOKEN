@@ -105,7 +105,7 @@ const AdminDashboard = () => {
                             <div className={`p-3 rounded-xl ${stat.bg} ${stat.color}`}>
                                 {stat.icon}
                             </div>
-                            {index === 0 && <span className="flex items-center text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full"><FiTrendingUp className="mr-1" /> Trending</span>}
+                            {index === 0 && <span className="flex items-center text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full"><FiTrendingUp className="mr-1" /> Updated</span>}
                         </div>
                         <div>
                             <div className="text-3xl font-bold text-gray-900 mb-1">
