@@ -14,22 +14,7 @@ console.log('🏗️ Initializing SMS Service...');
 console.log(`👤 AT Username (Trimmed): '${username}'`);
 console.log(`🔑 AT API Key Status: ${apiKey ? 'Present' : 'MISSING'}`);
 
-let sms;
 
-if (apiKey) {
-    try {
-        const at = africastalking({
-            username,
-            apiKey,
-        });
-        sms = at.SMS;
-        logger.info('✅ Africa\'s Talking SDK initialized successfully');
-    } catch (error) {
-        logger.error('❌ Failed to initialize Africa\'s Talking SDK:', error);
-    }
-} else {
-    logger.warn('⚠️ AT_API_KEY not found in environment variables. SMS service will be in simulated mode.');
-}
 
 class SMSService {
     /**
@@ -39,7 +24,11 @@ class SMSService {
      * @returns {Promise<any>}
      */
     async sendSMS(to, message) {
-        if (!sms) {
+        // Re-read credentials at runtime to ensure they are fresh
+        const currentUsername = (process.env.AT_USERNAME || 'sandbox').trim();
+        const currentApiKey = (process.env.AT_API_KEY || '').trim();
+
+        if (!currentApiKey) {
             logger.warn('⚠️ SMS service in simulation mode - API key not configured');
             logger.warn('SMS simulation: Sending message to', to, ':', message);
             return {
@@ -50,6 +39,13 @@ class SMSService {
         }
 
         try {
+            // Initialize SDK on demand
+            const at = africastalking({
+                username: currentUsername,
+                apiKey: currentApiKey,
+            });
+            const sms = at.SMS;
+
             // Validate inputs
             if (!to || (Array.isArray(to) && to.length === 0)) {
                 throw new Error('No recipient phone number provided');
@@ -72,8 +68,7 @@ class SMSService {
             logger.info('📤 Sending SMS via Africa\'s Talking...');
             logger.info(`Recipients: ${JSON.stringify(options.to)}`);
             logger.info(`Message: ${message.substring(0, 50)}${message.length > 50 ? '...' : ''}`);
-            logger.info(`Username: ${username}`);
-            logger.info(`Sender ID: ${options.from || 'Default'}`);
+            logger.info(`Username: ${currentUsername}`);
 
             const response = await sms.send(options);
 
@@ -97,8 +92,10 @@ class SMSService {
         } catch (error) {
             logger.error('❌ Error sending SMS via Africa\'s Talking:');
             logger.error('Error message:', error.message);
-            logger.error('Error details:', error.response?.data || error);
-            logger.error('Stack trace:', error.stack);
+            if (error.response) {
+                logger.error('API Response Data:', JSON.stringify(error.response.data, null, 2));
+                logger.error('API Response Status:', error.response.status);
+            }
             throw error;
         }
     }
