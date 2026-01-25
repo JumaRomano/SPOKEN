@@ -214,6 +214,8 @@ class CommunicationService {
                         // Since we're doing it "live" for now (simulated):
                         await this.markAsSent(logId);
                     } else if (channel === 'sms') {
+                        console.log(`📱 Processing SMS for recipient ${recipient.id}:`, { originalPhone: contactInfo });
+
                         // Format phone number for Kenya (Africa's Talking requires +254 format)
                         let formattedPhone = contactInfo;
                         if (formattedPhone) {
@@ -233,6 +235,9 @@ class CommunicationService {
                             }
                         }
 
+                        console.log(`📲 Formatted phone: ${formattedPhone}`);
+                        console.log(`📝 Message content: ${announcement.content.substring(0, 50)}...`);
+
                         // Send SMS via Africa's Talking
                         await smsService.sendSMS(formattedPhone, announcement.content);
                         await this.markAsSent(logId);
@@ -240,6 +245,14 @@ class CommunicationService {
                         logger.info(`SMS sent to ${formattedPhone} (original: ${recipient.phone})`);
                     }
                 } catch (error) {
+                    console.error(`❌❌❌ CRITICAL ERROR sending ${channel} to ${contactInfo}:`);
+                    console.error('Error type:', error.constructor.name);
+                    console.error('Error message:', error.message);
+                    console.error('Error stack:', error.stack);
+                    console.error('Error details:', JSON.stringify(error, null, 2));
+                    if (error.response) {
+                        console.error('API Response:', error.response);
+                    }
                     logger.error(`Failed to send broadcast via ${channel} to ${contactInfo}:`, error);
                     await this.markAsFailed(logId);
                     broadcastResults[channel].failed++;
