@@ -199,11 +199,30 @@ class CommunicationService {
                         // Since we're doing it "live" for now (simulated):
                         await this.markAsSent(logId);
                     } else if (channel === 'sms') {
+                        // Format phone number for Kenya (Africa's Talking requires +254 format)
+                        let formattedPhone = contactInfo;
+                        if (formattedPhone) {
+                            // Remove any spaces, dashes, or parentheses
+                            formattedPhone = formattedPhone.replace(/[\s\-\(\)]/g, '');
+
+                            // Convert to international format if not already
+                            if (formattedPhone.startsWith('0')) {
+                                // Replace leading 0 with +254
+                                formattedPhone = '+254' + formattedPhone.substring(1);
+                            } else if (formattedPhone.startsWith('254')) {
+                                // Add + if missing
+                                formattedPhone = '+' + formattedPhone;
+                            } else if (!formattedPhone.startsWith('+')) {
+                                // Assume it's a Kenyan number without country code
+                                formattedPhone = '+254' + formattedPhone;
+                            }
+                        }
+
                         // Send SMS via Africa's Talking
-                        await smsService.sendSMS(contactInfo, announcement.content);
+                        await smsService.sendSMS(formattedPhone, announcement.content);
                         await this.markAsSent(logId);
                         broadcastResults.sms.success++;
-                        logger.info(`SMS sent for ${recipient.phone}`);
+                        logger.info(`SMS sent to ${formattedPhone} (original: ${recipient.phone})`);
                     }
                 } catch (error) {
                     logger.error(`Failed to send broadcast via ${channel} to ${contactInfo}:`, error);
