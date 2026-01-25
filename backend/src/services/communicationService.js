@@ -134,12 +134,17 @@ class CommunicationService {
      * Send broadcast message (email/SMS)
      */
     async sendBroadcast(announcementId, channels = ['email']) {
+        console.log('📢 sendBroadcast called:', { announcementId, channels });
+
         const announcement = await this.getById(announcementId);
+        console.log('📝 Announcement retrieved:', { id: announcement.id, title: announcement.title, targetAudience: announcement.target_audience });
 
         // Get recipients based on target audience
         let recipients = [];
         const isEmailEnabled = channels.includes('email');
         const isSMSEnabled = channels.includes('sms');
+
+        console.log('📊 Channels enabled:', { email: isEmailEnabled, sms: isSMSEnabled });
 
         // Build the query to get relevant recipients with their contact info
         let baseQuery = 'SELECT id, email, phone FROM members WHERE membership_status = $1';
@@ -157,6 +162,16 @@ class CommunicationService {
 
         const result = await db.query(baseQuery, queryParams);
         recipients = result.rows;
+
+        console.log(`👥 Found ${recipients.length} recipients`);
+        if (recipients.length > 0) {
+            console.log('📱 Sample recipient:', {
+                id: recipients[0].id,
+                hasEmail: !!recipients[0].email,
+                hasPhone: !!recipients[0].phone,
+                phone: recipients[0].phone
+            });
+        }
 
         // Load services
         const emailService = require('./emailService');

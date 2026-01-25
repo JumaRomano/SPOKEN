@@ -71,9 +71,12 @@ class CommunicationController {
         try {
             const { id } = req.params;
             const { channels } = req.body;
+            console.log('🚀 Broadcast request received:', { announcementId: id, channels, user: req.user?.email });
             const result = await communicationService.sendBroadcast(id, channels);
+            console.log('✅ Broadcast completed:', result);
             res.json(result);
         } catch (error) {
+            console.error('❌ Broadcast error:', error);
             next(error);
         }
     }
