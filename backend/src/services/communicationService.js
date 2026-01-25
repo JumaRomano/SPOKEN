@@ -239,7 +239,9 @@ class CommunicationService {
                         console.log(`📝 Message content: ${announcement.content.substring(0, 50)}...`);
 
                         // Send SMS via Africa's Talking
-                        await smsService.sendSMS(formattedPhone, announcement.content);
+                        const response = await smsService.sendSMS(formattedPhone, announcement.content);
+                        console.log('✅✅✅ SMS Success Response:', JSON.stringify(response, null, 2));
+
                         await this.markAsSent(logId);
                         broadcastResults.sms.success++;
                         logger.info(`SMS sent to ${formattedPhone} (original: ${recipient.phone})`);
