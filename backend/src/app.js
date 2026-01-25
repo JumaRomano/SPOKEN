@@ -21,6 +21,10 @@ const sermonRoutes = require('./routes/sermon.routes');
 // Initialize Express app
 const app = express();
 
+// Trust proxy - Required for Render and other reverse proxies
+// This allows Express to correctly identify client IPs and work with rate limiting
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 
