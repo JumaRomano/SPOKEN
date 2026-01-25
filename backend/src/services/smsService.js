@@ -5,6 +5,12 @@ const logger = require('../utils/logger');
 const username = process.env.AT_USERNAME || 'sandbox';
 const apiKey = process.env.AT_API_KEY;
 
+// Log configuration status (masked)
+console.log('🏗️ Initializing SMS Service...');
+console.log(`👤 AT Username: ${username}`);
+console.log(`🔑 AT API Key: ${apiKey ? 'Present (Starts with ' + apiKey.substring(0, 5) + '...)' : 'MISSING ❌'}`);
+console.log(`🆔 AT Sender ID: ${process.env.AT_SENDER_ID || 'Default (None)'}`);
+
 let sms;
 
 if (apiKey) {
@@ -14,12 +20,12 @@ if (apiKey) {
             apiKey,
         });
         sms = at.SMS;
-        logger.info('Africa\'s Talking SDK initialized successfully');
+        logger.info('✅ Africa\'s Talking SDK initialized successfully');
     } catch (error) {
-        logger.error('Failed to initialize Africa\'s Talking SDK:', error);
+        logger.error('❌ Failed to initialize Africa\'s Talking SDK:', error);
     }
 } else {
-    logger.warn('AT_API_KEY not found in environment variables. SMS service will be in simulated mode.');
+    logger.warn('⚠️ AT_API_KEY not found in environment variables. SMS service will be in simulated mode.');
 }
 
 class SMSService {
