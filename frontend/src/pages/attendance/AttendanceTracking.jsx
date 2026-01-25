@@ -15,10 +15,8 @@ const AttendanceTracking = () => {
     const [message, setMessage] = useState({ type: '', text: '' });
 
     useEffect(() => {
-        if (activeTab === 'services') {
-            fetchServices();
-        }
-    }, [activeTab]);
+        fetchServices();
+    }, [activeTab]); // Refetch whenever tab changes
 
     const fetchServices = async () => {
         setLoading(true);
@@ -60,8 +58,8 @@ const AttendanceTracking = () => {
         <button
             onClick={() => setActiveTab(tab)}
             className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${activeTab === tab
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300'
                 }`}
         >
             {label}
@@ -73,8 +71,8 @@ const AttendanceTracking = () => {
             {message.text && (
                 <div
                     className={`mb-4 px-4 py-3 rounded ${message.type === 'success'
-                            ? 'bg-green-50 border border-green-200 text-green-700'
-                            : 'bg-red-50 border border-red-200 text-red-700'
+                        ? 'bg-green-50 border border-green-200 text-green-700'
+                        : 'bg-red-50 border border-red-200 text-red-700'
                         }`}
                 >
                     {message.text}
@@ -165,7 +163,7 @@ const AttendanceTracking = () => {
                 </Card>
             )}
 
-            {activeTab === 'record' && <AttendanceRecorder />}
+            {activeTab === 'record' && <AttendanceRecorder onAttendanceRecorded={fetchServices} />}
 
             {activeTab === 'statistics' && <AttendanceStatistics />}
 

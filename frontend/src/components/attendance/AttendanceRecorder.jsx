@@ -5,7 +5,7 @@ import Card from '../common/Card';
 import Button from '../common/Button';
 import Select from '../common/Select';
 
-const AttendanceRecorder = () => {
+const AttendanceRecorder = ({ onAttendanceRecorded }) => {
     const [services, setServices] = useState([]);
     const [members, setMembers] = useState([]);
     const [selectedService, setSelectedService] = useState('');
@@ -72,6 +72,8 @@ const AttendanceRecorder = () => {
             await attendanceService.recordAttendance(selectedService, singleAttendance);
             setMessage({ type: 'success', text: 'Attendance recorded successfully!' });
             setSingleAttendance({ memberId: '', status: 'present', notes: '' });
+            // Notify parent to refresh services
+            if (onAttendanceRecorded) onAttendanceRecorded();
         } catch (err) {
             setMessage({
                 type: 'error',
@@ -103,6 +105,8 @@ const AttendanceRecorder = () => {
                 text: `Attendance recorded for ${selectedMembers.length} members!`
             });
             setSelectedMembers([]);
+            // Notify parent to refresh services
+            if (onAttendanceRecorded) onAttendanceRecorded();
         } catch (err) {
             setMessage({
                 type: 'error',
@@ -118,8 +122,8 @@ const AttendanceRecorder = () => {
             {message.text && (
                 <div
                     className={`px-4 py-3 rounded ${message.type === 'success'
-                            ? 'bg-green-50 border border-green-200 text-green-700'
-                            : 'bg-red-50 border border-red-200 text-red-700'
+                        ? 'bg-green-50 border border-green-200 text-green-700'
+                        : 'bg-red-50 border border-red-200 text-red-700'
                         }`}
                 >
                     {message.text}
@@ -147,8 +151,8 @@ const AttendanceRecorder = () => {
                             type="button"
                             onClick={() => setRecordingMode('bulk')}
                             className={`px-4 py-2 rounded ${recordingMode === 'bulk'
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             Bulk Recording
@@ -157,8 +161,8 @@ const AttendanceRecorder = () => {
                             type="button"
                             onClick={() => setRecordingMode('single')}
                             className={`px-4 py-2 rounded ${recordingMode === 'single'
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             Single Member
