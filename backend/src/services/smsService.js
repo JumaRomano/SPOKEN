@@ -2,14 +2,17 @@ const africastalking = require('africastalking');
 const logger = require('../utils/logger');
 
 // Initialize Africa's Talking
-const username = process.env.AT_USERNAME || 'sandbox';
-const apiKey = process.env.AT_API_KEY;
+const rawUsername = process.env.AT_USERNAME || 'sandbox';
+const rawApiKey = process.env.AT_API_KEY;
+
+// Trim credentials to prevent whitespace authentication errors
+const username = rawUsername.trim();
+const apiKey = rawApiKey ? rawApiKey.trim() : null;
 
 // Log configuration status (masked)
 console.log('🏗️ Initializing SMS Service...');
-console.log(`👤 AT Username: ${username}`);
-console.log(`🔑 AT API Key: ${apiKey ? 'Present (Starts with ' + apiKey.substring(0, 5) + '...)' : 'MISSING ❌'}`);
-console.log(`🆔 AT Sender ID: ${process.env.AT_SENDER_ID || 'Default (None)'}`);
+console.log(`👤 AT Username (Trimmed): '${username}'`);
+console.log(`🔑 AT API Key Status: ${apiKey ? 'Present' : 'MISSING'}`);
 
 let sms;
 
