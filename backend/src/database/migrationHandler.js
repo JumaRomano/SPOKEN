@@ -88,6 +88,10 @@ async function runMigrations() {
             ['secretary', 'attendance', 'read'],
             ['secretary', 'attendance', 'create'],
             ['secretary', 'attendance', 'update'],
+            ['secretary', 'announcements', 'create'],
+            ['secretary', 'announcements', 'read'],
+            ['secretary', 'announcements', 'update'],
+            ['secretary', 'announcements', 'delete'],
 
             // Critical wildcards
             ['admin', '*', '*'],
