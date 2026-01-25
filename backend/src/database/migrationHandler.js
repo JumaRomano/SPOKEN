@@ -60,6 +60,9 @@ async function runMigrations() {
             
             -- Relax service_type constraints (for attendance)
             ALTER TABLE services DROP CONSTRAINT IF EXISTS services_service_type_check;
+            
+            -- Relax announcement_type constraints (allow priority values)
+            ALTER TABLE announcements DROP CONSTRAINT IF EXISTS announcements_announcement_type_check;
         `);
 
         // 4. Nullability fixes
