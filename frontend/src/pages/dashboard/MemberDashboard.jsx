@@ -59,65 +59,74 @@ const MemberDashboard = () => {
 
     return (
         <div className="space-y-8 pb-12">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-200 pb-6">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">
-                        Welcome, {memberData?.first_name || user?.email?.split('@')[0]}!
+                    <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Member Portal</span>
+                    <h1 className="text-3xl font-bold text-secondary-dark mt-1">
+                        Welcome back, {memberData?.first_name || user?.email?.split('@')[0]}
                     </h1>
-                    <p className="text-gray-500 mt-1">Here is what's happening in your church life.</p>
+                    <p className="text-slate-500 mt-2 text-lg">Here's an overview of your activity and upcoming events.</p>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500 bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
-                    <FiCalendar />
+                <div className="flex items-center gap-2 text-sm font-medium text-slate-600 bg-white px-4 py-2.5 rounded-lg border border-gray-200 shadow-sm">
+                    <FiCalendar className="text-primary" />
                     {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                 </div>
             </div>
 
             {/* Member Stats */}
+            {/* Member Stats - Bento Grid Style */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-none shadow-lg">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                            <FiHeart className="w-8 h-8 text-white" />
-                        </div>
+                <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary group">
+                    <div className="flex items-start justify-between">
                         <div>
-                            <p className="text-blue-100 text-sm font-medium">My Giving (Total)</p>
-                            <h3 className="text-3xl font-bold">KES {memberStats.contributions.toLocaleString()}</h3>
+                            <p className="text-slate-500 text-sm font-medium mb-1">Total Giving</p>
+                            <h3 className="text-3xl font-bold text-secondary-dark tracking-tight">KES {memberStats.contributions.toLocaleString()}</h3>
+                        </div>
+                        <div className="p-3 bg-blue-50 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                            <FiHeart className="w-6 h-6" />
                         </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-white/20">
-                        <Link to={`/members/${user.memberId}`} className="text-sm font-medium flex items-center gap-2 hover:underline">
+                    <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-primary bg-blue-50 px-2 py-1 rounded">Faithful Giver</span>
+                        <Link to={`/members/${user.memberId}`} className="text-sm font-medium text-secondary hover:text-primary flex items-center gap-1">
                             View History <FiArrowRight />
                         </Link>
                     </div>
                 </Card>
 
-                <Card className="bg-white border-green-100 shadow-sm">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-green-50 rounded-xl text-green-600">
-                            <FiClock className="w-8 h-8" />
-                        </div>
+                <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-emerald-500 group">
+                    <div className="flex items-start justify-between">
                         <div>
-                            <p className="text-gray-500 text-sm font-medium">Services Attended</p>
-                            <h3 className="text-3xl font-bold text-gray-900">{memberStats.attendance}</h3>
+                            <p className="text-slate-500 text-sm font-medium mb-1">Services Attended</p>
+                            <h3 className="text-3xl font-bold text-secondary-dark tracking-tight">{memberStats.attendance}</h3>
+                        </div>
+                        <div className="p-3 bg-emerald-50 rounded-xl text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                            <FiClock className="w-6 h-6" />
                         </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-gray-50">
-                        <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full font-medium">Keep it up!</span>
+                    <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">Active Member</span>
+                        <Link to="/attendance" className="text-sm font-medium text-secondary hover:text-emerald-600 flex items-center gap-1">
+                            View Record <FiArrowRight />
+                        </Link>
                     </div>
                 </Card>
 
-                <Card className="bg-white border-purple-100 shadow-sm">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-purple-50 rounded-xl text-purple-600">
-                            <BiGroup className="w-8 h-8" />
-                        </div>
+                <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-purple-500 group">
+                    <div className="flex items-start justify-between">
                         <div>
-                            <p className="text-gray-500 text-sm font-medium">My Groups</p>
-                            <h3 className="text-3xl font-bold text-gray-900">{memberStats.groups}</h3>
+                            <p className="text-slate-500 text-sm font-medium mb-1">My Groups</p>
+                            <h3 className="text-3xl font-bold text-secondary-dark tracking-tight">{memberStats.groups}</h3>
+                        </div>
+                        <div className="p-3 bg-purple-50 rounded-xl text-purple-600 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                            <BiGroup className="w-6 h-6" />
                         </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-gray-50">
-                        <Link to={`/members/${user.memberId}`} className="text-sm text-purple-600 font-medium hover:underline">View Groups</Link>
+                    <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-purple-700 bg-purple-50 px-2 py-1 rounded">Connected</span>
+                        <Link to="/groups" className="text-sm font-medium text-secondary hover:text-purple-600 flex items-center gap-1">
+                            Browse Groups <FiArrowRight />
+                        </Link>
                     </div>
                 </Card>
             </div>
@@ -125,33 +134,44 @@ const MemberDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
                     <Card title="Quick Actions">
-                        <div className="grid grid-cols-2 gap-4">
-                            <Link to="/events" className="p-4 border rounded-xl hover:bg-gray-50 transition-colors flex flex-col items-center text-center gap-2">
-                                <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <Link to="/events" className="group p-5 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-slate-200 transition-all flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                                     <FiCalendar className="text-xl" />
                                 </div>
-                                <span className="font-semibold text-gray-700">Browse Events</span>
+                                <div>
+                                    <span className="block font-bold text-secondary-dark">Browse Events</span>
+                                    <span className="text-sm text-slate-500">Register for upcoming services</span>
+                                </div>
+                                <FiArrowRight className="ml-auto text-slate-300 group-hover:text-primary transition-colors" />
                             </Link>
-                            <Link to="/sermons" className="p-4 border rounded-xl hover:bg-gray-50 transition-colors flex flex-col items-center text-center gap-2">
-                                <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center">
+
+                            <Link to="/sermons" className="group p-5 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-slate-200 transition-all flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                                     <FiActivity className="text-xl" />
                                 </div>
-                                <span className="font-semibold text-gray-700">Watch Sermons</span>
+                                <div>
+                                    <span className="block font-bold text-secondary-dark">Watch Sermons</span>
+                                    <span className="text-sm text-slate-500">Catch up on recent teachings</span>
+                                </div>
+                                <FiArrowRight className="ml-auto text-slate-300 group-hover:text-primary transition-colors" />
                             </Link>
                         </div>
                     </Card>
                 </div>
 
                 <div className="space-y-6">
-                    <div className="bg-gradient-to-br from-primary-gradientStart to-primary-gradientEnd p-6 rounded-2xl text-white shadow-lg relative overflow-hidden">
+                    <div className="bg-secondary-dark p-6 rounded-2xl text-white shadow-lg relative overflow-hidden group">
                         <div className="relative z-10">
                             <h3 className="font-bold text-lg mb-2">My Profile</h3>
-                            <p className="text-white/80 text-sm mb-4">Update your personal information and contact details.</p>
-                            <Link to={`/members/${user.memberId}`} className="inline-block bg-white text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-100 transition-colors">
-                                Edit Profile
+                            <p className="text-slate-300 text-sm mb-6 leading-relaxed">Keep your contact information and preferences up to date.</p>
+                            <Link to={`/members/${user.memberId}`} className="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-glow">
+                                Edit Profile <FiArrowRight />
                             </Link>
                         </div>
-                        <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                        {/* Abstract Decoration */}
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full transition-transform group-hover:scale-110"></div>
+                        <div className="absolute bottom-0 right-0 w-24 h-24 bg-primary/20 rounded-tl-full blur-xl"></div>
                     </div>
                 </div>
             </div>
