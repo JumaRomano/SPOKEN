@@ -12,14 +12,15 @@ class AttendanceService {
         const params = [];
         let paramCount = 1;
 
-        // Filter by group: if groupId is provided, only show that group's services
-        // Otherwise, show only church-wide services (group_id IS NULL)
-        if (groupId) {
+        // Filter by group ONLY if groupId is explicitly provided as a non-empty string
+        // If not provided, show only church-wide services (group_id IS NULL)
+        if (groupId && groupId !== 'null' && groupId !== 'undefined') {
             query += ` AND group_id = $${paramCount}`;
             params.push(groupId);
             paramCount++;
         } else {
-            query += ` AND group_id IS NULL`;
+            // Default: show only church-wide services
+            query += ` AND (group_id IS NULL OR group_id = '')`;
         }
 
         if (serviceType) {
