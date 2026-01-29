@@ -23,60 +23,63 @@ import Events from './pages/public/Events';
 // import Giving from './pages/public/Giving';
 import Contact from './pages/public/Contact';
 import Communication from './pages/communication/Communication';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import './App.css';
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Public Website Routes */}
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/about" element={<About />} />
-            {/* <Route path="/ministries" element={<Ministries />} /> */}
-            <Route path="/sermons" element={<Sermons />} />
-            <Route path="/events" element={<Events />} />
-            {/* <Route path="/giving" element={<Giving />} /> */}
-            <Route path="/contact" element={<Contact />} />
-          </Route>
+    <ErrorBoundary>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public Website Routes */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/about" element={<About />} />
+              {/* <Route path="/ministries" element={<Ministries />} /> */}
+              <Route path="/sermons" element={<Sermons />} />
+              <Route path="/events" element={<Events />} />
+              {/* <Route path="/giving" element={<Giving />} /> */}
+              <Route path="/contact" element={<Contact />} />
+            </Route>
 
-          <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Login />} />
 
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <Routes>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/members" element={
-                      <RoleProtectedRoute allowedRoles={['admin', 'sysadmin']}>
-                        <MemberList />
-                      </RoleProtectedRoute>
-                    } />
-                    <Route path="/groups" element={<GroupList />} />
-                    <Route path="/finance" element={<FinanceOverview />} />
-                    <Route path="/events-management" element={<EventList />} />
-                    <Route path="/sermons-management" element={<SermonManager />} />
-                    <Route path="/members/:id" element={
-                      <RoleProtectedRoute allowedRoles={['admin', 'sysadmin']}>
-                        <MemberDetail />
-                      </RoleProtectedRoute>
-                    } />
-                    <Route path="/groups/:id" element={<GroupDetail />} />
-                    <Route path="/events-management/:id" element={<EventDetail />} />
-                    <Route path="/attendance" element={<AttendanceTracking />} />
-                    <Route path="/communication" element={<Communication />} />
-                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                  </Routes>
-                </MainLayout>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/members" element={
+                        <RoleProtectedRoute allowedRoles={['admin', 'sysadmin']}>
+                          <MemberList />
+                        </RoleProtectedRoute>
+                      } />
+                      <Route path="/groups" element={<GroupList />} />
+                      <Route path="/finance" element={<FinanceOverview />} />
+                      <Route path="/events-management" element={<EventList />} />
+                      <Route path="/sermons-management" element={<SermonManager />} />
+                      <Route path="/members/:id" element={
+                        <RoleProtectedRoute allowedRoles={['admin', 'sysadmin']}>
+                          <MemberDetail />
+                        </RoleProtectedRoute>
+                      } />
+                      <Route path="/groups/:id" element={<GroupDetail />} />
+                      <Route path="/events-management/:id" element={<EventDetail />} />
+                      <Route path="/attendance" element={<AttendanceTracking />} />
+                      <Route path="/communication" element={<Communication />} />
+                      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                    </Routes>
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

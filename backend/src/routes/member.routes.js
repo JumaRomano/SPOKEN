@@ -4,6 +4,8 @@ const memberController = require('../controllers/memberController');
 const authenticate = require('../middleware/auth');
 const rbac = require('../middleware/rbac');
 const auditLog = require('../middleware/auditLog');
+const validate = require('../middleware/validation');
+const { memberSchemas } = require('../validators/schemas');
 
 // All routes require authentication
 router.use(authenticate);
@@ -18,10 +20,10 @@ router.get('/:id/contributions', rbac('contributions', 'read'), memberController
 router.get('/:id/events', rbac('members', 'read'), memberController.getEvents);
 
 // POST routes
-router.post('/', rbac('members', 'create'), auditLog('create', 'members'), memberController.create);
+router.post('/', rbac('members', 'create'), auditLog('create', 'members'), validate(memberSchemas.create), memberController.create);
 
 // PUT routes
-router.put('/:id', rbac('members', 'update'), auditLog('update', 'members'), memberController.update);
+router.put('/:id', rbac('members', 'update'), auditLog('update', 'members'), validate(memberSchemas.update), memberController.update);
 
 // DELETE routes
 router.delete('/:id', rbac('members', 'delete'), auditLog('delete', 'members'), memberController.delete);

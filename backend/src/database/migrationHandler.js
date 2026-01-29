@@ -50,6 +50,14 @@ async function runMigrations() {
             await db.query('ALTER TABLE volunteer_signups ADD COLUMN notes TEXT');
         }
 
+        // Services Table Fixes
+        if (!(await checkColumn('services', 'description'))) {
+            await db.query('ALTER TABLE services ADD COLUMN description TEXT');
+        }
+        if (!(await checkColumn('services', 'created_by'))) {
+            await db.query('ALTER TABLE services ADD COLUMN created_by UUID REFERENCES users(id)');
+        }
+
         // 3. User Role Constraint
         await db.query(`
             ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;
@@ -60,6 +68,7 @@ async function runMigrations() {
             
             -- Relax service_type constraints (for attendance)
             ALTER TABLE services DROP CONSTRAINT IF EXISTS services_service_type_check;
+            ALTER TABLE services ALTER COLUMN service_name DROP NOT NULL;
             
             -- Relax announcement_type constraints (allow priority values)
             ALTER TABLE announcements DROP CONSTRAINT IF EXISTS announcements_announcement_type_check;

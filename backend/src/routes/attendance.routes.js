@@ -4,14 +4,16 @@ const attendanceController = require('../controllers/attendanceController');
 const authenticate = require('../middleware/auth');
 const rbac = require('../middleware/rbac');
 const auditLog = require('../middleware/auditLog');
+const validate = require('../middleware/validation');
+const { serviceSchemas } = require('../validators/schemas');
 
 router.use(authenticate);
 
 // Service management
 router.get('/services', rbac('attendance', 'read'), attendanceController.getServices);
 router.get('/services/:id', rbac('attendance', 'read'), attendanceController.getServiceById);
-router.post('/services', rbac('attendance', 'create'), auditLog('create', 'services'), attendanceController.createService);
-router.put('/services/:id', rbac('attendance', 'update'), auditLog('update', 'services'), attendanceController.updateService);
+router.post('/services', rbac('attendance', 'create'), auditLog('create', 'services'), validate(serviceSchemas.create), attendanceController.createService);
+router.put('/services/:id', rbac('attendance', 'update'), auditLog('update', 'services'), validate(serviceSchemas.create), attendanceController.updateService);
 router.delete('/services/:id', rbac('attendance', 'delete'), auditLog('delete', 'services'), attendanceController.deleteService);
 
 // Attendance recording

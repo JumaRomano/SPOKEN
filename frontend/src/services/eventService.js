@@ -14,9 +14,15 @@ const eventService = {
         return response.data;
     },
 
-    // Get public events (alias for getAll, used by public pages)
+    // Get public events
     async getPublicEvents(filters = {}) {
-        return this.getAll(filters);
+        const { eventType, upcoming } = filters;
+        const params = new URLSearchParams();
+        if (eventType) params.set('eventType', eventType);
+        if (upcoming) params.set('upcoming', upcoming);
+
+        const response = await api.get('/events/public', { params });
+        return response.data;
     },
 
     // Get event by ID

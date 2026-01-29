@@ -7,6 +7,7 @@ import Select from '../common/Select';
 const CreateServiceModal = ({ isOpen, onClose, onServiceCreated }) => {
     const [formData, setFormData] = useState({
         service_date: new Date().toISOString().split('T')[0],
+        service_time: '09:00',
         service_type: 'sunday_service',
         description: '',
         total_attendance: 0,
@@ -38,6 +39,7 @@ const CreateServiceModal = ({ isOpen, onClose, onServiceCreated }) => {
             await onServiceCreated(formData);
             setFormData({
                 service_date: new Date().toISOString().split('T')[0],
+                service_time: '09:00',
                 service_type: 'sunday_service',
                 description: '',
                 total_attendance: 0,
@@ -59,14 +61,24 @@ const CreateServiceModal = ({ isOpen, onClose, onServiceCreated }) => {
                     </div>
                 )}
 
-                <Input
-                    label="Service Date"
-                    type="date"
-                    name="service_date"
-                    value={formData.service_date}
-                    onChange={handleChange}
-                    required
-                />
+                <div className="grid grid-cols-2 gap-4">
+                    <Input
+                        label="Service Date"
+                        type="date"
+                        name="service_date"
+                        value={formData.service_date}
+                        onChange={handleChange}
+                        required
+                    />
+                    <Input
+                        label="Time"
+                        type="time"
+                        name="service_time"
+                        value={formData.service_time}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
 
                 <Select
                     label="Service Type"

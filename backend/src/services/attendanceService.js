@@ -56,11 +56,16 @@ class AttendanceService {
     async createService(serviceData, createdBy) {
         const { serviceType, serviceDate, serviceTime, description } = serviceData;
 
+        // Normalize inputs (handle snake_case alternatives)
+        const type = serviceType || serviceData.service_type;
+        const date = serviceDate || serviceData.service_date;
+        const time = serviceTime || serviceData.service_time;
+
         const result = await db.query(
             `INSERT INTO services (service_type, service_date, service_time, description, created_by)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-            [serviceType, serviceDate, serviceTime, description, createdBy]
+            [type, date, time, description, createdBy]
         );
 
         logger.info('Service created:', { serviceId: result.rows[0].id, serviceType, serviceDate });
@@ -73,6 +78,11 @@ class AttendanceService {
     async updateService(id, serviceData) {
         const { serviceType, serviceDate, serviceTime, description } = serviceData;
 
+        // Normalize inputs
+        const type = serviceType || serviceData.service_type;
+        const date = serviceDate || serviceData.service_date;
+        const time = serviceTime || serviceData.service_time;
+
         const result = await db.query(
             `UPDATE services SET
         service_type = COALESCE($1, service_type),
@@ -82,7 +92,7 @@ class AttendanceService {
         updated_at = CURRENT_TIMESTAMP
        WHERE id = $5
        RETURNING *`,
-            [serviceType, serviceDate, serviceTime, description, id]
+            [type, date, time, description, id]
         );
 
         if (result.rows.length === 0) {

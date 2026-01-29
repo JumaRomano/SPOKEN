@@ -11,12 +11,13 @@ const MemberList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [search, setSearch] = useState('');
+    const [statusFilter, setStatusFilter] = useState('active');
     const [pagination, setPagination] = useState({ limit: 20, offset: 0, total: 0 });
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     useEffect(() => {
         fetchMembers();
-    }, [search, pagination.offset]);
+    }, [search, pagination.offset, statusFilter]);
 
     const fetchMembers = async () => {
         try {
@@ -25,7 +26,7 @@ const MemberList = () => {
                 limit: pagination.limit,
                 offset: pagination.offset,
                 search,
-                status: 'active',
+                status: statusFilter === 'all' ? undefined : statusFilter,
             };
             const response = await memberService.getAll(params);
             setMembers(response.members || []);
