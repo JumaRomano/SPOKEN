@@ -33,10 +33,14 @@ const CreateServiceModal = ({ isOpen, onClose, onServiceCreated }) => {
 
     const fetchGroups = async () => {
         try {
-            const data = await groupService.getAll();
-            setGroups(data.map(g => ({ value: g.id, label: g.name })));
+            const response = await groupService.getAll();
+            // Response is { groups: [], total, limit, offset }
+            const groupsArray = response.groups || response.data || response || [];
+            setGroups(groupsArray.map(g => ({ value: g.id, label: g.name || g.group_name })));
         } catch (err) {
-            console.error('Failed to fetch groups:', err);
+            console.error('Failed to fetch groups:', err.response?.data || err.message);
+            // Permission denied or other error - just show no groups
+            setGroups([]);
         }
     };
 
