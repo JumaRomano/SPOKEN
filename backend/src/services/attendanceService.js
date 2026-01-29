@@ -233,7 +233,7 @@ class AttendanceService {
         return {
             unique_attendees: parseInt(result.rows[0].unique_attendees || 0),
             total_attendance_records: parseInt(result.rows[0].total_attendance_records || 0),
-            services_count: parseInt(result.rows[0].services_count || 0),
+            total_services: parseInt(result.rows[0].services_count || 0),
             avg_attendance_per_service: parseFloat(result.rows[0].avg_attendance_per_service || 0).toFixed(2)
         };
     }
