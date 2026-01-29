@@ -57,6 +57,9 @@ async function runMigrations() {
         if (!(await checkColumn('services', 'created_by'))) {
             await db.query('ALTER TABLE services ADD COLUMN created_by UUID REFERENCES users(id)');
         }
+        if (!(await checkColumn('services', 'group_id'))) {
+            await db.query('ALTER TABLE services ADD COLUMN group_id UUID REFERENCES groups(id)');
+        }
 
         // 3. User Role Constraint
         await db.query(`

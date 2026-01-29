@@ -6,11 +6,21 @@ class AttendanceService {
      * Get all services
      */
     async getServices(filters = {}) {
-        const { limit = 20, offset = 0, serviceType = null, startDate = null, endDate = null } = filters;
+        const { limit = 20, offset = 0, serviceType = null, startDate = null, endDate = null, groupId = null } = filters;
 
         let query = 'SELECT * FROM services WHERE 1=1';
         const params = [];
         let paramCount = 1;
+
+        // Filter by group: if groupId is provided, only show that group's services
+        // Otherwise, show only church-wide services (group_id IS NULL)
+        if (groupId) {
+            query += ` AND group_id = $${paramCount}`;
+            params.push(groupId);
+            paramCount++;
+        } else {
+            query += ` AND group_id IS NULL`;
+        }
 
         if (serviceType) {
             query += ` AND service_type = $${paramCount}`;
@@ -61,15 +71,16 @@ class AttendanceService {
         const date = serviceDate || serviceData.service_date;
         const time = serviceTime || serviceData.service_time;
         const count = serviceData.total_attendance || serviceData.attendance_count || 0;
+        const groupId = serviceData.group_id || null;
 
         const result = await db.query(
-            `INSERT INTO services (service_type, service_date, service_time, description, created_by, attendance_count)
-       VALUES ($1, $2, $3, $4, $5, $6)
+            `INSERT INTO services (service_type, service_date, service_time, description, created_by, attendance_count, group_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-            [type, date, time, description, createdBy, count]
+            [type, date, time, description, createdBy, count, groupId]
         );
 
-        logger.info('Service created:', { serviceId: result.rows[0].id, serviceType, serviceDate });
+        logger.info('Service created:', { serviceId: result.rows[0].id, serviceType, serviceDate, groupId });
         return result.rows[0];
     }
 

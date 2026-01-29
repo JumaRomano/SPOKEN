@@ -65,7 +65,9 @@ const serviceSchemas = {
         serviceTime: Joi.string(),
         serviceType: Joi.string(),
         total_attendance: Joi.number().integer().min(0).allow(null),
-        totalAttendance: Joi.number().integer().min(0).allow(null)
+        totalAttendance: Joi.number().integer().min(0).allow(null),
+        group_id: Joi.string().uuid().allow(null, ''),
+        groupId: Joi.string().uuid().allow(null, '')
     }).unknown(true)
 };
 

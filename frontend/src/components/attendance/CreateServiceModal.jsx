@@ -3,6 +3,7 @@ import Modal from '../common/Modal';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import Select from '../common/Select';
+import groupService from '../../services/groupService';
 
 const CreateServiceModal = ({ isOpen, onClose, onServiceCreated }) => {
     const [formData, setFormData] = useState({
@@ -11,9 +12,11 @@ const CreateServiceModal = ({ isOpen, onClose, onServiceCreated }) => {
         service_type: 'sunday_service',
         description: '',
         total_attendance: 0,
+        group_id: '',
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [groups, setGroups] = useState([]);
 
     const serviceTypes = [
         { value: 'sunday_service', label: 'Sunday Service' },
@@ -21,6 +24,21 @@ const CreateServiceModal = ({ isOpen, onClose, onServiceCreated }) => {
         { value: 'prayer_meeting', label: 'Prayer Meeting' },
         { value: 'special_event', label: 'Special Event' },
     ];
+
+    useEffect(() => {
+        if (isOpen) {
+            fetchGroups();
+        }
+    }, [isOpen]);
+
+    const fetchGroups = async () => {
+        try {
+            const data = await groupService.getAll();
+            setGroups(data.map(g => ({ value: g.id, label: g.name })));
+        } catch (err) {
+            console.error('Failed to fetch groups:', err);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -43,6 +61,7 @@ const CreateServiceModal = ({ isOpen, onClose, onServiceCreated }) => {
                 service_type: 'sunday_service',
                 description: '',
                 total_attendance: 0,
+                group_id: '',
             });
             onClose();
         } catch (err) {
@@ -87,6 +106,14 @@ const CreateServiceModal = ({ isOpen, onClose, onServiceCreated }) => {
                     onChange={handleChange}
                     options={serviceTypes}
                     required
+                />
+
+                <Select
+                    label="Group (Optional - leave blank for church-wide service)"
+                    name="group_id"
+                    value={formData.group_id}
+                    onChange={handleChange}
+                    options={[{ value: '', label: 'Church-Wide Service' }, ...groups]}
                 />
 
                 <Input

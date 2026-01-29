@@ -9,6 +9,7 @@ class AttendanceController {
                 serviceType: req.query.serviceType || null,
                 startDate: req.query.startDate || null,
                 endDate: req.query.endDate || null,
+                groupId: req.query.groupId || null,
             };
 
             const services = await attendanceService.getServices(filters);
