@@ -60,12 +60,13 @@ class AttendanceService {
         const type = serviceType || serviceData.service_type;
         const date = serviceDate || serviceData.service_date;
         const time = serviceTime || serviceData.service_time;
+        const count = serviceData.total_attendance || serviceData.attendance_count || 0;
 
         const result = await db.query(
-            `INSERT INTO services (service_type, service_date, service_time, description, created_by)
-       VALUES ($1, $2, $3, $4, $5)
+            `INSERT INTO services (service_type, service_date, service_time, description, created_by, attendance_count)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-            [type, date, time, description, createdBy]
+            [type, date, time, description, createdBy, count]
         );
 
         logger.info('Service created:', { serviceId: result.rows[0].id, serviceType, serviceDate });

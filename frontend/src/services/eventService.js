@@ -4,6 +4,12 @@ const eventService = {
     // Get all events
     async getAll(filters = {}) {
         const { eventType, status, upcoming, search } = filters;
+
+        // Safety net: If requesting upcoming events, redirect to public endpoint
+        if (upcoming) {
+            return this.getPublicEvents(filters);
+        }
+
         const params = new URLSearchParams();
         if (eventType) params.set('eventType', eventType);
         if (status) params.set('status', status);

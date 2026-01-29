@@ -63,7 +63,9 @@ const serviceSchemas = {
         // CamelCase support
         serviceDate: Joi.date().iso(),
         serviceTime: Joi.string(),
-        serviceType: Joi.string()
+        serviceType: Joi.string(),
+        total_attendance: Joi.number().integer().min(0).allow(null),
+        totalAttendance: Joi.number().integer().min(0).allow(null)
     }).unknown(true)
 };
 

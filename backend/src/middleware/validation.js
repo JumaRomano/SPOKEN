@@ -22,7 +22,7 @@ const validate = (schema, property = 'body') => {
 
             return res.status(400).json({
                 status: 'error',
-                message: 'Validation failed',
+                message: `Validation failed: ${error.details[0].message}`,
                 errors: error.details.map(detail => ({
                     field: detail.path.join('.'),
                     message: detail.message

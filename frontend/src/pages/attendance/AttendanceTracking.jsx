@@ -12,6 +12,11 @@ const AttendanceTracking = () => {
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [filters, setFilters] = useState({
+        startDate: '',
+        endDate: '',
+        serviceType: ''
+    });
     const [message, setMessage] = useState({ type: '', text: '' });
 
     useEffect(() => {
