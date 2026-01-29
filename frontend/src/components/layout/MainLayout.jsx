@@ -54,7 +54,7 @@ const MainLayout = ({ children }) => {
 
             {isSidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+                    className="fixed inset-0 bg-secondary-dark/80 backdrop-blur-sm z-30 lg:hidden"
                     onClick={() => setIsSidebarOpen(false)}
                 />
             )}
@@ -62,51 +62,53 @@ const MainLayout = ({ children }) => {
             {/* Sidebar */}
             <aside
                 className={clsx(
-                    "fixed lg:static inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-primary-gradientStart to-primary-gradientEnd text-white flex flex-col shadow-2xl transition-transform duration-300 transform lg:transform-none",
+                    "fixed lg:static inset-y-0 left-0 z-40 w-72 bg-secondary-dark text-white flex flex-col shadow-2xl transition-transform duration-300 transform lg:transform-none border-r border-white/5",
                     isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                 )}
             >
-                <div className="p-8 border-b border-white/10 flex flex-col items-center text-center">
-                    <img src={logo} alt="Logo" className="w-16 h-auto mb-3" />
-                    <h2 className="text-xl font-bold m-0 leading-tight">The Spoken Word</h2>
-                    <p className="text-[10px] opacity-70 tracking-[0.2em] mt-1 uppercase">of God Ministries</p>
+                <div className="p-8 flex flex-col items-center text-center border-b border-white/5">
+                    <img src={logo} alt="Logo" className="w-14 h-auto mb-4" />
+                    <h2 className="text-lg font-bold m-0 leading-tight tracking-tight">The Spoken Word</h2>
+                    <p className="text-xl text-slate-400 tracking-[0.2em] mt-1 uppercase font-medium">Ministries Portal</p>
                 </div>
 
-                <nav className="flex-1 px-3 py-6 flex flex-col gap-1 overflow-y-auto">
+                <nav className="flex-1 px-4 py-6 flex flex-col gap-1.5 overflow-y-auto">
                     {filteredNav.map((item) => (
                         <Link
                             key={item.path}
                             to={item.path}
                             onClick={() => setIsSidebarOpen(false)}
                             className={clsx(
-                                "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
+                                "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group",
                                 isActive(item.path)
-                                    ? "bg-white/20 font-semibold shadow-inner"
-                                    : "hover:bg-white/10 hover:translate-x-1"
+                                    ? "bg-primary text-white shadow-soft"
+                                    : "text-slate-300 hover:bg-white/5 hover:text-white"
                             )}
                         >
-                            <span className="text-xl">{item.icon}</span>
+                            <span className={clsx("text-lg transition-colors", isActive(item.path) ? "text-white" : "text-slate-400 group-hover:text-white")}>
+                                {item.icon}
+                            </span>
                             <span>{item.label}</span>
                         </Link>
                     ))}
                 </nav>
 
-                <div className="p-5 border-t border-white/10 bg-black/5">
-                    <div className="flex items-center gap-3 p-3 bg-white/10 rounded-lg mb-3">
-                        <div className="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center text-lg font-bold">
+                <div className="p-5 border-t border-white/5 bg-black/20">
+                    <div className="flex items-center gap-3 p-3 rounded-lg mb-3">
+                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-sm font-bold shadow-glow">
                             {user?.email?.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0 overflow-hidden">
-                            <div className="text-[13px] font-semibold truncate" title={user?.email}>{user?.email}</div>
-                            <div className="text-[10px] opacity-80 uppercase tracking-wide">{user?.role}</div>
+                            <div className="text-sm font-semibold truncate" title={user?.email}>{user?.email?.split('@')[0]}</div>
+                            <div className="text-[10px] text-slate-400 uppercase tracking-wide font-medium">{user?.role}</div>
                         </div>
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="w-full py-2.5 bg-white/20 rounded-lg text-sm font-semibold hover:bg-white/30 transition-colors flex items-center justify-center gap-2"
+                        className="w-full py-2.5 bg-white/5 border border-white/5 rounded-lg text-sm font-medium hover:bg-white/10 transition-all flex items-center justify-center gap-2 text-slate-300 hover:text-white"
                     >
-                        <FiLogOut />
-                        Logout
+                        <FiLogOut className="text-lg" />
+                        Sign Out
                     </button>
                 </div>
             </aside>

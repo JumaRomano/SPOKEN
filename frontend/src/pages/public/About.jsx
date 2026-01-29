@@ -5,47 +5,59 @@ import Button from '../../components/common/Button';
 const About = () => {
     return (
         <div className="flex flex-col min-h-screen">
-            {/* Hero Section */}
-            <section className="relative bg-primary-dark text-white py-24 lg:py-32 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary-dark to-primary opacity-90"></div>
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
+            {/* Hero Section - Professional & Clear */}
+            <section className="relative bg-secondary-dark text-white py-32 overflow-hidden">
+                {/* Background Image Placeholder - Replace url() with real image */}
+                <div className="absolute inset-0 z-0 select-none">
+                    <img
+                        src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2073&auto=format&fit=crop"
+                        alt="Community gathering"
+                        className="w-full h-full object-cover opacity-40 mix-blend-overlay grayscale"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-secondary-dark/90 via-secondary-dark/80 to-secondary-dark"></div>
+                </div>
+
                 <div className="relative max-w-4xl mx-auto px-6 text-center z-10">
-                    <h1 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-tight">
+                    <span className="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/10 text-blue-200 text-xs font-bold tracking-widest uppercase mb-6 backdrop-blur-sm">
+                        Who We Are
+                    </span>
+                    <h1 className="text-5xl lg:text-7xl font-bold mb-8 leading-tight tracking-tight">
                         About Spoken Word
                     </h1>
-                    <p className="text-xl lg:text-2xl opacity-90 font-light max-w-2xl mx-auto">
-                        Building a community of faith, hope, and love where everyone belongs.
+                    <p className="text-xl text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed">
+                        Building a community of faith, hope, and love where everyone belongs and finds their purpose.
                     </p>
                 </div>
             </section>
 
-            {/* Vision & Mission */}
-            <section className="py-20 px-6 bg-white">
+            {/* Vision & Mission - Bento Grid Style */}
+            <section className="py-24 px-6 bg-white">
                 <div className="max-w-7xl mx-auto">
-                    <div className="grid md:grid-cols-2 gap-12 items-center">
-                        <div className="relative">
-                            <div className="absolute -top-4 -left-4 w-24 h-24 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-                            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-amber-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-
-                            <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 relative z-10">
-                                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-6 text-primary">
-                                    <FiEye size={24} />
+                    <div className="grid md:grid-cols-2 gap-8">
+                        {/* Vision Card */}
+                        <div className="group bg-white p-10 rounded-2xl shadow-soft hover:shadow-lg transition-all duration-300 border border-slate-100 flex flex-col justify-between h-full relative overflow-hidden">
+                            <div className="absolute right-0 top-0 w-32 h-32 bg-blue-50 rounded-bl-full opacity-50 z-0 transition-transform group-hover:scale-150 duration-700"></div>
+                            <div className="relative z-10">
+                                <div className="w-14 h-14 bg-blue-50 text-primary rounded-xl flex items-center justify-center mb-8 shadow-sm">
+                                    <FiEye size={28} className="stroke-2" />
                                 </div>
-                                <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Vision</h2>
-                                <p className="text-gray-600 text-lg leading-relaxed">
-                                    To be a beacon of light in our community, transforming lives through the power of the Gospel and raising disciples who impact the world.
+                                <h2 className="text-3xl font-bold text-secondary-dark mb-4">Our Vision</h2>
+                                <p className="text-slate-600 text-lg leading-relaxed">
+                                    To be a beacon of light in our community, transforming lives through the power of the Gospel and raising disciples who impact the world with Kingdom vales.
                                 </p>
                             </div>
                         </div>
 
-                        <div className="relative">
-                            <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 relative z-10">
-                                <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-6 text-amber-600">
-                                    <FiTarget size={24} />
+                        {/* Mission Card */}
+                        <div className="group bg-secondary-dark text-white p-10 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between h-full relative overflow-hidden">
+                            <div className="absolute right-0 bottom-0 w-40 h-40 bg-white/5 rounded-tl-full z-0 transition-transform group-hover:scale-150 duration-700"></div>
+                            <div className="relative z-10">
+                                <div className="w-14 h-14 bg-white/10 text-white rounded-xl flex items-center justify-center mb-8 backdrop-blur-md">
+                                    <FiTarget size={28} className="stroke-2" />
                                 </div>
-                                <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Mission</h2>
-                                <p className="text-gray-600 text-lg leading-relaxed">
-                                    We exist to worship God, disciple believers, and serve our neighbors with the tangible love of Jesus Christ.
+                                <h2 className="text-3xl font-bold text-white mb-4">Our Mission</h2>
+                                <p className="text-slate-300 text-lg leading-relaxed">
+                                    We exist to worship God, disciple believers, and serve our neighbors with the tangible, life-changing love of Jesus Christ in action.
                                 </p>
                             </div>
                         </div>
