@@ -21,77 +21,100 @@ const PublicLayout = () => {
     return (
         <div className="min-h-screen flex flex-col font-sans text-secondary">
             {/* Header */}
-            <header className="sticky top-0 z-50 bg-white shadow-sm h-[70px]">
-                <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
-                    <Link to="/" className="flex items-center gap-3 no-underline">
-                        <img src={logo} alt="Logo" className="w-12 h-12 object-contain" />
+            <header className="sticky top-0 z-50 bg-white shadow-sm h-16 sm:h-[70px]">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex justify-between items-center">
+                    <Link to="/" className="flex items-center gap-2 sm:gap-3 no-underline active-scale">
+                        <img src={logo} alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12 object-contain" />
                         <div className="flex flex-col items-start">
-                            <span className="text-xl font-extrabold text-primary leading-tight uppercase">The Spoken Word</span>
-                            <span className="text-[10px] text-secondary font-bold tracking-widest uppercase">of God Ministries</span>
+                            <span className="text-base sm:text-xl font-extrabold text-primary leading-tight uppercase">The Spoken Word</span>
+                            <span className="text-[9px] sm:text-[10px] text-secondary font-bold tracking-widest uppercase">of God Ministries</span>
                         </div>
                     </Link>
 
                     {/* Mobile Menu Button */}
                     <button
-                        className="lg:hidden text-2xl text-secondary focus:outline-none"
+                        className="lg:hidden text-2xl text-secondary focus:outline-none p-2 -mr-2 active-scale min-h-[44px] min-w-[44px] flex items-center justify-center transition-transform duration-200"
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                         aria-label="Toggle menu"
                     >
-                        {isMenuOpen ? '✕' : '☰'}
+                        <span className={clsx("transition-all duration-300", isMenuOpen && "rotate-90")}>
+                            {isMenuOpen ? '✕' : '☰'}
+                        </span>
                     </button>
 
                     {/* Desktop Nav */}
-                    <nav className="hidden lg:flex items-center gap-8">
+                    <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.path}
                                 to={link.path}
                                 className={clsx(
-                                    "font-medium transition-colors duration-200",
+                                    "font-medium transition-colors duration-200 min-h-[44px] flex items-center active-scale",
                                     isActive(link.path) ? "text-primary" : "text-secondary hover:text-primary"
                                 )}
                             >
                                 {link.label}
                             </Link>
                         ))}
-                        <Link to="/login">
+                        <Link to="/login" className="active-scale">
                             <Button variant="outline" size="small">Member Portal</Button>
                         </Link>
                     </nav>
                 </div>
 
-                {/* Mobile Nav Overlay */}
+                {/* Mobile Nav - Backdrop */}
                 {isMenuOpen && (
-                    <div className="lg:hidden absolute top-[70px] left-0 w-full bg-white shadow-md flex flex-col p-4 gap-2 animate-in slide-in-from-top-2 duration-200">
+                    <div
+                        className="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 animate-in fade-in duration-200"
+                        onClick={() => setIsMenuOpen(false)}
+                        style={{ top: '64px' }}
+                    />
+                )}
+
+                {/* Mobile Nav - Side Drawer */}
+                <div className={clsx(
+                    "lg:hidden fixed right-0 w-80 max-w-[85vw] h-[calc(100vh-64px)] bg-white shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-out safe-area-pb",
+                    isMenuOpen ? "translate-x-0" : "translate-x-full"
+                )}
+                    style={{ top: '64px' }}>
+                    <div className="p-6 space-y-2 overflow-y-auto">
+                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 px-2">Navigation</h3>
                         {navLinks.map((link) => (
                             <Link
                                 key={link.path}
                                 to={link.path}
                                 onClick={() => setIsMenuOpen(false)}
                                 className={clsx(
-                                    "px-4 py-3 rounded-lg text-center font-medium",
-                                    isActive(link.path) ? "bg-primary-light/10 text-primary" : "text-secondary"
+                                    "px-4 py-3.5 rounded-xl font-medium min-h-[52px] flex items-center transition-all active-scale group",
+                                    isActive(link.path)
+                                        ? "bg-gradient-to-r from-primary/10 to-primary/5 text-primary shadow-sm"
+                                        : "text-secondary hover:bg-gray-50"
                                 )}
                             >
-                                {link.label}
+                                <span className="flex-1">{link.label}</span>
+                                <span className={clsx(
+                                    "text-lg transition-transform duration-200",
+                                    isActive(link.path) ? "opacity-100" : "opacity-0 group-hover:opacity-50"
+                                )}>→</span>
                             </Link>
                         ))}
-                        <div className="mt-2 pt-2 border-t border-gray-100 flex justify-center">
-                            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="w-full">
+
+                        <div className="mt-6 pt-6 border-t border-gray-100">
+                            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block">
                                 <Button variant="outline" fullWidth>Member Portal</Button>
                             </Link>
                         </div>
                     </div>
-                )}
+                </div>
             </header>
 
             {/* Main Content */}
             <main className="flex-1">
                 <Outlet />
-            </main>
+            </main >
 
             {/* Footer */}
-            <footer className="bg-gray-900 text-gray-400 py-16 mt-auto">
+            < footer className="bg-gray-900 text-gray-400 py-16 mt-auto" >
                 <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
                     <div>
                         <h3 className="text-white text-xl font-bold mb-4">Spoken Word Of God Ministries</h3>
@@ -127,8 +150,8 @@ const PublicLayout = () => {
                         <p>&copy; {new Date().getFullYear()} Spoken Word Of God Ministries. All rights reserved.</p>
                     </div>
                 </div>
-            </footer>
-        </div>
+            </footer >
+        </div >
     );
 };
 

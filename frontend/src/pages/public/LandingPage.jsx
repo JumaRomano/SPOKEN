@@ -33,9 +33,9 @@ const LandingPage = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen font-sans">
+        <div className="flex flex-col min-h-screen font-sans smooth-scroll">
             {/* Hero Section */}
-            <section className="relative min-h-[90vh] flex items-center justify-center text-white overflow-hidden">
+            <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center justify-center text-white overflow-hidden">
                 {/* Background Gradient */}
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-sky-900 to-cyan-900"></div>
@@ -45,32 +45,34 @@ const LandingPage = () => {
                 </div>
 
                 {/* Content */}
-                <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-                    <span className="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-sm text-sm font-semibold tracking-wider mb-6 border border-white/30">
+                <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
+                    <span className="inline-block py-1.5 px-4 rounded-full glass text-xs sm:text-sm font-bold tracking-wider mb-4 sm:mb-6 shadow-lg">
                         WELCOME HOME
                     </span>
-                    <h1 className="text-5xl lg:text-7xl font-black mb-6 leading-tight tracking-tight drop-shadow-lg">
-                        Experience God's <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">Transforming Love</span>
+                    <h1 className="font-black mb-4 sm:mb-6 leading-tight drop-shadow-2xl">
+                        Experience God's <br className="hidden sm:inline" />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-cyan-200 to-white">Transforming Love</span>
                     </h1>
-                    <p className="text-xl lg:text-2xl font-medium mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed text-blue-50">
-                        A vibrant community dedicated to worship, spiritual growth, and serving our neighbors with the tangible love of Christ.
+                    <p className="text-base sm:text-xl lg:text-2xl font-medium mb-6 sm:mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed text-blue-50">
+                        <span className="hidden sm:inline">A vibrant community dedicated to worship, spiritual growth, and serving our neighbors with the tangible love of Christ.</span>
+                        <span className="sm:hidden">Worship. Grow. Serve. Experience God's transforming love in community.</span>
                     </p>
-                    <p className="text-lg italic opacity-80 mb-1 max-w-2xl mx-auto font-serif">
-                        "Thy word is a lamp unto my feet, and a light unto my path." <span className="not-italic block mt-1 text-sm font-sans font-bold uppercase tracking-widest opacity-70">- Psalm 119:105</span>
+                    <p className="text-sm sm:text-lg italic opacity-80 mb-6 sm:mb-8 max-w-2xl mx-auto font-serif hidden sm:block">
+                        "Thy word is a lamp unto my feet, and a light unto my path."
+                        <span className="not-italic block mt-1 text-xs sm:text-sm font-sans font-bold uppercase tracking-widest opacity-70">- Psalm 119:105</span>
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-5 justify-center">
-                        <Button to="/about" variant="secondary" size="large" className="font-bold shadow-lg shadow-black/20 hover:shadow-black/40 transition-all transform hover:-translate-y-1 !bg-white/10 backdrop-blur-md border border-white/30 text-white hover:!bg-white hover:!text-primary-dark">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center max-w-md sm:max-w-none mx-auto">
+                        <Button to="/about" variant="secondary" size="large" className="btn-secondary font-bold shadow-xl shadow-black/20 hover:shadow-black/40 !bg-white/10 backdrop-blur-md border-2 border-white/30 text-white hover:!bg-white hover:!text-primary-dark min-h-[50px] text-base">
                             Our Mission
                         </Button>
-                        <Button to="/events" variant="secondary" size="large" className="font-bold shadow-lg shadow-black/20 hover:shadow-black/40 transition-all transform hover:-translate-y-1 !bg-white/10 backdrop-blur-md border border-white/30 text-white hover:!bg-white hover:!text-primary-dark">
+                        <Button to="/events" variant="secondary" size="large" className="btn-secondary font-bold shadow-xl shadow-black/20 hover:shadow-black/40 !bg-white/10 backdrop-blur-md border-2 border-white/30 text-white hover:!bg-white hover:!text-primary-dark min-h-[50px] text-base">
                             Upcoming Events
                         </Button>
                     </div>
                 </div>
 
-                {/* Scroll Indicator */}
-                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce opacity-70">
+                {/* Scroll Indicator - Hidden on mobile */}
+                <div className="absolute bottom-6 sm:bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce opacity-70 hidden sm:block">
                     <svg className="w-6 h-6 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
                         <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
                     </svg>
@@ -78,20 +80,20 @@ const LandingPage = () => {
             </section>
 
             {/* Quick Access Cards */}
-            <section className="bg-gray-50 pb-24 pt-12 lg:-mt-24 relative z-20 px-6">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            <section className="bg-gray-50 pb-12 sm:pb-20 lg:pb-24 pt-8 sm:pt-12 lg:-mt-24 relative z-20 px-4 sm:px-6">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     {[
-                        { title: 'Worship With Us', icon: <FiSun className="w-8 h-8" />, text: 'Join us every Sunday at 9:00 AM & 11:30 AM.', link: '/contact', linkText: 'Plan Your Visit', color: 'bg-amber-500' },
-                        { title: 'Watch Sermons', icon: <FiVideo className="w-8 h-8" />, text: 'Catch up on recent messages and teachings.', link: '/sermons', linkText: 'Watch Now', color: 'bg-red-500' },
+                        { title: 'Worship With Us', icon: <FiSun className="icon-xl" />, text: 'Join us every Sunday at 9:00 AM & 11:30 AM.', link: '/contact', linkText: 'Plan Your Visit', color: 'bg-amber-500' },
+                        { title: 'Watch Sermons', icon: <FiVideo className="icon-xl" />, text: 'Catch up on recent messages and teachings.', link: '/sermons', linkText: 'Watch Now', color: 'bg-red-500' },
                     ].map((card, index) => (
-                        <div key={index} className="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 group">
-                            <div className={`w-14 h-14 ${card.color} text-white rounded-2xl flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                        <div key={index} className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg card-hover border border-gray-100 group touch-manipulation active-scale">
+                            <div className={`w-12 h-12 sm:w-14 sm:h-14 ${card.color} text-white rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-md group-hover:scale-110 transition-transform duration-300`}>
                                 {card.icon}
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">{card.title}</h3>
-                            <p className="text-gray-500 mb-6 leading-relaxed text-sm">{card.text}</p>
-                            <Link to={card.link} className="text-primary font-bold hover:text-primary-dark inline-flex items-center gap-2 group-hover:gap-3 transition-all text-sm uppercase tracking-wider">
-                                {card.linkText} <FiArrowRight />
+                            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{card.title}</h3>
+                            <p className="text-gray-600 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">{card.text}</p>
+                            <Link to={card.link} className="text-primary font-bold hover:text-primary-dark inline-flex items-center gap-2 group-hover:gap-3 transition-all text-xs sm:text-sm uppercase tracking-wider active-scale min-h-[44px]">
+                                {card.linkText} <FiArrowRight className="icon-md" />
                             </Link>
                         </div>
                     ))}
@@ -99,18 +101,18 @@ const LandingPage = () => {
             </section>
 
             {/* Featured Event Preview */}
-            <section className="py-24 px-6 bg-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-gray-50 skew-x-12 transform translate-x-20 z-0"></div>
+            <section className="py-12 sm:py-16 lg:py-24 px-4 sm:px-6 bg-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-1/3 h-full bg-gray-50 skew-x-12 transform translate-x-20 z-0 hidden lg:block"></div>
 
                 <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-12 gap-4">
                         <div className="max-w-2xl">
-                            <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Mark Your Calendars</span>
-                            <h2 className="text-4xl font-black text-gray-900 mb-4">Upcoming Highlights</h2>
-                            <p className="text-gray-600 text-lg">Don't miss out on what God is doing in our midst. Join us for these special gatherings.</p>
+                            <span className="text-primary font-bold tracking-wider uppercase text-xs sm:text-sm mb-2 block">Mark Your Calendars</span>
+                            <h2 className="font-black text-gray-900 mb-2 sm:mb-4">Upcoming Highlights</h2>
+                            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">Don't miss out on what God is doing in our midst. Join us for these special gatherings.</p>
                         </div>
-                        <Link to="/events" className="hidden md:flex items-center gap-2 text-primary font-bold hover:text-primary-dark transition-colors px-6 py-3 bg-blue-50 rounded-full">
-                            View Full Calendar <FiArrowRight />
+                        <Link to="/events" className="hidden md:flex items-center gap-2 text-primary font-bold hover:text-primary-dark transition-colors px-6 py-3 bg-blue-50 rounded-full active-scale min-h-[44px]">
+                            View Full Calendar <FiArrowRight className="icon-md" />
                         </Link>
                     </div>
 
@@ -194,7 +196,7 @@ const LandingPage = () => {
             </section>
 
             {/* Call to Action */}
-            <section className="py-24 px-6 relative overflow-hidden">
+            <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 relative overflow-hidden">
                 <div className="absolute inset-0">
                     <div className="absolute inset-0 bg-gradient-to-r from-sky-900 via-cyan-800 to-sky-800"></div>
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-600/20 to-slate-900/60"></div>
@@ -203,16 +205,17 @@ const LandingPage = () => {
                 </div>
 
                 <div className="max-w-4xl mx-auto relative z-10 text-center text-white">
-                    <span className="inline-block py-1 px-3 rounded-full bg-white/10 backdrop-blur-sm text-sm font-semibold tracking-wider mb-6 border border-white/20">BECOME A MEMBER</span>
-                    <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Ready to Find Your Place?</h2>
-                    <p className="text-xl opacity-90 mb-12 max-w-2xl mx-auto leading-relaxed text-blue-100">
-                        Experience the love of God in a welcoming family environment. Whether you're new to faith or looking for a home, we can't wait to meet you.
+                    <span className="inline-block py-1.5 px-4 rounded-full glass text-xs sm:text-sm font-bold tracking-wider mb-4 sm:mb-6 shadow-lg">BECOME A MEMBER</span>
+                    <h2 className="font-black mb-4 sm:mb-6 leading-tight">Ready to Find Your Place?</h2>
+                    <p className="text-base sm:text-xl opacity-90 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed text-blue-100">
+                        <span className="hidden sm:inline">Experience the love of God in a welcoming family environment. Whether you're new to faith or looking for a home, we can't wait to meet you.</span>
+                        <span className="sm:hidden">Join our welcoming community. Whether you're new to faith or looking for a home, you belong here.</span>
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-5 justify-center">
-                        <Button to="/contact" variant="secondary" size="large" className="font-bold shadow-lg shadow-black/20 hover:shadow-black/40 transition-all transform hover:-translate-y-1">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center max-w-md sm:max-w-none mx-auto">
+                        <Button to="/contact" variant="secondary" size="large" className="btn-secondary font-bold shadow-xl shadow-black/20 hover:shadow-black/40 min-h-[50px] text-base">
                             Plan Your Visit
                         </Button>
-                        <Button to="/login" variant="outline" size="large" className="bg-white/10 backdrop-blur-md border-white text-white hover:bg-white hover:text-primary-dark font-bold transition-all transform hover:-translate-y-1">
+                        <Button to="/login" variant="outline" size="large" className="btn-secondary !bg-white/10 backdrop-blur-md border-2 border-white text-white hover:!bg-white hover:!text-primary-dark font-bold min-h-[50px] text-base">
                             Member Portal
                         </Button>
                     </div>

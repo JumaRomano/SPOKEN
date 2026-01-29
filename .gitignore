@@ -13,6 +13,11 @@ yarn.lock
 .env.production
 .env.test
 *.env
+.env.render
+backend/.env*
+frontend/.env
+!backend/.env.example
+!frontend/.env.example
 
 # Build outputs
 dist/
