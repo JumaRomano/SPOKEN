@@ -195,7 +195,6 @@ class CommunicationService {
                 }
 
                 // Insert log first as 'pending'
-                // Insert log first as 'pending'
                 const logResult = await db.query(
                     `INSERT INTO communication_logs 
                     (recipient_type, recipient_id, communication_type, message, status)
@@ -206,13 +205,28 @@ class CommunicationService {
 
                 try {
                     if (channel === 'email') {
-                        // In a real system, this would be queued.
-                        // For now, we'll log it as queued.
-                        logger.info(`Queued email for ${recipient.email}`);
-                        broadcastResults.email.success++;
-                        // If we had a real email worker, it would update the status.
-                        // Since we're doing it "live" for now (simulated):
-                        await this.markAsSent(logId);
+                        logger.info(`📧 Sending email to ${recipient.email}...`);
+
+                        const emailSent = await emailService.sendEmail(
+                            recipient.email,
+                            announcement.title, // Use announcement title as subject
+                            `<div>
+                                <h2>${announcement.title}</h2>
+                                <p>${announcement.content}</p>
+                                <br/>
+                                <hr/>
+                                <small>You are receiving this because you are a member of ${process.env.APP_NAME || 'Spoken Word Ministry'}.</small>
+                            </div>`
+                        );
+
+                        if (emailSent) {
+                            broadcastResults.email.success++;
+                            await this.markAsSent(logId);
+                            logger.info(`✅ Email sent to ${recipient.email}`);
+                        } else {
+                            throw new Error('Email service returned false');
+                        }
+
                     } else if (channel === 'sms') {
                         console.log(`📱 Processing SMS for recipient ${recipient.id}:`, { originalPhone: contactInfo });
 

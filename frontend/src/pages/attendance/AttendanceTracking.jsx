@@ -61,8 +61,8 @@ const AttendanceTracking = () => {
 
     // Filter services based on search
     const filteredServices = services.filter(service =>
-        service.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.service_type?.toLowerCase().includes(searchTerm.toLowerCase())
+        (service.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (service.service_type || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const tabs = [
@@ -103,8 +103,8 @@ const AttendanceTracking = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             className={`p-4 rounded-xl border flex items-center gap-3 ${message.type === 'success'
-                                    ? 'bg-emerald-50 border-emerald-100 text-emerald-700'
-                                    : 'bg-red-50 border-red-100 text-red-700'
+                                ? 'bg-emerald-50 border-emerald-100 text-emerald-700'
+                                : 'bg-red-50 border-red-100 text-red-700'
                                 }`}
                         >
                             <span className={`w-2 h-2 rounded-full ${message.type === 'success' ? 'bg-emerald-500' : 'bg-red-500'}`} />

@@ -60,10 +60,10 @@ class SMSService {
                 message: message.trim(),
             };
 
-            // Add Sender ID if available
-            if (process.env.AT_SENDER_ID) {
-                options.from = process.env.AT_SENDER_ID;
-            }
+            // Removed Sender ID to use default Africa's Talking sender ID (resolves 406 Not Acceptable)
+            // if (process.env.AT_SENDER_ID) {
+            //     options.from = process.env.AT_SENDER_ID;
+            // }
 
             logger.info('📤 Sending SMS via Africa\'s Talking...');
             logger.info(`Recipients: ${JSON.stringify(options.to)}`);
