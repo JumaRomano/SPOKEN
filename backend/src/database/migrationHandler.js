@@ -80,6 +80,20 @@ async function runMigrations() {
         // 4. Nullability fixes
         await db.query('ALTER TABLE group_attendance ALTER COLUMN member_id DROP NOT NULL');
 
+        // Create meeting_minutes table if not exists
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS meeting_minutes (
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                title VARCHAR(255) NOT NULL,
+                meeting_date DATE NOT NULL DEFAULT CURRENT_DATE,
+                content TEXT NOT NULL,
+                group_id UUID REFERENCES groups(id) ON DELETE SET NULL,
+                created_by UUID REFERENCES users(id),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
         // 5. Expand Permissions
         const permissions = [
             // Member permissions
@@ -107,6 +121,15 @@ async function runMigrations() {
             ['secretary', 'announcements', 'read'],
             ['secretary', 'announcements', 'update'],
             ['secretary', 'announcements', 'delete'],
+
+            // Minutes permissions
+            ['secretary', 'minutes', 'create'],
+            ['secretary', 'minutes', 'read'],
+            ['secretary', 'minutes', 'update'],
+            ['secretary', 'minutes', 'delete'],
+
+            // Attendance delete permissions for Secretary
+            ['secretary', 'attendance', 'delete'],
 
             // Critical wildcards
             ['admin', '*', '*'],
