@@ -21,16 +21,27 @@ const StatCard = ({ title, value, subtext, icon: Icon, color }) => (
 
 const CheckInRow = ({ reg, onCheckIn }) => {
     const isCheckedIn = reg.attendance_status === 'attended';
+    // Get initials from member_name or email
+    const getInitials = () => {
+        if (reg.member_name) {
+            const parts = reg.member_name.trim().split(' ');
+            if (parts.length >= 2) {
+                return parts[0][0] + parts[parts.length - 1][0];
+            }
+            return parts[0][0] + (parts[0][1] || '');
+        }
+        return reg.email ? reg.email.substring(0, 2).toUpperCase() : '??';
+    };
 
     return (
         <div className={`flex items-center justify-between p-4 rounded-xl border mb-3 transition-all ${isCheckedIn ? 'bg-green-50 border-green-200' : 'bg-white border-slate-100'}`}>
             <div className="flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${isCheckedIn ? 'bg-green-200 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
-                    {reg.first_name[0]}{reg.last_name[0]}
+                    {getInitials()}
                 </div>
                 <div>
-                    <h4 className={`font-bold ${isCheckedIn ? 'text-green-800' : 'text-slate-700'}`}>{reg.member_name}</h4>
-                    <span className="text-xs text-slate-400">{reg.email}</span>
+                    <h4 className={`font-bold ${isCheckedIn ? 'text-green-800' : 'text-slate-700'}`}>{reg.member_name || 'Unknown'}</h4>
+                    <span className="text-xs text-slate-400">{reg.email || 'No email'}</span>
                 </div>
             </div>
             <button
@@ -144,8 +155,8 @@ const EventDetail = () => {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === tab.id
-                                ? 'bg-indigo-50 text-indigo-700 shadow-sm'
-                                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                            ? 'bg-indigo-50 text-indigo-700 shadow-sm'
+                            : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
                             }`}
                     >
                         <tab.icon /> {tab.label}
