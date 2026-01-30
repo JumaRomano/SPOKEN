@@ -1,0 +1,48 @@
+=================================================================
+QUICK FIX FOR 400 ERROR - Apply these changes on Render
+=================================================================
+
+FILE 1: backend/src/controllers/attendanceController.js
+---------------------------------------------------------
+FIND (around line 12):
+    groupId: req.query.groupId || null,
+
+REPLACE WITH:
+    groupId: req.query.groupId && req.query.groupId.trim() !== '' ? req.query.groupId : null,
+
+
+FILE 2: backend/src/services/attendanceService.js  
+---------------------------------------------------------
+FIND (around line 23):
+    query += ` AND (group_id IS NULL OR group_id = '')`;
+
+REPLACE WITH:
+    query += ` AND group_id IS NULL`;
+
+
+=================================================================
+HOW TO APPLY ON RENDER:
+=================================================================
+1. Go to Render Dashboard → Your Backend Service
+2. Click "Shell" tab
+3. Run these commands:
+
+cd backend/src/controllers
+nano attendanceController.js
+# Make the change to line 12, save with Ctrl+O, Exit with Ctrl+X
+
+cd ../services
+nano attendanceService.js  
+# Make the change to line 23, save with Ctrl+O, Exit with Ctrl+X
+
+# Restart the service
+exit
+
+4. Click "Manual Deploy" → "Deploy latest commit"
+
+=================================================================
+EXPLANATION:
+=================================================================
+The frontend is sending an empty string for groupId when it's not set.
+PostgreSQL can't compare UUID columns to empty strings.
+These fixes ensure empty strings are converted to NULL before querying.
