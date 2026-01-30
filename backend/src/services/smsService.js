@@ -54,9 +54,12 @@ class SMSService {
                 throw new Error('Message content is empty');
             }
 
-            // Africa's Talking expects recipients as a comma-separated string or array
+            // Africa's Talking expects recipients as a comma-separated string
+            // Even though the SDK might handle arrays, let's force a string to be safe and avoid 406
+            const recipientString = Array.isArray(to) ? to.join(',') : to;
+
             const options = {
-                to: Array.isArray(to) ? to : [to],
+                to: recipientString,
                 message: message.trim(),
             };
 
@@ -66,8 +69,7 @@ class SMSService {
             // }
 
             logger.info('📤 Sending SMS via Africa\'s Talking...');
-            logger.info(`Recipients: ${JSON.stringify(options.to)}`);
-            logger.info(`Message: ${message.substring(0, 50)}${message.length > 50 ? '...' : ''}`);
+            logger.info(`Options payload: ${JSON.stringify(options)}`);
             logger.info(`Username: ${currentUsername}`);
 
             const response = await sms.send(options);
