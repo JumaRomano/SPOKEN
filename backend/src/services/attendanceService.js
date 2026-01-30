@@ -120,6 +120,9 @@ class AttendanceService {
      * Delete service
      */
     async deleteService(id) {
+        // Delete related attendance records first to avoid foreign key violation
+        await db.query('DELETE FROM attendance_records WHERE service_id = $1', [id]);
+
         const result = await db.query('DELETE FROM services WHERE id = $1 RETURNING *', [id]);
 
         if (result.rows.length === 0) {
