@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import dashboardService from '../../services/dashboardService';
+import financeService from '../../services/financeService';
+import ContributionRecorder from '../../components/finance/ContributionRecorder';
 import {
     FiDollarSign, FiTrendingUp, FiActivity, FiPlus, FiPieChart, FiDownload, FiArrowRight
 } from 'react-icons/fi';
@@ -13,6 +15,8 @@ const FinanceDashboard = () => {
         // other stats might be returned but we focus on finance
     });
     const [loading, setLoading] = useState(true);
+    const [showContributionModal, setShowContributionModal] = useState(false);
+    const [message, setMessage] = useState({ type: '', text: '' });
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -29,8 +33,33 @@ const FinanceDashboard = () => {
         fetchDashboardData();
     }, []);
 
+    const handleRecordContribution = async (contributionData) => {
+        try {
+            await financeService.recordContribution(contributionData);
+            setMessage({ type: 'success', text: 'Contribution recorded successfully!' });
+            // Refresh stats
+            const data = await dashboardService.getStats();
+            setStats(data);
+            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+        } catch (err) {
+            setMessage({ type: 'error', text: 'Failed to record contribution' });
+            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+        }
+    };
+
     return (
         <div className="space-y-8 pb-12">
+            {message.text && (
+                <div
+                    className={`px-4 py-3 rounded ${message.type === 'success'
+                        ? 'bg-green-50 border border-green-200 text-green-700'
+                        : 'bg-red-50 border border-red-200 text-red-700'
+                        }`}
+                >
+                    {message.text}
+                </div>
+            )}
+
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">Finance Overview</h1>
@@ -41,10 +70,13 @@ const FinanceDashboard = () => {
                         <FiDownload />
                         Download Report
                     </button>
-                    <Link to="/finance/record" className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700">
+                    <button
+                        onClick={() => setShowContributionModal(true)}
+                        className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700"
+                    >
                         <FiPlus />
                         Record Contribution
-                    </Link>
+                    </button>
                 </div>
             </div>
 
@@ -88,6 +120,12 @@ const FinanceDashboard = () => {
                     <p>No recent transactions to display here.</p>
                 </div>
             </div>
+
+            <ContributionRecorder
+                isOpen={showContributionModal}
+                onClose={() => setShowContributionModal(false)}
+                onContributionRecorded={handleRecordContribution}
+            />
         </div>
     );
 };

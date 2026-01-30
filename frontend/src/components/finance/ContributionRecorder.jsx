@@ -26,6 +26,7 @@ const ContributionRecorder = ({ isOpen, onClose, onContributionRecorded }) => {
         { value: 'tithe', label: 'Tithe' },
         { value: 'offering', label: 'Offering' },
         { value: 'donation', label: 'Donation' },
+        { value: 'event_fee', label: 'Event Fee' },
         { value: 'pledge_payment', label: 'Pledge Payment' },
         { value: 'other', label: 'Other' },
     ];

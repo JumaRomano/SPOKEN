@@ -13,7 +13,7 @@ class FinanceService {
                    COALESCE((SELECT SUM(amount) FROM contributions WHERE fund_id = f.id), 0) as total_received
             FROM funds f
             LEFT JOIN groups g ON f.group_id = g.id
-            WHERE f.is_active = true
+            WHERE 1=1
         `;
 
         const params = [];
@@ -24,11 +24,6 @@ class FinanceService {
             query += ` AND (f.group_id IS NULL OR f.group_id = $${paramCount})`;
             params.push(filters.groupId);
             paramCount++;
-        } else if (filters.showAll !== true) {
-            // By default, maybe only show global funds if no group specified? 
-            // Or if showing all (admin), show everything.
-            // If filters.groupId is explicitly null or undefined and not showAll, maybe just show global?
-            // tailored for controller usage.
         }
 
         query += ` ORDER BY f.group_id NULLS FIRST, f.fund_name`;
