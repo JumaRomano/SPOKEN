@@ -37,7 +37,7 @@ Thumbs.db
 desktop.ini
 
 # Database
-*.sql
+# *.sql
 *.db
 *.sqlite
 *.sqlite3
