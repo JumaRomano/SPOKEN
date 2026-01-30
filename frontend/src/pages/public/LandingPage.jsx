@@ -53,8 +53,8 @@ const LandingPage = () => {
                     </div>
 
                     <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight tracking-tight">
-                        Experience a faith that <br />
-                        <span className="text-blue-400">moves mountains.</span>
+                        I shall stay under the Spoken <br />
+                        <span className="text-blue-400">word of God .</span>
                     </h1>
 
                     <p className="text-lg md:text-xl text-slate-300 font-medium mb-10 max-w-2xl mx-auto leading-relaxed">

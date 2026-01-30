@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import eventService from '../../services/eventService';
 import Button from '../../components/common/Button';
@@ -20,6 +21,15 @@ const EventList = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
+
+    const location = useLocation();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('create') === 'true') {
+            setShowCreateModal(true);
+        }
+    }, [location]);
 
     const fetchEvents = useCallback(async () => {
         try {
@@ -207,30 +217,16 @@ const EventList = () => {
                                         <div className="premium-btn-group">
                                             {isAdmin && (
                                                 <>
-                                                    <button
-                                                        onClick={() => { setSelectedEvent(event); setShowEditModal(true); }}
-                                                        className="p-2 text-gray-400 hover:text-indigo-600 transition-colors"
-                                                        title="Edit Event"
+                                                    <Button
+                                                        to={`/events-management/${event.id}`}
+                                                        variant="primary"
+                                                        size="small"
+                                                        className="!rounded-xl shadow-sm"
                                                     >
-                                                        <FiEdit2 size={18} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(event.id, event.event_name)}
-                                                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                                                        title="Delete Event"
-                                                    >
-                                                        <FiTrash2 size={18} />
-                                                    </button>
+                                                        Manage
+                                                    </Button>
                                                 </>
                                             )}
-                                            <Button
-                                                variant="outline"
-                                                size="small"
-                                                onClick={() => { setSelectedEvent(event); setShowDetailModal(true); }}
-                                                className="!rounded-xl border-gray-200"
-                                            >
-                                                Details
-                                            </Button>
                                         </div>
                                     </div>
                                 </div>

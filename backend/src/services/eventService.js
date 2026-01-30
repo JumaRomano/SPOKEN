@@ -235,7 +235,9 @@ class EventService {
 
     async getRegistrations(eventId) {
         const result = await db.query(
-            `SELECT er.*, m.first_name, m.last_name, m.email, m.phone
+            `SELECT er.*, 
+                    m.first_name, m.last_name, m.email, m.phone,
+                    CONCAT(m.first_name, ' ', m.last_name) as member_name
              FROM event_registrations er
              JOIN members m ON er.member_id = m.id
              WHERE er.event_id = $1
@@ -243,6 +245,27 @@ class EventService {
             [eventId]
         );
         return result.rows;
+    }
+
+    async checkIn(eventId, memberId, status = 'attended') {
+        const result = await db.query(
+            `UPDATE event_registrations 
+             SET attendance_status = $1, updated_at = CURRENT_TIMESTAMP
+             WHERE event_id = $2 AND member_id = $3
+             RETURNING *`,
+            [status, eventId, memberId]
+        );
+
+        if (result.rows.length === 0) {
+            // Check if member exists but isn't registered
+            const memberCheck = await db.query('SELECT id FROM members WHERE id = $1', [memberId]);
+            if (memberCheck.rows.length === 0) throw new AppError('Member not found', 404);
+
+            // Auto-register and check-in
+            return this.register(eventId, memberId, 0, 'Walk-in Check-in');
+        }
+
+        return result.rows[0];
     }
 
     async createVolunteerRole(eventId, roleData) {
@@ -277,6 +300,7 @@ class EventService {
         );
 
         if (slotsCheck.rows.length === 0) throw new AppError('Role not found', 404);
+        // Allow over-signup but warn? For now enforcing limit strict for this "Sacred" quality.
         if (slotsCheck.rows[0].filled >= slotsCheck.rows[0].slots_needed) {
             throw new AppError('This volunteer role is already full', 400);
         }
@@ -289,6 +313,35 @@ class EventService {
             [roleId, memberId, notes]
         );
         return result.rows[0];
+    }
+
+    async getVolunteerSignups(eventId) {
+        const result = await db.query(
+            `SELECT vs.*, 
+                    vr.role_name, 
+                    m.first_name, m.last_name, m.email, m.phone,
+                     CONCAT(m.first_name, ' ', m.last_name) as member_name
+             FROM volunteer_signups vs
+             JOIN volunteer_roles vr ON vs.role_id = vr.id
+             JOIN members m ON vs.member_id = m.id
+             WHERE vr.event_id = $1 AND vs.status != 'cancelled'`,
+            [eventId]
+        );
+        return result.rows;
+    }
+
+    async getEventStats(eventId) {
+        const stats = await db.query(
+            `SELECT 
+                (SELECT COUNT(*) FROM event_registrations WHERE event_id = $1 AND attendance_status != 'cancelled') as total_registrations,
+                (SELECT COUNT(*) FROM event_registrations WHERE event_id = $1 AND attendance_status = 'attended') as checked_in,
+                (SELECT COALESCE(SUM(amount_paid), 0) FROM event_registrations WHERE event_id = $1 AND payment_status = 'paid') as total_revenue,
+                 (SELECT COUNT(*) FROM volunteer_signups vs JOIN volunteer_roles vr ON vs.role_id = vr.id WHERE vr.event_id = $1 AND vs.status != 'cancelled') as total_volunteers
+            `,
+            [eventId]
+        );
+
+        return stats.rows[0];
     }
 }
 

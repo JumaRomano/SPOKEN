@@ -89,6 +89,24 @@ const eventService = {
     async volunteerSignup(roleId, data) {
         const response = await api.post(`/events/volunteers/${roleId}/signup`, data);
         return response.data;
+    },
+
+    // Get Volunteer Signups (Admin)
+    async getVolunteerSignups(eventId) {
+        const response = await api.get(`/events/${eventId}/volunteer-signups`);
+        return response.data;
+    },
+
+    // Check-in (Admin)
+    async checkIn(eventId, data) {
+        const response = await api.post(`/events/${eventId}/check-in`, data);
+        return response.data;
+    },
+
+    // Get Statistics (Admin)
+    async getStats(eventId) {
+        const response = await api.get(`/events/${eventId}/stats`);
+        return response.data;
     }
 };
 

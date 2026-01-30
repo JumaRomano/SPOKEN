@@ -104,7 +104,7 @@ class ReportingService {
         const result = await db.query(
             `SELECT 
         DATE_TRUNC('month', service_date) as month,
-        AVG(total_attendance) as avg_attendance,
+        AVG(attendance_count) as avg_attendance,
         COUNT(DISTINCT id) as service_count
        FROM services
        WHERE service_date >= CURRENT_DATE - INTERVAL '${months} months'
@@ -140,11 +140,11 @@ class ReportingService {
     async getMembershipGrowth(months = 12) {
         const result = await db.query(
             `SELECT 
-        DATE_TRUNC('month', member_since) as month,
+        DATE_TRUNC('month', membership_date) as month,
         COUNT(*) as new_members
        FROM members
-       WHERE member_since >= CURRENT_DATE - INTERVAL '${months} months'
-       GROUP BY DATE_TRUNC('month', member_since)
+       WHERE membership_date >= CURRENT_DATE - INTERVAL '${months} months'
+       GROUP BY DATE_TRUNC('month', membership_date)
        ORDER BY month`
         );
 

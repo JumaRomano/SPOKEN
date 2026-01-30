@@ -11,6 +11,7 @@ import MemberDetail from './pages/members/MemberDetail';
 import GroupDetail from './pages/groups/GroupDetail';
 import EventDetail from './pages/events/EventDetail';
 import SermonManager from './pages/sermons/SermonManager';
+import MemberProfile from './pages/members/MemberProfile';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleProtectedRoute from './components/RoleProtectedRoute';
 import MainLayout from './components/layout/MainLayout';
@@ -54,6 +55,7 @@ function App() {
                   <MainLayout>
                     <Routes>
                       <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/profile" element={<MemberProfile />} />
                       <Route path="/members" element={
                         <RoleProtectedRoute allowedRoles={['admin', 'sysadmin']}>
                           <MemberList />
