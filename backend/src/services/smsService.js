@@ -61,12 +61,15 @@ class SMSService {
             const options = {
                 to: recipientString,
                 message: message.trim(),
+                // enqueue: true // Commented out for debugging to see real-time errors
             };
 
-            // Removed Sender ID to use default Africa's Talking sender ID (resolves 406 Not Acceptable)
-            // if (process.env.AT_SENDER_ID) {
-            //     options.from = process.env.AT_SENDER_ID;
-            // }
+            // Add Sender ID if available
+            if (process.env.AT_SENDER_ID) {
+                options.from = process.env.AT_SENDER_ID;
+            } else {
+                logger.warn('⚠️ No AT_SENDER_ID found in env. Attempting to send using default/shared Sender ID. This may cause 406 errors in production if not allowed.');
+            }
 
             logger.info('📤 Sending SMS via Africa\'s Talking...');
             logger.info(`Options payload: ${JSON.stringify(options)}`);
@@ -97,6 +100,10 @@ class SMSService {
             if (error.response) {
                 logger.error('API Response Data:', JSON.stringify(error.response.data, null, 2));
                 logger.error('API Response Status:', error.response.status);
+
+                if (error.response.status === 406) {
+                    logger.error('🚨 CRITICAL: 406 Not Acceptable. This usually means "UserInBlacklist". The recipient has blocked messages from this sender ID.');
+                }
             }
             throw error;
         }
