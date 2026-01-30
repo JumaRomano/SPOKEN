@@ -26,7 +26,12 @@ router.get('/:id/registrations', rbac('events', 'read'), eventController.getRegi
 
 // Volunteer management
 router.get('/:id/volunteers', rbac('events', 'read'), eventController.getVolunteerRoles);
+router.get('/:id/volunteer-signups', rbac('events', 'read'), eventController.getVolunteerSignups);
 router.post('/:id/volunteers', rbac('events', 'create'), auditLog('create', 'volunteer_roles'), eventController.createVolunteerRole);
 router.post('/volunteers/:roleId/signup', rbac('events', 'create'), auditLog('create', 'volunteer_signups'), eventController.volunteerSignup);
+
+// Advanced Management
+router.post('/:id/check-in', rbac('events', 'update'), auditLog('update', 'event_registrations'), eventController.checkIn);
+router.get('/:id/stats', rbac('events', 'read'), eventController.getEventStats);
 
 module.exports = router;

@@ -165,7 +165,7 @@ const MemberDashboard = () => {
                         <div className="relative z-10">
                             <h3 className="font-bold text-lg mb-2">My Profile</h3>
                             <p className="text-slate-300 text-sm mb-6 leading-relaxed">Keep your contact information and preferences up to date.</p>
-                            <Link to={`/members/${user.memberId}`} className="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-glow">
+                            <Link to="/profile" className="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-glow">
                                 Edit Profile <FiArrowRight />
                             </Link>
                         </div>

@@ -120,6 +120,37 @@ class EventController {
             next(error);
         }
     }
+
+    async checkIn(req, res, next) {
+        try {
+            const { id: eventId } = req.params;
+            const { memberId, status } = req.body;
+            const result = await eventService.checkIn(eventId, memberId, status);
+            res.json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getVolunteerSignups(req, res, next) {
+        try {
+            const { id: eventId } = req.params;
+            const signups = await eventService.getVolunteerSignups(eventId);
+            res.json(signups);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getEventStats(req, res, next) {
+        try {
+            const { id: eventId } = req.params;
+            const stats = await eventService.getEventStats(eventId);
+            res.json(stats);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = new EventController();

@@ -1,11 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiCalendar, FiList, FiClock, FiMapPin, FiArrowRight, FiSearch, FiFilter } from 'react-icons/fi';
 import eventService from '../../services/eventService';
 import Button from '../../components/common/Button';
+
+// Utility for calendar generation
+const generateCalendarDays = (year, month) => {
+    const date = new Date(year, month, 1);
+    const day = date.getDay();
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    const days = [];
+
+    // Previous month padding
+    for (let i = 0; i < day; i++) {
+        days.push(null);
+    }
+
+    // Current month days
+    for (let i = 1; i <= lastDay; i++) {
+        days.push(new Date(year, month, i));
+    }
+    return days;
+};
 
 const Events = () => {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [viewMode, setViewMode] = useState('list'); // 'list' or 'calendar'
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(null);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -32,100 +56,235 @@ const Events = () => {
         };
     };
 
+    // Calendar Helper
+    const eventsOnDay = (date) => {
+        if (!date) return [];
+        return events.filter(e => {
+            const eDate = new Date(e.start_date);
+            return eDate.getDate() === date.getDate() &&
+                eDate.getMonth() === date.getMonth() &&
+                eDate.getFullYear() === date.getFullYear();
+        });
+    };
+
+    const calendarDays = generateCalendarDays(currentDate.getFullYear(), currentDate.getMonth());
+
+    const changeMonth = (offset) => {
+        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1));
+    };
+
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50">
-            {/* Header - Professional Hero with Overlay */}
-            <section className="relative bg-secondary-dark text-white py-24 md:py-32 overflow-hidden">
-                {/* Background Overlay */}
+        <div className="flex flex-col min-h-screen bg-gray-50 font-sans text-slate-800">
+            {/* HER0 SECTION - Cinematic */}
+            <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <img
                         src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2070&auto=format&fit=crop"
-                        alt="Worship event"
-                        className="w-full h-full object-cover opacity-30 mix-blend-overlay grayscale"
+                        alt="Worship Gathering"
+                        className="w-full h-full object-cover scale-105 animate-slow-zoom"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-secondary-dark/95 via-secondary-dark/80 to-secondary-dark"></div>
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-secondary-dark via-secondary-dark/60 to-transparent"></div>
+                    <div className="absolute inset-0 bg-secondary-dark/30 mix-blend-multiply"></div>
                 </div>
 
-                <div className="relative max-w-4xl mx-auto px-6 text-center z-10">
-                    <span className="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/10 text-blue-200 text-xs font-bold tracking-widest uppercase mb-6 backdrop-blur-sm">
-                        Gather With Us
-                    </span>
-                    <h1 className="text-4xl lg:text-6xl font-bold mb-6 tracking-tight">Upcoming Events</h1>
-                    <p className="text-lg l:text-xl text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed">
-                        Join us for worship, fellowship, and special gatherings. We'd love to see you there.
-                    </p>
+                <div className="relative z-10 text-center px-6 max-w-4xl mx-auto mt-20">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <span className="inline-block py-1.5 px-5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-blue-100 text-xs font-bold tracking-[0.2em] uppercase mb-8 shadow-2xl">
+                            Experience the Divine
+                        </span>
+                        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
+                            Events & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-indigo-200">Gatherings</span>
+                        </h1>
+                        <p className="text-lg md:text-xl text-slate-200/90 max-w-2xl mx-auto leading-relaxed font-light">
+                            Discover moments of connection, spiritual growth, and community celebration.
+                            There is a place for you here.
+                        </p>
+                    </motion.div>
                 </div>
             </section>
 
-            {/* Events List */}
-            <section className="py-20 px-6">
-                <div className="max-w-5xl mx-auto">
-                    {loading ? (
-                        <div className="flex justify-center items-center py-20">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            {/* CONTROLS BAR - Floating Glass */}
+            <div className="sticky top-20 z-30 px-6 -mt-8 pointer-events-none">
+                <div className="max-w-5xl mx-auto bg-white/90 backdrop-blur-xl border border-white/40 shadow-xl rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center gap-4 pointer-events-auto">
+                    <div className="flex items-center gap-2 w-full md:w-auto">
+                        <div className="relative flex-1 md:flex-none md:w-64">
+                            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Find an event..."
+                                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 transition-all font-medium placeholder:text-slate-400"
+                            />
                         </div>
-                    ) : events.length > 0 ? (
-                        <div className="space-y-6">
-                            {events.map((event) => (
-                                <div key={event.id} className="group bg-white rounded-xl p-0 shadow-soft hover:shadow-lg transition-all duration-300 border border-slate-100 flex flex-col md:flex-row overflow-hidden">
-                                    {/* Date Badge - Elegant & Distinct */}
-                                    <div className="bg-slate-50 border-r border-slate-100 p-6 md:p-8 flex flex-col items-center justify-center min-w-[140px] text-center group-hover:bg-blue-50/50 transition-colors">
-                                        <span className="text-xs font-bold uppercase tracking-widest text-primary mb-1">{formatDate(event.start_date).month}</span>
-                                        <span className="text-4xl font-black text-secondary-dark leading-none mb-2">{formatDate(event.start_date).day}</span>
-                                        <span className="text-sm font-medium text-slate-400">{new Date(event.start_date).getFullYear()}</span>
-                                    </div>
+                        <button className="p-2.5 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors text-slate-500">
+                            <FiFilter />
+                        </button>
+                    </div>
 
-                                    {/* Content */}
-                                    <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
-                                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                                            <h2 className="text-xl md:text-2xl font-bold text-secondary-dark group-hover:text-primary transition-colors">{event.event_name}</h2>
-                                            {event.registration_required && (
-                                                <span className="px-3 py-1 bg-amber-50 text-amber-700 border border-amber-100 text-[10px] font-bold uppercase tracking-wider rounded-full">
-                                                    Registration Required
-                                                </span>
-                                            )}
-                                        </div>
+                    <div className="flex bg-slate-100 p-1 rounded-xl">
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'list' ? 'bg-white text-secondary-dark shadow-sm' : 'text-slate-500 hover:text-secondary-dark'}`}
+                        >
+                            <FiList /> List
+                        </button>
+                        <button
+                            onClick={() => setViewMode('calendar')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'calendar' ? 'bg-white text-secondary-dark shadow-sm' : 'text-slate-500 hover:text-secondary-dark'}`}
+                        >
+                            <FiCalendar /> Calendar
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-                                        <div className="flex flex-wrap gap-x-6 gap-y-2 text-slate-500 mb-6 text-sm font-medium">
-                                            <span className="flex items-center gap-1.5">
-                                                <span className="text-primary">🕒</span> {formatDate(event.start_date).full} • {formatDate(event.start_date).time}
-                                            </span>
-                                            <span className="flex items-center gap-1.5">
-                                                <span className="text-primary">📍</span> {event.location || 'Main Sanctuary'}
-                                            </span>
-                                        </div>
+            {/* MAIN CONTENT AREA */}
+            <section className="py-12 md:py-20 px-6">
+                <div className="max-w-6xl mx-auto">
 
-                                        <p className="text-slate-600 mb-6 leading-relaxed text-base">
-                                            {event.description}
-                                        </p>
-
-                                        <div className="flex flex-wrap gap-3 mt-auto">
-                                            {event.registration_required ? (
-                                                <Button to={`/events/${event.id}/register`} variant="primary" size="small">
-                                                    Register Now
-                                                </Button>
-                                            ) : (
-                                                <Button to="/contact" variant="outline" size="small" className="text-secondary-dark hover:text-primary">
-                                                    Contact for Details
-                                                </Button>
-                                            )}
-                                        </div>
+                    {viewMode === 'calendar' && (
+                        <div className="animate-fade-in-up">
+                            {/* Simple Calendar View Implementation */}
+                            <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                                <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                                    <h2 className="text-2xl font-bold text-secondary-dark">
+                                        {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
+                                    </h2>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => changeMonth(-1)} className="p-2 hover:bg-white rounded-lg transition-colors text-slate-500 hover:shadow-sm">← Prev</button>
+                                        <button onClick={() => changeMonth(1)} className="p-2 hover:bg-white rounded-lg transition-colors text-slate-500 hover:shadow-sm">Next →</button>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-gray-100">
-                            <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <span className="text-3xl">📅</span>
+                                <div className="grid grid-cols-7 text-center py-4 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+                                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                                </div>
+                                <div className="grid grid-cols-7 min-h-[500px]">
+                                    {calendarDays.map((day, idx) => {
+                                        const dayEvents = eventsOnDay(day);
+                                        const isToday = day && day.toDateString() === new Date().toDateString();
+
+                                        return (
+                                            <div
+                                                key={idx}
+                                                className={`min-h-[120px] p-2 border-b border-r border-slate-50 hover:bg-blue-50/30 transition-colors relative group ${!day ? 'bg-slate-50/50' : ''}`}
+                                            >
+                                                {day && (
+                                                    <>
+                                                        <span className={`text-sm font-semibold inline-block w-8 h-8 rounded-full flex items-center justify-center mb-1 ${isToday ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'text-slate-700'}`}>
+                                                            {day.getDate()}
+                                                        </span>
+                                                        <div className="space-y-1">
+                                                            {dayEvents.map(ev => (
+                                                                <Link
+                                                                    to={ev.registration_required ? `/events/${ev.id}/register` : '/contact'}
+                                                                    key={ev.id}
+                                                                    className="block text-[10px] bg-white border border-blue-100 text-secondary-dark px-2 py-1.5 rounded-md shadow-sm hover:shadow-md hover:border-primary/30 transition-all truncate font-medium relative overflow-hidden"
+                                                                >
+                                                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+                                                                    <span className="pl-1">{ev.event_name}</span>
+                                                                </Link>
+                                                            ))}
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2">No Upcoming Events</h3>
-                            <p className="text-gray-500 mb-8 max-w-md mx-auto">
-                                We don't have any events scheduled right now. Please check back later or join us for our regular Sunday services.
-                            </p>
-                            <Button to="/contact" variant="primary">
-                                Contact Us
-                            </Button>
+                        </div>
+                    )}
+
+                    {viewMode === 'list' && (
+                        <div className="grid grid-cols-1 gap-8">
+                            {loading ? (
+                                <div className="flex justify-center py-20">
+                                    <div className="animate-spin text-primary text-4xl">●</div>
+                                </div>
+                            ) : events.length > 0 ? (
+                                events.map((event, index) => (
+                                    <motion.div
+                                        key={event.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.1 }}
+                                        className="group relative bg-white rounded-3xl p-0 shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl hover:translate-y-[-4px] transition-all duration-300"
+                                    >
+                                        <div className="flex flex-col md:flex-row h-full">
+                                            {/* Date Column */}
+                                            <div className="bg-slate-50/50 p-8 flex flex-col items-center justify-center min-w-[150px] border-b md:border-b-0 md:border-r border-slate-100 group-hover:bg-blue-50/30 transition-colors">
+                                                <span className="text-secondary-dark font-black text-5xl tracking-tighter mb-1">{formatDate(event.start_date).day}</span>
+                                                <span className="text-primary font-bold uppercase tracking-widest text-xs">{formatDate(event.start_date).month}</span>
+                                                <span className="text-slate-400 font-medium text-xs mt-2">{new Date(event.start_date).getFullYear()}</span>
+                                            </div>
+
+                                            {/* Content Column */}
+                                            <div className="flex-1 p-8 flex flex-col justify-center relative">
+                                                {/* Decorative background blob */}
+                                                <div className="absolute -right-20 -top-20 w-64 h-64 bg-slate-50 rounded-full blur-3xl group-hover:bg-blue-50 transition-colors duration-500"></div>
+
+                                                <div className="relative z-10">
+                                                    <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
+                                                        <h3 className="text-2xl font-bold text-secondary-dark group-hover:text-primary transition-colors duration-300">
+                                                            {event.event_name}
+                                                        </h3>
+                                                        <div className="flex gap-2">
+                                                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${event.registration_required ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>
+                                                                {event.registration_required ? 'Registration Required' : 'Open to All'}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex flex-wrap gap-6 mb-6 text-sm text-slate-500 font-medium">
+                                                        <span className="flex items-center gap-2">
+                                                            <FiClock className="text-primary" />
+                                                            {formatDate(event.start_date).full} • {formatDate(event.start_date).time}
+                                                        </span>
+                                                        <span className="flex items-center gap-2">
+                                                            <FiMapPin className="text-primary" />
+                                                            {event.location || 'Main Sanctuary'}
+                                                        </span>
+                                                    </div>
+
+                                                    <p className="text-slate-600 mb-8 max-w-2xl leading-relaxed">
+                                                        {event.description}
+                                                    </p>
+
+                                                    <div className="flex items-center gap-4">
+                                                        {event.registration_required ? (
+                                                            <Button to={`/events/${event.id}/register`} variant="primary" className="shadow-lg shadow-primary/20 hover:shadow-primary/40">
+                                                                Reserve Your Place <FiArrowRight className="ml-2" />
+                                                            </Button>
+                                                        ) : (
+                                                            <Button to="/contact" variant="outline" className="border-slate-200 hover:border-primary hover:text-primary">
+                                                                Contact Us <FiArrowRight className="ml-2" />
+                                                            </Button>
+                                                        )}
+
+                                                        {event.cost > 0 && (
+                                                            <span className="text-slate-800 font-bold ml-4">
+                                                                ${event.cost} <span className="text-slate-400 font-normal text-xs">/ person</span>
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))
+                            ) : (
+                                <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+                                    <div className="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <FiCalendar className="text-3xl text-slate-300" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-slate-900 mb-2">No Upcoming Events</h3>
+                                    <p className="text-slate-500 mb-6">Unfolding grace. Check back soon for new gatherings.</p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
