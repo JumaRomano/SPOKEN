@@ -243,29 +243,44 @@ const EventDetail = () => {
 
                     {activeTab === 'volunteers' && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {volunteers.map(vol => (
-                                <div key={vol.id} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-start gap-4">
-                                    <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center text-purple-600 font-bold text-lg">
-                                        {vol.first_name[0]}
+                            {volunteers.map(vol => {
+                                // Get initials from member_name
+                                const getInitials = () => {
+                                    if (vol.member_name) {
+                                        const parts = vol.member_name.trim().split(' ');
+                                        if (parts.length >= 2) {
+                                            return parts[0][0] + parts[parts.length - 1][0];
+                                        }
+                                        return parts[0][0] + (parts[0][1] || '');
+                                    }
+                                    return vol.email ? vol.email.substring(0, 2).toUpperCase() : '??';
+                                };
+
+                                return (
+                                    <div key={vol.id} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-start gap-4">
+                                        <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center text-purple-600 font-bold text-lg">
+                                            {getInitials()}
+                                        </div>
+                                        <div className="flex-1">
+                                            <span className="text-xs font-bold text-purple-600 uppercase tracking-wider bg-purple-50 px-2 py-0.5 rounded-md mb-1 inline-block">
+                                                {vol.role_name || 'Volunteer'}
+                                            </span>
+                                            <h3 className="font-bold text-slate-800 text-lg">{vol.member_name || 'Unknown'}</h3>
+                                            <p className="text-slate-500 text-sm">{vol.email || 'No email'}</p>
+                                            {vol.phone && <p className="text-slate-500 text-sm">{vol.phone}</p>}
+                                            {vol.notes && (
+                                                <div className="mt-3 p-3 bg-slate-50 rounded-lg text-xs text-slate-600 italic">
+                                                    "{vol.notes}"
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div>
-                                        <span className="text-xs font-bold text-purple-600 uppercase tracking-wider bg-purple-50 px-2 py-0.5 rounded-md mb-1 inline-block">
-                                            {vol.role_name}
-                                        </span>
-                                        <h3 className="font-bold text-slate-800 text-lg">{vol.member_name}</h3>
-                                        <p className="text-slate-500 text-sm">{vol.email}</p>
-                                        <p className="text-slate-500 text-sm">{vol.phone}</p>
-                                        {vol.notes && (
-                                            <div className="mt-3 p-3 bg-slate-50 rounded-lg text-xs text-slate-600 italic">
-                                                "{vol.notes}"
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                             {volunteers.length === 0 && (
                                 <div className="col-span-full text-center py-20 text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">
-                                    No volunteers have signed up yet.
+                                    <FiUsers className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                                    <p className="font-medium">No volunteers have signed up yet.</p>
                                 </div>
                             )}
                         </div>
@@ -273,30 +288,46 @@ const EventDetail = () => {
 
                     {activeTab === 'registrations' && (
                         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                            <table className="w-full text-left">
-                                <thead className="bg-slate-50 text-slate-500 font-bold text-xs uppercase tracking-wider">
-                                    <tr>
-                                        <th className="p-4 border-b">Member</th>
-                                        <th className="p-4 border-b">Date</th>
-                                        <th className="p-4 border-b">Status</th>
-                                        <th className="p-4 border-b text-right">Payment</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
-                                    {registrations.map(reg => (
-                                        <tr key={reg.id} className="hover:bg-slate-50/50">
-                                            <td className="p-4 font-medium text-slate-700">{reg.member_name}</td>
-                                            <td className="p-4 text-slate-500 text-sm">{new Date(reg.registration_date).toLocaleDateString()}</td>
-                                            <td className="p-4">
-                                                <span className={`px-2 py-1 rounded-full text-xs font-bold ${reg.attendance_status === 'attended' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
-                                                    {reg.attendance_status}
-                                                </span>
-                                            </td>
-                                            <td className="p-4 text-right font-mono text-slate-600">${reg.amount_paid}</td>
+                            {registrations.length > 0 ? (
+                                <table className="w-full text-left">
+                                    <thead className="bg-slate-50 text-slate-500 font-bold text-xs uppercase tracking-wider">
+                                        <tr>
+                                            <th className="p-4 border-b">Member</th>
+                                            <th className="p-4 border-b">Date</th>
+                                            <th className="p-4 border-b">Status</th>
+                                            <th className="p-4 border-b text-right">Payment</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {registrations.map(reg => (
+                                            <tr key={reg.id} className="hover:bg-slate-50/50">
+                                                <td className="p-4 font-medium text-slate-700">{reg.member_name || 'Unknown'}</td>
+                                                <td className="p-4 text-slate-500 text-sm">
+                                                    {reg.registration_date ? new Date(reg.registration_date).toLocaleDateString() : 'N/A'}
+                                                </td>
+                                                <td className="p-4">
+                                                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${reg.attendance_status === 'attended'
+                                                            ? 'bg-green-100 text-green-700'
+                                                            : reg.attendance_status === 'registered'
+                                                                ? 'bg-blue-100 text-blue-700'
+                                                                : 'bg-slate-100 text-slate-500'
+                                                        }`}>
+                                                        {reg.attendance_status || 'pending'}
+                                                    </span>
+                                                </td>
+                                                <td className="p-4 text-right font-semibold text-slate-700">
+                                                    KES {(reg.amount_paid || 0).toLocaleString()}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <div className="text-center py-20 text-slate-400">
+                                    <FiUsers className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                                    <p className="font-medium">No registrations yet.</p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </motion.div>
