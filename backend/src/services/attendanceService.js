@@ -8,7 +8,12 @@ class AttendanceService {
     async getServices(filters = {}) {
         const { limit = 20, offset = 0, serviceType = null, startDate = null, endDate = null, groupId = null } = filters;
 
-        let query = 'SELECT * FROM services WHERE 1=1';
+        let query = `
+            SELECT s.*, 
+            (SELECT COUNT(*)::int FROM attendance_records ar WHERE ar.service_id = s.id AND ar.attendance_status = 'present') as total_attendance
+            FROM services s 
+            WHERE 1=1
+        `;
         const params = [];
         let paramCount = 1;
 
@@ -16,33 +21,30 @@ class AttendanceService {
         // If not provided, we won't filter by group (showing all allowed by RBAC usually, or just public ones)
         // NOTE: Adjusted to allow seeing created services immediately.
         if (groupId && groupId !== 'null' && groupId !== 'undefined') {
-            query += ` AND group_id = $${paramCount}`;
+            query += ` AND s.group_id = $${paramCount}`;
             params.push(groupId);
             paramCount++;
         }
-        // Logic removed: else { query += ' AND group_id IS NULL'; } 
-        // This allows seeing ALL services (church-wide + groups) in the main list unless filtered.
-        // If specific behavior is needed (e.g. only church-wide), the frontend should request groupId=null explicitly if needed, but for now we want everything visible.
 
         if (serviceType) {
-            query += ` AND service_type = $${paramCount}`;
+            query += ` AND s.service_type = $${paramCount}`;
             params.push(serviceType);
             paramCount++;
         }
 
         if (startDate) {
-            query += ` AND service_date >= $${paramCount}`;
+            query += ` AND s.service_date >= $${paramCount}`;
             params.push(startDate);
             paramCount++;
         }
 
         if (endDate) {
-            query += ` AND service_date <= $${paramCount}`;
+            query += ` AND s.service_date <= $${paramCount}`;
             params.push(endDate);
             paramCount++;
         }
 
-        query += ` ORDER BY service_date DESC, service_time DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
+        query += ` ORDER BY s.service_date DESC, s.service_time DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
         params.push(limit, offset);
 
         const result = await db.query(query, params);
