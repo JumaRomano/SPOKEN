@@ -20,7 +20,7 @@ class AttendanceService {
             paramCount++;
         } else {
             // Default: show only church-wide services
-            query += ` AND (group_id IS NULL OR group_id = '')`;
+            query += ` AND group_id IS NULL`;
         }
 
         if (serviceType) {
