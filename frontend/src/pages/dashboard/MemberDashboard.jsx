@@ -161,18 +161,7 @@ const MemberDashboard = () => {
                 </div>
 
                 <div className="space-y-6">
-                    <div className="bg-secondary-dark p-6 rounded-2xl text-white shadow-lg relative overflow-hidden group">
-                        <div className="relative z-10">
-                            <h3 className="font-bold text-lg mb-2">My Profile</h3>
-                            <p className="text-slate-300 text-sm mb-6 leading-relaxed">Keep your contact information and preferences up to date.</p>
-                            <Link to="/profile" className="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-glow">
-                                Edit Profile <FiArrowRight />
-                            </Link>
-                        </div>
-                        {/* Abstract Decoration */}
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full transition-transform group-hover:scale-110"></div>
-                        <div className="absolute bottom-0 right-0 w-24 h-24 bg-primary/20 rounded-tl-full blur-xl"></div>
-                    </div>
+                    {/* Profile Card Removed as per request */}
                 </div>
             </div>
         </div>

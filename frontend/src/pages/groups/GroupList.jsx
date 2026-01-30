@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import groupService from '../../services/groupService';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -8,6 +9,7 @@ import './GroupList.css';
 
 const GroupList = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -16,7 +18,6 @@ const GroupList = () => {
     useEffect(() => {
         fetchGroups();
     }, []);
-
 
     const fetchGroups = async () => {
         try {
@@ -49,6 +50,8 @@ const GroupList = () => {
         department: { icon: '🏢', color: '#9f7aea' },
     };
 
+    const canCreateGroup = ['admin', 'sysadmin', 'leader'].includes(user?.role);
+
     return (
         <div className="group-list-container">
             <CreateGroupModal
@@ -59,7 +62,7 @@ const GroupList = () => {
             <Card
                 title="Groups & Ministries"
                 subtitle={`${groups.length} active groups`}
-                actions={<Button variant="primary" onClick={() => setIsCreateModalOpen(true)}>Create Group</Button>}
+                actions={canCreateGroup && <Button variant="primary" onClick={() => setIsCreateModalOpen(true)}>Create Group</Button>}
             >
                 {loading ? (
                     <div className="loading-state">Loading groups...</div>
