@@ -12,16 +12,17 @@ class AttendanceService {
         const params = [];
         let paramCount = 1;
 
-        // Filter by group ONLY if groupId is explicitly provided as a non-empty string
-        // If not provided, show only church-wide services (group_id IS NULL)
+        // Filter by group ONLY if groupId is explicitly provided as a non-empty string.
+        // If not provided, we won't filter by group (showing all allowed by RBAC usually, or just public ones)
+        // NOTE: Adjusted to allow seeing created services immediately.
         if (groupId && groupId !== 'null' && groupId !== 'undefined') {
             query += ` AND group_id = $${paramCount}`;
             params.push(groupId);
             paramCount++;
-        } else {
-            // Default: show only church-wide services
-            query += ` AND group_id IS NULL`;
         }
+        // Logic removed: else { query += ' AND group_id IS NULL'; } 
+        // This allows seeing ALL services (church-wide + groups) in the main list unless filtered.
+        // If specific behavior is needed (e.g. only church-wide), the frontend should request groupId=null explicitly if needed, but for now we want everything visible.
 
         if (serviceType) {
             query += ` AND service_type = $${paramCount}`;

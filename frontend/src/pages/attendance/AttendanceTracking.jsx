@@ -36,7 +36,7 @@ const AttendanceTracking = () => {
         try {
             await attendanceService.createService(serviceData);
             setMessage({ type: 'success', text: 'Service created successfully!' });
-            fetchServices();
+            await fetchServices(); // Ensure this is awaited
             setShowCreateModal(false);
         } catch (err) {
             console.error(err);

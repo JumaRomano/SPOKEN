@@ -38,16 +38,26 @@ const MinutesManager = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (editingMinute) {
-                await minutesService.update(editingMinute.id, formData);
+            const payload = { ...formData };
+
+            // Ensure date is properly formatted
+            if (!payload.meetingDate) {
+                payload.meetingDate = new Date().toISOString().split('T')[0];
             } else {
-                await minutesService.create(formData);
+                // Should already be YYYY-MM-DD from input type="date", but safe check
+                payload.meetingDate = new Date(payload.meetingDate).toISOString().split('T')[0];
+            }
+
+            if (editingMinute) {
+                await minutesService.update(editingMinute.id, payload);
+            } else {
+                await minutesService.create(payload);
             }
             fetchMinutes();
             handleCloseModal();
         } catch (err) {
             console.error('Failed to save minute', err);
-            alert('Failed to save. Please try again.');
+            alert('Failed to save. ' + (err.response?.data?.error || 'Please try again.'));
         }
     };
 
