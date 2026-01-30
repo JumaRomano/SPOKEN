@@ -193,37 +193,72 @@ const EventRegistration = () => {
                             >
                                 <button onClick={() => setStep(1)} className="text-slate-400 hover:text-slate-600 mb-6 flex items-center gap-2 text-sm font-bold"><FiArrowLeft /> Back</button>
                                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">Step 2 of 3</span>
-                                <h1 className="text-3xl font-bold text-slate-900 mb-2">Serve With Us</h1>
-                                <p className="text-slate-500 mb-8">Volunteering is a great way to connect. (Optional)</p>
+                                <h1 className="text-3xl font-bold text-slate-900 mb-2">Volunteer Opportunity</h1>
+                                <p className="text-slate-500 mb-6">Would you like to serve at this event?</p>
 
-                                <div className="space-y-3 mb-8">
-                                    <div
+                                {/* Just Attending Option - Compact */}
+                                <div className="mb-6 pb-6 border-b border-slate-200">
+                                    <button
                                         onClick={() => setSelectedRole(null)}
-                                        className={`p-5 rounded-xl border cursor-pointer transition-all ${selectedRole === null ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600' : 'border-slate-200 hover:border-slate-400'}`}
+                                        className={`w-full text-left px-4 py-3 rounded-lg border transition-all ${selectedRole === null ? 'border-indigo-600 bg-indigo-50 text-indigo-900' : 'border-slate-200 hover:border-slate-300 bg-white'}`}
                                     >
-                                        <div className="flex justify-between items-center">
-                                            <h3 className="font-bold text-slate-900">Just Attending</h3>
-                                            {selectedRole === null && <FiCheck className="text-indigo-600 text-xl" />}
-                                        </div>
-                                    </div>
-
-                                    {roles.map(role => (
-                                        <div
-                                            key={role.id}
-                                            onClick={() => role.slots_filled < role.slots_needed && setSelectedRole(role.id)}
-                                            className={`p-5 rounded-xl border cursor-pointer transition-all ${selectedRole === role.id ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600' : (role.slots_filled >= role.slots_needed ? 'opacity-50 border-slate-100 cursor-not-allowed hidden' : 'border-slate-200 hover:border-slate-400')}`}
-                                        >
-                                            <div className="flex justify-between items-center">
-                                                <h3 className="font-bold text-slate-900">{role.role_name}</h3>
-                                                {selectedRole === role.id && <FiCheck className="text-indigo-600 text-xl" />}
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedRole === null ? 'border-indigo-600 bg-indigo-600' : 'border-slate-300'}`}>
+                                                    {selectedRole === null && <FiCheck className="text-white text-xs" />}
+                                                </div>
+                                                <span className="font-semibold text-sm">Just Attending</span>
                                             </div>
-                                            <p className="text-sm text-slate-500 mt-1">{role.description}</p>
-                                            <span className="inline-block mt-2 text-[10px] font-bold bg-slate-100 px-2 py-0.5 rounded text-slate-500">
-                                                {role.slots_needed - (role.slots_filled || 0)} spots left
-                                            </span>
+                                            <span className="text-xs text-slate-400">No volunteer role</span>
                                         </div>
-                                    ))}
+                                    </button>
                                 </div>
+
+                                {/* Volunteer Roles Section */}
+                                {roles.length > 0 && (
+                                    <>
+                                        <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4">Available Volunteer Roles</h3>
+                                        <div className="space-y-3 mb-8">
+                                            {roles.map(role => (
+                                                <div
+                                                    key={role.id}
+                                                    onClick={() => role.slots_filled < role.slots_needed && setSelectedRole(role.id)}
+                                                    className={`p-4 rounded-xl border cursor-pointer transition-all ${selectedRole === role.id
+                                                            ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600'
+                                                            : (role.slots_filled >= role.slots_needed
+                                                                ? 'opacity-40 border-slate-100 cursor-not-allowed'
+                                                                : 'border-slate-200 hover:border-slate-400 bg-white')
+                                                        }`}
+                                                >
+                                                    <div className="flex justify-between items-start">
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center gap-2 mb-1">
+                                                                <h4 className="font-bold text-slate-900">{role.role_name}</h4>
+                                                                {selectedRole === role.id && <FiCheck className="text-indigo-600" />}
+                                                            </div>
+                                                            <p className="text-xs text-slate-500 mb-2">{role.description}</p>
+                                                            <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded ${role.slots_filled >= role.slots_needed
+                                                                    ? 'bg-red-100 text-red-700'
+                                                                    : 'bg-green-100 text-green-700'
+                                                                }`}>
+                                                                {role.slots_filled >= role.slots_needed
+                                                                    ? 'Full'
+                                                                    : `${role.slots_needed - (role.slots_filled || 0)} spot${role.slots_needed - (role.slots_filled || 0) !== 1 ? 's' : ''} left`
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+
+                                {roles.length === 0 && selectedRole === null && (
+                                    <div className="text-center py-6 text-slate-400 text-sm">
+                                        <p>No volunteer roles available for this event.</p>
+                                    </div>
+                                )}
 
                                 {error && <div className="text-red-500 mb-6 text-sm bg-red-50 p-3 rounded-lg border border-red-100">{error}</div>}
 
