@@ -128,8 +128,25 @@ async function runMigrations() {
             ['secretary', 'minutes', 'update'],
             ['secretary', 'minutes', 'delete'],
 
+
             // Attendance delete permissions for Secretary
             ['secretary', 'attendance', 'delete'],
+
+            // Finance permissions for Secretary
+            ['secretary', 'finance', 'read'],
+            ['secretary', 'finance', 'create'],
+            ['secretary', 'finance', 'update'],
+
+            // Finance role permissions
+            ['finance', 'finance', 'create'],
+            ['finance', 'finance', 'read'],
+            ['finance', 'finance', 'update'],
+            ['finance', 'finance', 'delete'],
+            ['finance', 'contributions', 'create'],
+            ['finance', 'contributions', 'read'],
+            ['finance', 'contributions', 'update'],
+            ['finance', 'members', 'read'],
+            ['finance', 'events', 'read'],
 
             // Critical wildcards
             ['admin', '*', '*'],
