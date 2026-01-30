@@ -80,6 +80,13 @@ async function runMigrations() {
         // 4. Nullability fixes
         await db.query('ALTER TABLE group_attendance ALTER COLUMN member_id DROP NOT NULL');
 
+        // Add group_id to funds table if not exists
+        if (!(await checkColumn('funds', 'group_id'))) {
+            await db.query('ALTER TABLE funds ADD COLUMN group_id UUID REFERENCES groups(id) ON DELETE CASCADE');
+            await db.query('CREATE INDEX IF NOT EXISTS idx_funds_group_id ON funds(group_id)');
+            logger.info('Added group_id column to funds table');
+        }
+
         // Create meeting_minutes table if not exists
         await db.query(`
             CREATE TABLE IF NOT EXISTS meeting_minutes (
