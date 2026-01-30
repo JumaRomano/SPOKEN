@@ -50,6 +50,17 @@ async function runMigrations() {
             await db.query('ALTER TABLE volunteer_signups ADD COLUMN notes TEXT');
         }
 
+        // Fix event_registrations to reference users instead of members for public registration
+        await db.query(`
+            -- Drop old constraint
+            ALTER TABLE event_registrations DROP CONSTRAINT IF EXISTS event_registrations_member_id_fkey;
+            
+            -- Add new constraint referencing users table
+            ALTER TABLE event_registrations ADD CONSTRAINT event_registrations_member_id_fkey 
+                FOREIGN KEY (member_id) REFERENCES users(id) ON DELETE CASCADE;
+        `);
+        logger.info('Fixed event_registrations foreign key to reference users table');
+
         // Services Table Fixes
         if (!(await checkColumn('services', 'description'))) {
             await db.query('ALTER TABLE services ADD COLUMN description TEXT');
