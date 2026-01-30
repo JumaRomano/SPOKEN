@@ -75,14 +75,16 @@ const Events = () => {
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50 font-sans text-slate-800">
-            {/* HERO SECTION - Clean Gradient */}
-            <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-secondary-dark via-indigo-900 to-slate-900">
-                {/* Decorative Elements */}
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-                    <div className="absolute top-40 right-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-                    <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+            {/* HERO SECTION */}
+            <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden bg-secondary-dark text-white">
+                {/* Abstract Professional Background */}
+                <div className="absolute inset-0 z-0 opacity-20">
+                    <div className="absolute top-[-50%] left-[-20%] w-[80%] h-[80%] rounded-full bg-primary-dark blur-[120px]"></div>
+                    <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-primary blur-[100px]"></div>
                 </div>
+
+                {/* Texture Overlay */}
+                <div className="absolute inset-0 z-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}></div>
 
                 <div className="relative z-10 text-center px-6 max-w-4xl mx-auto mt-20">
                     <motion.div
