@@ -117,11 +117,11 @@ const GroupDetail = () => {
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
                                                 {member.first_name} {member.last_name}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {member.role}
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">
+                                                {member.group_role || member.role}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {member.joined_date ? new Date(member.joined_date).toLocaleDateString() : 'N/A'}
+                                                {(member.joined_at || member.joined_date) ? new Date(member.joined_at || member.joined_date).toLocaleDateString() : 'N/A'}
                                             </td>
                                         </tr>
                                     ))}
