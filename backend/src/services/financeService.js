@@ -4,16 +4,36 @@ const logger = require('../utils/logger');
 class FinanceService {
     /**
      * Get all funds
+     * @param {Object} filters - Optional filters
      */
-    async getFunds() {
-        const result = await db.query(
-            `SELECT f.*,
-              COALESCE((SELECT SUM(amount) FROM contributions WHERE fund_id = f.id), 0) as total_received
-       FROM funds f
-       WHERE f.is_active = true
-       ORDER BY f.fund_name`
-        );
+    async getFunds(filters = {}) {
+        let query = `
+            SELECT f.*,
+                   g.name as group_name,
+                   COALESCE((SELECT SUM(amount) FROM contributions WHERE fund_id = f.id), 0) as total_received
+            FROM funds f
+            LEFT JOIN groups g ON f.group_id = g.id
+            WHERE f.is_active = true
+        `;
 
+        const params = [];
+        let paramCount = 1;
+
+        if (filters.groupId) {
+            // Show global funds (group_id IS NULL) AND funds for the specific group
+            query += ` AND (f.group_id IS NULL OR f.group_id = $${paramCount})`;
+            params.push(filters.groupId);
+            paramCount++;
+        } else if (filters.showAll !== true) {
+            // By default, maybe only show global funds if no group specified? 
+            // Or if showing all (admin), show everything.
+            // If filters.groupId is explicitly null or undefined and not showAll, maybe just show global?
+            // tailored for controller usage.
+        }
+
+        query += ` ORDER BY f.group_id NULLS FIRST, f.fund_name`;
+
+        const result = await db.query(query, params);
         return result.rows;
     }
 
@@ -27,15 +47,16 @@ class FinanceService {
         const targetAmount = fundData.targetAmount || fundData.target_amount || null;
         const description = fundData.description;
         const isActive = fundData.isActive !== undefined ? fundData.isActive : (fundData.is_active !== undefined ? fundData.is_active : true);
+        const groupId = fundData.groupId || fundData.group_id || null;
 
         const result = await db.query(
-            `INSERT INTO funds (fund_name, description, fund_type, target_amount, is_active)
-       VALUES ($1, $2, $3, $4, $5)
+            `INSERT INTO funds (fund_name, description, fund_type, target_amount, is_active, group_id)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-            [fundName, description, fundType, targetAmount, isActive]
+            [fundName, description, fundType, targetAmount, isActive, groupId]
         );
 
-        logger.info('Fund created:', { fundId: result.rows[0].id, fundName });
+        logger.info('Fund created:', { fundId: result.rows[0].id, fundName, groupId });
         return result.rows[0];
     }
 
@@ -48,14 +69,31 @@ class FinanceService {
         const targetAmount = fundData.targetAmount || fundData.target_amount || null;
         const description = fundData.description;
         const isActive = fundData.isActive !== undefined ? fundData.isActive : (fundData.is_active !== undefined ? fundData.is_active : true);
+        // group_id usually shouldn't change, but allowing update if necessary
+        const groupId = fundData.groupId || fundData.group_id;
 
-        const result = await db.query(
-            `UPDATE funds 
-       SET fund_name = $1, description = $2, fund_type = $3, target_amount = $4, is_active = $5, updated_at = CURRENT_TIMESTAMP
-       WHERE id = $6
-       RETURNING *`,
-            [fundName, description, fundType, targetAmount, isActive, id]
-        );
+        // Dynamic update query to handle optional groupId update
+        let query = `UPDATE funds SET 
+            fund_name = $1, 
+            description = $2, 
+            fund_type = $3, 
+            target_amount = $4, 
+            is_active = $5, 
+            updated_at = CURRENT_TIMESTAMP`;
+
+        const params = [fundName, description, fundType, targetAmount, isActive];
+        let paramCount = 6;
+
+        if (groupId !== undefined) {
+            query += `, group_id = $${paramCount}`;
+            params.push(groupId);
+            paramCount++;
+        }
+
+        query += ` WHERE id = $${paramCount} RETURNING *`;
+        params.push(id);
+
+        const result = await db.query(query, params);
 
         if (result.rows.length === 0) {
             throw new Error('Fund not found');
@@ -447,6 +485,21 @@ class FinanceService {
             byFund: fundResult.rows,
             byPaymentMethod: methodResult.rows,
         };
+    }
+
+    /**
+     * Get authorized group ID for a user
+     */
+    async getAuthorizedGroupId(userId) {
+        const result = await db.query(`
+            SELECT gm.group_id 
+            FROM group_members gm 
+            JOIN members m ON gm.member_id = m.id 
+            WHERE m.user_id = $1
+            LIMIT 1
+        `, [userId]);
+
+        return result.rows.length > 0 ? result.rows[0].group_id : null;
     }
 }
 

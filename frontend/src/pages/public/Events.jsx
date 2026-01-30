@@ -255,15 +255,9 @@ const Events = () => {
                                                     </p>
 
                                                     <div className="flex items-center gap-4">
-                                                        {event.registration_required ? (
-                                                            <Button to={`/events/${event.id}/register`} variant="primary" className="shadow-lg shadow-primary/20 hover:shadow-primary/40">
-                                                                Reserve Your Place <FiArrowRight className="ml-2" />
-                                                            </Button>
-                                                        ) : (
-                                                            <Button to="/contact" variant="outline" className="border-slate-200 hover:border-primary hover:text-primary">
-                                                                Contact Us <FiArrowRight className="ml-2" />
-                                                            </Button>
-                                                        )}
+                                                        <Button to={`/events/${event.id}/register`} variant="primary" className="shadow-lg shadow-primary/20 hover:shadow-primary/40">
+                                                            {event.registration_required ? 'Reserve Your Place' : 'View Details & RSVP'} <FiArrowRight className="ml-2" />
+                                                        </Button>
 
                                                         {event.cost > 0 && (
                                                             <span className="text-slate-800 font-bold ml-4">

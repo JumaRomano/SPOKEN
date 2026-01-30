@@ -12,6 +12,7 @@ import GroupDetail from './pages/groups/GroupDetail';
 import EventDetail from './pages/events/EventDetail';
 import SermonManager from './pages/sermons/SermonManager';
 import MemberProfile from './pages/members/MemberProfile';
+import MinutesManager from './pages/dashboard/MinutesManager';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleProtectedRoute from './components/RoleProtectedRoute';
 import MainLayout from './components/layout/MainLayout';
@@ -24,7 +25,7 @@ import Events from './pages/public/Events';
 import EventRegistration from './pages/public/EventRegistration';
 // import Giving from './pages/public/Giving';
 import Contact from './pages/public/Contact';
-import Communication from './pages/communication/Communication';
+// import Communication from './pages/communication/Communication';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import './App.css';
 
@@ -73,7 +74,8 @@ function App() {
                       <Route path="/groups/:id" element={<GroupDetail />} />
                       <Route path="/events-management/:id" element={<EventDetail />} />
                       <Route path="/attendance" element={<AttendanceTracking />} />
-                      <Route path="/communication" element={<Communication />} />
+                      <Route path="/minutes" element={<MinutesManager />} />
+                      {/* <Route path="/communication" element={<Communication />} /> */}
                       <Route path="*" element={<Navigate to="/dashboard" replace />} />
                     </Routes>
                   </MainLayout>

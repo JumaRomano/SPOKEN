@@ -117,8 +117,17 @@ const EventRegistration = () => {
         setSubmitting(true);
         setError(null);
         try {
-            // 1. Register for event
-            await eventService.register(id, { memberId: user.memberId || user.id });
+            // 1. Register for event (ignoring if already registered)
+            try {
+                await eventService.register(id, { memberId: user.memberId || user.id });
+            } catch (regErr) {
+                if (regErr.response?.status === 409) {
+                    // Already registered - this is fine, continue to volunteer signup
+                    console.log('User already registered for event, proceeding to volunteer signup if applicable.');
+                } else {
+                    throw regErr; // Throw other errors
+                }
+            }
 
             // 2. Register for volunteer role if selected
             if (selectedRole) {
@@ -128,12 +137,7 @@ const EventRegistration = () => {
             setStep(3); // Success!
         } catch (err) {
             console.error(err);
-            if (err.response?.status === 409) {
-                // Already registered, just move to success to show ticket
-                setStep(3);
-            } else {
-                setError(err.response?.data?.message || 'Registration failed.');
-            }
+            setError(err.response?.data?.message || 'Registration failed. Please try again.');
         } finally {
             setSubmitting(false);
         }

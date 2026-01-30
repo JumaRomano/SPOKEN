@@ -15,7 +15,8 @@ const attendanceRoutes = require('./routes/attendance.routes');
 const eventRoutes = require('./routes/event.routes');
 const financeRoutes = require('./routes/finance.routes');
 const reportingRoutes = require('./routes/reporting.routes');
-const communicationRoutes = require('./routes/communication.routes');
+// app.use('/api/communication', communicationRoutes);
+
 const sermonRoutes = require('./routes/sermon.routes');
 
 // Initialize Express app
@@ -103,8 +104,10 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/reports', reportingRoutes);
-app.use('/api/communication', communicationRoutes);
+// app.use('/api/communication', communicationRoutes);
 app.use('/api/sermons', sermonRoutes);
+const minutesRoutes = require('./routes/minutes.routes');
+app.use('/api/minutes', minutesRoutes);
 
 // 404 handler
 app.use(notFound);

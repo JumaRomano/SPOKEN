@@ -37,10 +37,10 @@ const SecretaryDashboard = () => {
                     <p className="text-gray-500 mt-1">Administration, Records, and Communications</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">
+                    <Link to="/minutes" className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">
                         <FiFileText />
                         Minutes
-                    </button>
+                    </Link>
                     <Link to="/members/create" className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
                         <FiUserPlus />
                         Add Member
@@ -90,24 +90,24 @@ const SecretaryDashboard = () => {
                             <h3 className="text-3xl font-bold text-gray-900">{stats.upcomingEvents}</h3>
                         </div>
                     </div>
-                    <Link to="/events" className="text-orange-600 text-sm font-medium hover:underline flex items-center gap-1">
-                        View Calendar <FiArrowRight />
+                    <Link to="/events-management" className="text-orange-600 text-sm font-medium hover:underline flex items-center gap-1">
+                        Manage Calendar <FiArrowRight />
                     </Link>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Communications Center */}
+                {/* Communications Center - Placeholder or Remove? User asked to remove 'communication feature'. Keeping placeholder just in case, but removing link */}
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                     <h3 className="font-bold text-lg text-gray-900 mb-6 flex items-center gap-2">
                         <FiMessageSquare className="text-purple-600" />
-                        Communications
+                        Quick Notes
                     </h3>
                     <div className="text-center py-12 text-gray-400">
                         <div className="p-4 bg-gray-50 rounded-full w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                            <FiMessageSquare className="w-6 h-6 text-gray-300" />
+                            <FiFileText className="w-6 h-6 text-gray-300" />
                         </div>
-                        <p className="text-sm">No messages or bulletins yet</p>
+                        <p className="text-sm">Use "Minutes" to record notes.</p>
                     </div>
                 </div>
 
@@ -127,18 +127,18 @@ const SecretaryDashboard = () => {
                             <p className="text-indigo-100 text-sm">Service & Groups</p>
                         </div>
                     </Link>
-                    <Link to="/events" className="bg-orange-600 text-white p-6 rounded-2xl shadow-lg hover:bg-orange-700 transition-colors flex flex-col justify-between group">
+                    <Link to="/events-management" className="bg-orange-600 text-white p-6 rounded-2xl shadow-lg hover:bg-orange-700 transition-colors flex flex-col justify-between group">
                         <FiCalendar className="w-8 h-8 opacity-80 group-hover:scale-110 transition-transform" />
                         <div>
                             <h3 className="font-bold text-lg">Church Calendar</h3>
                             <p className="text-orange-100 text-sm">Schedule events</p>
                         </div>
                     </Link>
-                    <Link to="/communication" className="bg-purple-600 text-white p-6 rounded-2xl shadow-lg hover:bg-purple-700 transition-colors flex flex-col justify-between group text-left">
-                        <FiMessageSquare className="w-8 h-8 opacity-80 group-hover:scale-110 transition-transform" />
+                    <Link to="/minutes" className="bg-green-600 text-white p-6 rounded-2xl shadow-lg hover:bg-green-700 transition-colors flex flex-col justify-between group">
+                        <FiFileText className="w-8 h-8 opacity-80 group-hover:scale-110 transition-transform" />
                         <div>
-                            <h3 className="font-bold text-lg">Send Notice</h3>
-                            <p className="text-purple-100 text-sm">Email / SMS</p>
+                            <h3 className="font-bold text-lg">Meeting Minutes</h3>
+                            <p className="text-green-100 text-sm">Record keeping</p>
                         </div>
                     </Link>
                 </div>

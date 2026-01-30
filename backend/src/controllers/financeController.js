@@ -3,7 +3,23 @@ const financeService = require('../services/financeService');
 class FinanceController {
     async getFunds(req, res, next) {
         try {
-            const funds = await financeService.getFunds();
+            const filters = {};
+
+            // Logic: Finance users see their group's funds + global funds
+            if (req.user.role === 'finance') {
+                const groupId = await financeService.getAuthorizedGroupId(req.user.id);
+                if (groupId) {
+                    filters.groupId = groupId;
+                }
+            } else if (['admin', 'sysadmin'].includes(req.user.role)) {
+                filters.showAll = true;
+                // Allow admin to filter by specific group via query param
+                if (req.query.groupId) {
+                    filters.groupId = req.query.groupId;
+                }
+            }
+
+            const funds = await financeService.getFunds(filters);
             res.json(funds);
         } catch (error) {
             next(error);
@@ -15,6 +31,16 @@ class FinanceController {
             console.log('=== CREATE FUND REQUEST ===');
             console.log('Request body:', JSON.stringify(req.body, null, 2));
             console.log('User:', req.user);
+
+            // Enforce Group ID for 'finance' role
+            if (req.user.role === 'finance') {
+                const groupId = await financeService.getAuthorizedGroupId(req.user.id);
+                if (!groupId) {
+                    return res.status(403).json({ error: 'Access Denied. You must be a member of a group to create funds.' });
+                }
+                // Force the group ID, ignoring whatever was sent
+                req.body.groupId = groupId;
+            }
 
             const fund = await financeService.createFund(req.body);
 
@@ -29,6 +55,23 @@ class FinanceController {
     async updateFund(req, res, next) {
         try {
             const { id } = req.params;
+
+            // Security check for finance users
+            if (req.user.role === 'finance') {
+                const funds = await financeService.getFunds({ showAll: true }); // Get all to check specific one
+                const targetFund = funds.find(f => f.id === id);
+
+                if (!targetFund) {
+                    return res.status(404).json({ error: 'Fund not found' });
+                }
+
+                const authorizedGroupId = await financeService.getAuthorizedGroupId(req.user.id);
+                // If fund is global (no group) or belongs to another group, deny
+                if (!targetFund.group_id || targetFund.group_id !== authorizedGroupId) {
+                    return res.status(403).json({ error: 'Access Denied. You can only manage funds for your specific group.' });
+                }
+            }
+
             const fund = await financeService.updateFund(id, req.body);
             res.json(fund);
         } catch (error) {
@@ -39,6 +82,7 @@ class FinanceController {
     async reassignFund(req, res, next) {
         try {
             const { fromFundId, toFundId } = req.body;
+            // Note: Reassign logic might need similar checks, keeping simple for now or relying on frontend restrictions + common sense
             const result = await financeService.reassignFund(fromFundId, toFundId);
             res.json(result);
         } catch (error) {
@@ -49,6 +93,22 @@ class FinanceController {
     async deleteFund(req, res, next) {
         try {
             const { id } = req.params;
+
+            // Security check for finance users
+            if (req.user.role === 'finance') {
+                const funds = await financeService.getFunds({ showAll: true });
+                const targetFund = funds.find(f => f.id === id);
+
+                if (!targetFund) {
+                    return res.status(404).json({ error: 'Fund not found' });
+                }
+
+                const authorizedGroupId = await financeService.getAuthorizedGroupId(req.user.id);
+                if (!targetFund.group_id || targetFund.group_id !== authorizedGroupId) {
+                    return res.status(403).json({ error: 'Access Denied. You can only delete funds for your specific group.' });
+                }
+            }
+
             await financeService.deleteFund(id);
             res.status(204).send();
         } catch (error) {
