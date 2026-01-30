@@ -87,6 +87,15 @@ async function runMigrations() {
             logger.info('Added group_id column to funds table');
         }
 
+        // Fix funds unique constraint to allow same name for different groups
+        await db.query(`
+            ALTER TABLE funds DROP CONSTRAINT IF EXISTS funds_fund_name_key;
+            ALTER TABLE funds DROP CONSTRAINT IF EXISTS funds_fund_name_group_id_key;
+            ALTER TABLE funds ADD CONSTRAINT funds_fund_name_group_id_key 
+                UNIQUE NULLS NOT DISTINCT (fund_name, group_id);
+        `);
+        logger.info('Updated funds unique constraint to (fund_name, group_id)');
+
         // Create meeting_minutes table if not exists
         await db.query(`
             CREATE TABLE IF NOT EXISTS meeting_minutes (
