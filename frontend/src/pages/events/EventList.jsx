@@ -156,10 +156,17 @@ const EventList = () => {
                         return (
                             <div key={event.id} className="event-card-premium">
                                 <div className="event-banner">
-                                    <img
-                                        src={event.banner_url || "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=1400&auto=format&fit=crop"}
-                                        alt={event.event_name}
-                                    />
+                                    {event.banner_url ? (
+                                        <img
+                                            src={event.banner_url}
+                                            alt={event.event_name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-300">
+                                            <FiCalendar size={48} />
+                                        </div>
+                                    )}
                                     <div className="event-date-overlay">
                                         <span className="overlay-day">{dateInfo.day}</span>
                                         <span className="overlay-month">{dateInfo.month}</span>

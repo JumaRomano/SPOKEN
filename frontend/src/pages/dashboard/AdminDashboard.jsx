@@ -59,7 +59,7 @@ const AdminDashboard = () => {
             icon: <FiCalendar className="w-6 h-6" />,
             color: 'text-orange-600',
             bg: 'bg-orange-50',
-            link: '/events',
+            link: '/events-management',
             trend: 'View calendar'
         },
         {
@@ -76,7 +76,7 @@ const AdminDashboard = () => {
     const quickActions = [
         { to: '/members', label: 'Add Member', icon: <FiPlus />, color: 'bg-blue-600 hover:bg-blue-700' },
         { to: '/finance', label: 'Record Contribution', icon: <FiDollarSign />, color: 'bg-green-600 hover:bg-green-700' },
-        { to: '/events', label: 'Create Event', icon: <FiCalendar />, color: 'bg-orange-600 hover:bg-orange-700' },
+        { to: '/events-management', label: 'Create Event', icon: <FiCalendar />, color: 'bg-orange-600 hover:bg-orange-700' },
         { to: '/attendance', label: 'Mark Attendance', icon: <FiCheckCircle />, color: 'bg-purple-600 hover:bg-purple-700' },
     ];
 

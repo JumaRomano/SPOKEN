@@ -20,6 +20,7 @@ import About from './pages/public/About';
 // import Ministries from './pages/public/Ministries';
 import Sermons from './pages/public/Sermons';
 import Events from './pages/public/Events';
+import EventRegistration from './pages/public/EventRegistration';
 // import Giving from './pages/public/Giving';
 import Contact from './pages/public/Contact';
 import Communication from './pages/communication/Communication';
@@ -39,6 +40,7 @@ function App() {
               {/* <Route path="/ministries" element={<Ministries />} /> */}
               <Route path="/sermons" element={<Sermons />} />
               <Route path="/events" element={<Events />} />
+              <Route path="/events/:id/register" element={<EventRegistration />} />
               {/* <Route path="/giving" element={<Giving />} /> */}
               <Route path="/contact" element={<Contact />} />
             </Route>
