@@ -75,17 +75,13 @@ const Events = () => {
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50 font-sans text-slate-800">
-            {/* HER0 SECTION - Cinematic */}
-            <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 z-0">
-                    <img
-                        src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2070&auto=format&fit=crop"
-                        alt="Worship Gathering"
-                        className="w-full h-full object-cover scale-105 animate-slow-zoom"
-                    />
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-secondary-dark via-secondary-dark/60 to-transparent"></div>
-                    <div className="absolute inset-0 bg-secondary-dark/30 mix-blend-multiply"></div>
+            {/* HERO SECTION - Clean Gradient */}
+            <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-secondary-dark via-indigo-900 to-slate-900">
+                {/* Decorative Elements */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+                    <div className="absolute top-40 right-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+                    <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
                 </div>
 
                 <div className="relative z-10 text-center px-6 max-w-4xl mx-auto mt-20">

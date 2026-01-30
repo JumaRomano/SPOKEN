@@ -5,16 +5,13 @@ import Button from '../../components/common/Button';
 const About = () => {
     return (
         <div className="flex flex-col min-h-screen">
-            {/* Hero Section - Professional & Clear */}
-            <section className="relative bg-secondary-dark text-white py-32 overflow-hidden">
-                {/* Background Image Placeholder - Replace url() with real image */}
-                <div className="absolute inset-0 z-0 select-none">
-                    <img
-                        src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2073&auto=format&fit=crop"
-                        alt="Community gathering"
-                        className="w-full h-full object-cover opacity-40 mix-blend-overlay grayscale"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-secondary-dark/90 via-secondary-dark/80 to-secondary-dark"></div>
+            {/* Hero Section - Clean Gradient */}
+            <section className="relative bg-gradient-to-br from-secondary-dark via-indigo-900 to-slate-900 text-white py-32 overflow-hidden">
+                {/* Decorative Elements */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-10 left-20 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+                    <div className="absolute top-20 right-20 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+                    <div className="absolute bottom-10 left-1/3 w-96 h-96 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
                 </div>
 
                 <div className="relative max-w-4xl mx-auto px-6 text-center z-10">
