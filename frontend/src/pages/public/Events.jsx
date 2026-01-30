@@ -261,7 +261,7 @@ const Events = () => {
 
                                                         {event.cost > 0 && (
                                                             <span className="text-slate-800 font-bold ml-4">
-                                                                ${event.cost} <span className="text-slate-400 font-normal text-xs">/ person</span>
+                                                                KES {event.cost.toLocaleString()} <span className="text-slate-400 font-normal text-xs">/ person</span>
                                                             </span>
                                                         )}
                                                     </div>
