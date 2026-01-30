@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiPlus, FiTrash2, FiCalendar, FiUsers, FiActivity, FiSearch, FiFilter } from 'react-icons/fi';
 import attendanceService from '../../services/attendanceService';
-import Card from '../../components/common/Card';
-import Button from '../../components/common/Button';
 import CreateServiceModal from '../../components/attendance/CreateServiceModal';
 import AttendanceRecorder from '../../components/attendance/AttendanceRecorder';
 import AttendanceStatistics from '../../components/attendance/AttendanceStatistics';
@@ -12,16 +12,12 @@ const AttendanceTracking = () => {
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [filters, setFilters] = useState({
-        startDate: '',
-        endDate: '',
-        serviceType: ''
-    });
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        fetchServices();
-    }, [activeTab]); // Refetch whenever tab changes
+        if (activeTab === 'services') fetchServices();
+    }, [activeTab]);
 
     const fetchServices = async () => {
         setLoading(true);
@@ -37,20 +33,24 @@ const AttendanceTracking = () => {
     };
 
     const handleCreateService = async (serviceData) => {
-        await attendanceService.createService(serviceData);
-        setMessage({ type: 'success', text: 'Service created successfully!' });
-        fetchServices();
+        try {
+            await attendanceService.createService(serviceData);
+            setMessage({ type: 'success', text: 'Service created successfully!' });
+            fetchServices();
+            setShowCreateModal(false);
+        } catch (err) {
+            console.error(err);
+            setMessage({ type: 'error', text: 'Failed to create service' });
+        }
     };
 
     const handleDeleteService = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this service?')) {
-            return;
-        }
+        if (!window.confirm('Are you sure you want to delete this service?')) return;
 
         try {
             await attendanceService.deleteService(id);
             setMessage({ type: 'success', text: 'Service deleted successfully!' });
-            fetchServices();
+            setServices(prev => prev.filter(s => s.id !== id));
         } catch (err) {
             setMessage({
                 type: 'error',
@@ -59,127 +59,207 @@ const AttendanceTracking = () => {
         }
     };
 
-    const TabButton = ({ tab, label }) => (
-        <button
-            onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${activeTab === tab
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300'
-                }`}
-        >
-            {label}
-        </button>
+    // Filter services based on search
+    const filteredServices = services.filter(service =>
+        service.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        service.service_type?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const tabs = [
+        { id: 'services', label: 'Services', icon: FiCalendar },
+        { id: 'record', label: 'Record Attendance', icon: FiUsers },
+        { id: 'statistics', label: 'Insights', icon: FiActivity },
+    ];
+
     return (
-        <div className="attendance-container p-6">
-            {message.text && (
-                <div
-                    className={`mb-4 px-4 py-3 rounded ${message.type === 'success'
-                        ? 'bg-green-50 border border-green-200 text-green-700'
-                        : 'bg-red-50 border border-red-200 text-red-700'
-                        }`}
-                >
-                    {message.text}
-                </div>
-            )}
+        <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 font-sans">
+            <div className="max-w-7xl mx-auto space-y-8">
 
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">Attendance Tracking</h1>
-                {activeTab === 'services' && (
-                    <Button variant="primary" onClick={() => setShowCreateModal(true)}>
-                        Create Service
-                    </Button>
-                )}
-            </div>
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Attendance Management</h1>
+                        <p className="text-gray-500 mt-1">Track worship services, record member attendance, and analyze growth.</p>
+                    </div>
 
-            <div className="flex space-x-1 border-b border-gray-200 mb-6">
-                <TabButton tab="services" label="Services" />
-                <TabButton tab="record" label="Record Attendance" />
-                <TabButton tab="statistics" label="Statistics" />
-            </div>
-
-            {activeTab === 'services' && (
-                <Card>
-                    {loading ? (
-                        <div className="text-center py-8 text-gray-500">Loading services...</div>
-                    ) : services.length === 0 ? (
-                        <div className="text-center py-12">
-                            <div className="text-6xl mb-4">📅</div>
-                            <h3 className="text-lg font-medium text-gray-700 mb-2">No Services Yet</h3>
-                            <p className="text-gray-500 mb-4">
-                                Create your first service to start tracking attendance
-                            </p>
-                            <Button variant="primary" onClick={() => setShowCreateModal(true)}>
-                                Create Service
-                            </Button>
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Date
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Type
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Description
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Attendance
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {services.map((service) => (
-                                        <tr key={service.id} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {new Date(service.service_date).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {service.service_type?.replace('_', ' ').toUpperCase()}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">
-                                                {service.description || '-'}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                {service.total_attendance || 0}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                <button
-                                                    onClick={() => handleDeleteService(service.id)}
-                                                    className="text-red-600 hover:text-red-800"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                    {activeTab === 'services' && (
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setShowCreateModal(true)}
+                            className="bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-xl shadow-lg shadow-primary/20 flex items-center gap-2 font-medium transition-all"
+                        >
+                            <FiPlus className="w-5 h-5" />
+                            New Service
+                        </motion.button>
                     )}
-                </Card>
-            )}
+                </div>
 
-            {activeTab === 'record' && <AttendanceRecorder onAttendanceRecorded={fetchServices} />}
+                {/* Notifications */}
+                <AnimatePresence>
+                    {message.text && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className={`p-4 rounded-xl border flex items-center gap-3 ${message.type === 'success'
+                                    ? 'bg-emerald-50 border-emerald-100 text-emerald-700'
+                                    : 'bg-red-50 border-red-100 text-red-700'
+                                }`}
+                        >
+                            <span className={`w-2 h-2 rounded-full ${message.type === 'success' ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                            {message.text}
+                            <button onClick={() => setMessage({ type: '', text: '' })} className="ml-auto hover:opacity-70">✕</button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-            {activeTab === 'statistics' && <AttendanceStatistics />}
+                {/* Tab Navigation */}
+                <div className="flex p-1 bg-white rounded-2xl shadow-sm border border-gray-100 w-fit">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`relative px-6 py-2.5 rounded-xl text-sm font-medium transition-colors ${activeTab === tab.id ? 'text-primary' : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            {activeTab === tab.id && (
+                                <motion.div
+                                    layoutId="activeTab"
+                                    className="absolute inset-0 bg-primary/5 rounded-xl"
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                />
+                            )}
+                            <span className="relative flex items-center gap-2">
+                                <tab.icon className="w-4 h-4" />
+                                {tab.label}
+                            </span>
+                        </button>
+                    ))}
+                </div>
 
-            <CreateServiceModal
-                isOpen={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                onServiceCreated={handleCreateService}
-            />
+                {/* Main Content Area */}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={activeTab}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        {activeTab === 'services' && (
+                            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden min-h-[400px]">
+                                {/* Toolbar */}
+                                <div className="p-6 border-b border-gray-50 flex items-center gap-4">
+                                    <div className="relative flex-1 max-w-md">
+                                        <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                        <input
+                                            type="text"
+                                            placeholder="Search services..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            className="w-full pl-10 pr-4 py-2 bg-gray-50 border-transparent rounded-lg focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                                        />
+                                    </div>
+                                    <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                                        <FiFilter className="w-5 h-5" />
+                                    </button>
+                                </div>
+
+                                {/* Table */}
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left">
+                                        <thead>
+                                            <tr className="bg-gray-50/50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                                                <th className="px-6 py-4">Date & Time</th>
+                                                <th className="px-6 py-4">Event Type</th>
+                                                <th className="px-6 py-4">Description</th>
+                                                <th className="px-6 py-4 text-center">Attendance</th>
+                                                <th className="px-6 py-4 text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-50">
+                                            {loading ? (
+                                                <tr>
+                                                    <td colSpan="5" className="px-6 py-12 text-center text-gray-500">
+                                                        <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto mb-2" />
+                                                        Loading records...
+                                                    </td>
+                                                </tr>
+                                            ) : filteredServices.length === 0 ? (
+                                                <tr>
+                                                    <td colSpan="5" className="px-6 py-16 text-center">
+                                                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                                                            <FiCalendar className="w-8 h-8" />
+                                                        </div>
+                                                        <h3 className="text-gray-900 font-medium mb-1">No services found</h3>
+                                                        <p className="text-gray-500 text-sm">Create a new service to get started.</p>
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                                filteredServices.map((service) => (
+                                                    <tr key={service.id} className="group hover:bg-gray-50/80 transition-colors">
+                                                        <td className="px-6 py-4">
+                                                            <div className="flex flex-col">
+                                                                <span className="font-medium text-gray-900">
+                                                                    {new Date(service.service_date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                                                                </span>
+                                                                <span className="text-xs text-gray-500">
+                                                                    {new Date(`2000-01-01T${service.service_time}`).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100 capitalize">
+                                                                {service.service_type?.replace('_', ' ')}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <p className="text-sm text-gray-600 truncate max-w-xs">{service.description || '-'}</p>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-center">
+                                                            <span className="text-lg font-semibold text-gray-700">{service.total_attendance || 0}</span>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-right">
+                                                            <button
+                                                                onClick={() => handleDeleteService(service.id)}
+                                                                className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                                                title="Delete Service"
+                                                            >
+                                                                <FiTrash2 className="w-4 h-4" />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'record' && (
+                            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8">
+                                <AttendanceRecorder onAttendanceRecorded={fetchServices} />
+                            </div>
+                        )}
+
+                        {activeTab === 'statistics' && (
+                            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8">
+                                <AttendanceStatistics />
+                            </div>
+                        )}
+                    </motion.div>
+                </AnimatePresence>
+
+                <CreateServiceModal
+                    isOpen={showCreateModal}
+                    onClose={() => setShowCreateModal(false)}
+                    onServiceCreated={handleCreateService}
+                />
+            </div>
         </div>
     );
 };
 
 export default AttendanceTracking;
-
