@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FiHome, FiUsers, FiClipboard, FiBriefcase, FiCalendar } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import groupService from '../../services/groupService';
 import Card from '../../components/common/Card';
@@ -44,10 +45,10 @@ const GroupList = () => {
     };
 
     const groupTypes = {
-        ministry: { icon: '⛪', color: '#667eea' },
-        fellowship: { icon: '🤝', color: '#48bb78' },
-        committee: { icon: '📋', color: '#ed8936' },
-        department: { icon: '🏢', color: '#9f7aea' },
+        ministry: { icon: FiHome, color: '#667eea' },
+        fellowship: { icon: FiUsers, color: '#48bb78' },
+        committee: { icon: FiClipboard, color: '#ed8936' },
+        department: { icon: FiBriefcase, color: '#9f7aea' },
     };
 
     const canCreateGroup = ['admin', 'sysadmin', 'leader'].includes(user?.role);
@@ -78,9 +79,9 @@ const GroupList = () => {
                                 <div key={group.id} className="group-card">
                                     <div
                                         className="group-icon"
-                                        style={{ backgroundColor: `${typeInfo.color}20` }}
+                                        style={{ backgroundColor: `${typeInfo.color}20`, color: typeInfo.color }}
                                     >
-                                        {typeInfo.icon}
+                                        <typeInfo.icon size={24} />
                                     </div>
                                     <div className="group-info">
                                         <h3 className="group-name">{group.name}</h3>
@@ -95,7 +96,8 @@ const GroupList = () => {
                                         </div>
                                         {group.meeting_schedule && (
                                             <div className="group-schedule">
-                                                📅 {group.meeting_schedule}
+                                                <FiCalendar size={14} style={{ display: 'inline', marginRight: '4px' }} />
+                                                {group.meeting_schedule}
                                             </div>
                                         )}
                                     </div>

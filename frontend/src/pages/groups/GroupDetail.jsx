@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { FiTrash2, FiAlertCircle } from 'react-icons/fi';
+import { useAuth } from '../../context/AuthContext';
 import groupService from '../../services/groupService';
 
 const GroupDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [group, setGroup] = useState(null);
     const [members, setMembers] = useState([]);
     const [contributions, setContributions] = useState([]);
@@ -12,6 +15,8 @@ const GroupDetail = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
     const [error, setError] = useState(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         const fetchGroupData = async () => {
@@ -47,6 +52,22 @@ const GroupDetail = () => {
         }
     }, [id]);
 
+    const handleDeleteGroup = async () => {
+        try {
+            setDeleting(true);
+            await groupService.delete(id);
+            navigate('/groups');
+        } catch (err) {
+            console.error('Error deleting group:', err);
+            alert('Failed to delete group. Please try again.');
+        } finally {
+            setDeleting(false);
+            setShowDeleteConfirm(false);
+        }
+    };
+
+    const canDelete = ['admin', 'sysadmin'].includes(user?.role);
+
     if (loading) return <div className="p-6 text-center">Loading group details...</div>;
     if (error) return <div className="p-6 text-red-500">{error}</div>;
     if (!group) return <div className="p-6">Group not found.</div>;
@@ -70,13 +91,62 @@ const GroupDetail = () => {
                     <h1 className="text-2xl font-bold text-gray-800">{group.name}</h1>
                     <p className="text-gray-600">{group.group_type} • {members.length} Members</p>
                 </div>
-                <button
-                    onClick={() => navigate('/groups')}
-                    className="bg-white border border-gray-300 px-4 py-2 rounded shadow-sm hover:bg-gray-50 text-gray-700"
-                >
-                    Back to List
-                </button>
+                <div className="flex gap-3">
+                    {canDelete && (
+                        <button
+                            onClick={() => setShowDeleteConfirm(true)}
+                            className="bg-red-50 border border-red-200 px-4 py-2 rounded shadow-sm hover:bg-red-100 text-red-700 flex items-center gap-2 font-medium"
+                        >
+                            <FiTrash2 size={16} />
+                            Delete Group
+                        </button>
+                    )}
+                    <button
+                        onClick={() => navigate('/groups')}
+                        className="bg-white border border-gray-300 px-4 py-2 rounded shadow-sm hover:bg-gray-50 text-gray-700"
+                    >
+                        Back to List
+                    </button>
+                </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                                <FiAlertCircle className="text-red-600" size={24} />
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900">Delete Group?</h3>
+                        </div>
+                        <p className="text-gray-600 mb-6">
+                            Are you sure you want to delete <strong>{group.name}</strong>? This action cannot be undone and will remove all associated data.
+                        </p>
+                        <div className="flex gap-3 justify-end">
+                            <button
+                                onClick={() => setShowDeleteConfirm(false)}
+                                disabled={deleting}
+                                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 text-gray-700 font-medium"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteGroup}
+                                disabled={deleting}
+                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 font-medium flex items-center gap-2 disabled:opacity-50"
+                            >
+                                {deleting ? 'Deleting...' : (
+                                    <>
+                                        <FiTrash2 size={16} />
+                                        Delete Group
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="flex space-x-2 border-b border-gray-200 mb-6">
                 <TabButton name="overview" label="Overview" />
