@@ -6,7 +6,15 @@ import Button from '../../components/common/Button';
 
 
 const LandingPage = () => {
+    const [videoUrl, setVideoUrl] = useState(null);
 
+    useEffect(() => {
+        // Delay video loading to prioritize content rendering
+        const timer = setTimeout(() => {
+            setVideoUrl("https://www.youtube.com/embed/pPpWmvBkinA?autoplay=1&mute=1&controls=0&loop=1&playlist=pPpWmvBkinA&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&autohide=1&playsinline=1");
+        }, 1500);
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
         <div className="flex flex-col min-h-screen font-sans smooth-scroll bg-white">
@@ -14,24 +22,31 @@ const LandingPage = () => {
             <section className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-black text-white px-safe">
                 {/* Video Background Layer - Optimized for Internal Branding & Wide Screen Clarity */}
                 <div className="absolute inset-0 z-0 pointer-events-none select-none touch-none overflow-hidden bg-black">
-                    <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
-                        <iframe
-                            className="pointer-events-none border-none transition-opacity duration-1000"
-                            src="https://www.youtube.com/embed/pPpWmvBkinA?autoplay=1&mute=1&controls=0&loop=1&playlist=pPpWmvBkinA&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&autohide=1&playsinline=1"
-                            allow="autoplay; encrypted-media"
-                            title="Hero Video Background"
-                            style={{
-                                width: '100vw',
-                                height: '56.25vw', // 16:9
-                                minHeight: '100vh',
-                                minWidth: '177.77vh', // 16:9
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%) scale(1.0)', // Zero crop to preserve edge-to-edge text
-                                filter: 'contrast(1.02) brightness(1.05)',
-                            }}
-                        ></iframe>
+                    <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-slate-900">
+                        {videoUrl ? (
+                            <iframe
+                                className="pointer-events-none border-none transition-opacity duration-1000 animate-in fade-in"
+                                src={videoUrl}
+                                allow="autoplay; encrypted-media"
+                                title="Hero Video Background"
+                                style={{
+                                    width: '100vw',
+                                    height: '56.25vw', // 16:9
+                                    minHeight: '100vh',
+                                    minWidth: '177.77vh', // 16:9
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%) scale(1.0)', // Zero crop to preserve edge-to-edge text
+                                    filter: 'contrast(1.02) brightness(1.05)',
+                                }}
+                            ></iframe>
+                        ) : (
+                            <div className="absolute inset-0 bg-slate-900 flex items-center justify-center">
+                                {/* Subtle animated placeholder */}
+                                <div className="w-16 h-16 border-2 border-white/5 border-t-white/20 rounded-full animate-spin"></div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Precision Overlays - Lightened significantly to reveal address & welcome text in video */}

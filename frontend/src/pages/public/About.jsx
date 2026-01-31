@@ -99,7 +99,7 @@ const About = () => {
                                         ]
                                     },
                                     {
-                                        day: "Weekdays (Mon, Tue, Thu)",
+                                        day: "Weekdays (Tue, Thu)",
                                         items: [
                                             { name: "Midweek Service", time: "2:00 PM - 5:00 PM" }
                                         ]
