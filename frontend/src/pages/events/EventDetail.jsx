@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiArrowLeft, FiPieChart, FiUsers, FiClipboard, FiCheckSquare, FiSearch, FiCheckCircle } from 'react-icons/fi';
+import { FiArrowLeft, FiPieChart, FiUsers, FiClipboard, FiCheckSquare, FiSearch, FiCheckCircle, FiTrash2, FiAlertCircle } from 'react-icons/fi';
+import { useAuth } from '../../context/AuthContext';
 import eventService from '../../services/eventService';
 import Button from '../../components/common/Button';
 
@@ -57,9 +58,9 @@ const CheckInRow = ({ reg, onCheckIn }) => {
 const EventDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     // State
-    const { user } = useAuth();
     const [event, setEvent] = useState(null);
     const [activeTab, setActiveTab] = useState('dashboard');
     const [stats, setStats] = useState(null);
