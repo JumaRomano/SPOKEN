@@ -164,6 +164,18 @@ async function runMigrations() {
             ['secretary', 'finance', 'create'],
             ['secretary', 'finance', 'update'],
 
+            // Leader role permissions
+            ['leader', 'groups', 'read'],
+            ['leader', 'groups', 'create'],
+            ['leader', 'groups', 'update'],
+            ['leader', 'members', 'read'],
+            ['leader', 'events', 'read'],
+            ['leader', 'events', 'create'],
+            ['leader', 'attendance', 'read'],
+            ['leader', 'attendance', 'create'],
+            ['leader', 'attendance', 'update'],
+            ['leader', 'contributions', 'read'],
+
             // Finance role permissions
             ['finance', 'finance', 'create'],
             ['finance', 'finance', 'read'],

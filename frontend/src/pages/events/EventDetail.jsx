@@ -59,12 +59,15 @@ const EventDetail = () => {
     const navigate = useNavigate();
 
     // State
+    const { user } = useAuth();
     const [event, setEvent] = useState(null);
     const [activeTab, setActiveTab] = useState('dashboard');
     const [stats, setStats] = useState(null);
     const [registrations, setRegistrations] = useState([]);
     const [volunteers, setVolunteers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     // Filter State for Check-in
     const [checkInSearch, setCheckInSearch] = useState('');
@@ -117,6 +120,22 @@ const EventDetail = () => {
         r.email.toLowerCase().includes(checkInSearch.toLowerCase())
     );
 
+    const handleDeleteEvent = async () => {
+        try {
+            setDeleting(true);
+            await eventService.delete(id);
+            navigate('/events-management');
+        } catch (err) {
+            console.error('Error deleting event:', err);
+            alert('Failed to delete event. Please try again.');
+        } finally {
+            setDeleting(false);
+            setShowDeleteConfirm(false);
+        }
+    };
+
+    const canDelete = ['admin', 'sysadmin', 'secretary'].includes(user?.role);
+
     if (loading) return <div className="p-8 flex justify-center"><div className="animate-spin text-3xl text-indigo-600">●</div></div>;
     if (!event) return <div className="p-8 text-center text-red-500">Event not found</div>;
 
@@ -139,9 +158,55 @@ const EventDetail = () => {
                     </div>
                 </div>
                 <div className="flex gap-2">
-                    {/* Add Edit/Actions here later */}
+                    {canDelete && (
+                        <button
+                            onClick={() => setShowDeleteConfirm(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-200 text-red-700 rounded-lg hover:bg-red-100 font-medium text-sm transition-colors"
+                        >
+                            <FiTrash2 size={16} />
+                            Delete Event
+                        </button>
+                    )}
                 </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                                <FiAlertCircle className="text-red-600" size={24} />
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900">Delete Event?</h3>
+                        </div>
+                        <p className="text-gray-600 mb-6">
+                            Are you sure you want to delete <strong>{event.event_name}</strong>? This action cannot be undone and will remove all registrations and volunteer signups.
+                        </p>
+                        <div className="flex gap-3 justify-end">
+                            <button
+                                onClick={() => setShowDeleteConfirm(false)}
+                                disabled={deleting}
+                                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 text-gray-700 font-medium"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteEvent}
+                                disabled={deleting}
+                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 font-medium flex items-center gap-2 disabled:opacity-50"
+                            >
+                                {deleting ? 'Deleting...' : (
+                                    <>
+                                        <FiTrash2 size={16} />
+                                        Delete Event
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Navigation Tabs */}
             <div className="flex space-x-1 bg-white p-1 rounded-xl shadow-sm border border-slate-100 mb-8 max-w-fit">
@@ -307,10 +372,10 @@ const EventDetail = () => {
                                                 </td>
                                                 <td className="p-4">
                                                     <span className={`px-2 py-1 rounded-full text-xs font-bold ${reg.attendance_status === 'attended'
-                                                            ? 'bg-green-100 text-green-700'
-                                                            : reg.attendance_status === 'registered'
-                                                                ? 'bg-blue-100 text-blue-700'
-                                                                : 'bg-slate-100 text-slate-500'
+                                                        ? 'bg-green-100 text-green-700'
+                                                        : reg.attendance_status === 'registered'
+                                                            ? 'bg-blue-100 text-blue-700'
+                                                            : 'bg-slate-100 text-slate-500'
                                                         }`}>
                                                         {reg.attendance_status || 'pending'}
                                                     </span>

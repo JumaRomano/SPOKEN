@@ -113,16 +113,6 @@ const LeaderDashboard = () => {
                         )}
                     </div>
                 </div>
-
-                <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
-                    <div className="relative z-10">
-                        <h3 className="font-bold text-xl mb-2">Message Your Team</h3>
-                        <p className="text-indigo-100 text-sm mb-6">Send updates and announcements to your group members directly.</p>
-                        <button className="bg-white text-indigo-700 px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-indigo-50 transition-colors flex items-center gap-2">
-                            <FiMessageSquare /> Start Broadcast
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
     );
