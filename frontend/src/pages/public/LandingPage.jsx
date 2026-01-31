@@ -34,69 +34,87 @@ const LandingPage = () => {
 
     return (
         <div className="flex flex-col min-h-screen font-sans smooth-scroll bg-white">
-            {/* Hero Section - Immersive Video Background */}
-            <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden bg-black text-white">
-                {/* Video Background Layer */}
-                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-                    <div className="absolute inset-0 w-full h-full scale-110">
+            {/* Hero Section - Senior Engineer Mobile Optimized Immersive Video */}
+            <section className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-black text-white px-safe">
+                {/* Video Background Layer - Optimized for Internal Video Branding Visibility */}
+                <div className="absolute inset-0 z-0 pointer-events-none select-none touch-none overflow-hidden bg-black">
+                    <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
                         <iframe
-                            className="w-full h-full object-cover"
-                            src="https://www.youtube.com/embed/pPpWmvBkinA?autoplay=1&mute=1&controls=0&loop=1&playlist=pPpWmvBkinA&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1"
+                            className="pointer-events-none border-none transition-opacity duration-1000"
+                            src="https://www.youtube.com/embed/pPpWmvBkinA?autoplay=1&mute=1&controls=0&loop=1&playlist=pPpWmvBkinA&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&autohide=1&playsinline=1"
                             allow="autoplay; encrypted-media"
-                            allowFullScreen
                             title="Hero Video Background"
                             style={{
                                 width: '100vw',
-                                height: '56.25vw', // 16:9 Aspect Ratio
+                                height: '56.25vw', /* 16:9 ratio */
                                 minHeight: '100vh',
-                                minWidth: '177.77vh', // 16:9 Aspect Ratio
+                                minWidth: '177.77vh', /* 16:9 ratio */
                                 position: 'absolute',
                                 top: '50%',
                                 left: '50%',
-                                transform: 'translate(-50%, -50%)',
+                                transform: 'translate(-50%, -50%) scale(1.0)', /* Zero crop to maintain all edge text */
                             }}
                         ></iframe>
                     </div>
-                    {/* Cinematic Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80 z-10"></div>
+
+                    {/* Minimalist Overlays - Specifically designed to keep video text bright and readable */}
+                    <div className="absolute inset-0 bg-black/5 z-10"></div> {/* Extremely subtle tint */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50 z-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20 z-10 hidden xl:block"></div>
                 </div>
 
-                {/* Content */}
-                <div className="relative z-20 max-w-5xl mx-auto px-6 text-center">
+                {/* Content Container - Safe Area Aware */}
+                <div className="relative z-20 w-full max-w-6xl mx-auto px-6 py-12 md:py-24 
+                    mt-[env(safe-area-inset-top)] mb-[env(safe-area-inset-bottom)]">
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 1.2, ease: "easeOut" }}
+                        className="flex flex-col items-center text-center"
                     >
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-100 text-[10px] md:text-xs font-black tracking-[0.2em] uppercase mb-8 backdrop-blur-md">
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+                        {/* Branded Pill */}
+                        <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl text-blue-300 text-[10px] md:text-xs font-black tracking-[0.3em] uppercase mb-10 md:mb-12 shadow-2xl">
+                            <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_#3b82f6] animate-pulse"></span>
                             Spoken Word of God Ministries
                         </div>
 
-                        <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[1.1] tracking-tighter">
-                            I shall stay under the <br className="hidden md:block" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Spoken Word of God.</span>
+                        {/* Main Title with Responsive Sizing */}
+                        <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-[100px] font-black mb-6 md:mb-10 leading-[1.05] tracking-tighter drop-shadow-2xl">
+                            I shall stay <br className="md:hidden" />
+                            under the <br className="hidden md:block" />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-blue-400">
+                                Spoken Word <br className="md:hidden" /> of God.
+                            </span>
                         </h1>
 
-                        <p className="text-lg md:text-2xl text-slate-200 font-medium mb-12 max-w-3xl mx-auto leading-relaxed opacity-90">
-                            A vibrant community dedicated to authentic worship, deep spiritual growth, and serving our neighbors with love.
-                        </p>
+                        {/* Glass Container for text to ensure legibility */}
+                        <div className="max-w-2xl mx-auto relative px-4 py-2">
+                            <p className="text-base sm:text-xl md:text-2xl text-slate-100/90 font-medium mb-12 leading-relaxed tracking-tight">
+                                A vibrant community dedicated to authentic worship,
+                                <span className="hidden sm:inline"> deep spiritual growth, and serving our neighbors with love.</span>
+                            </p>
+                        </div>
 
-                        <div className="flex flex-col md:flex-row gap-5 justify-center items-center">
-                            <Button to="/about" variant="primary" size="large" className="min-w-[200px] h-14 rounded-full text-lg font-bold shadow-glow hover:scale-105 transition-transform">
+                        {/* Impactful Buttons */}
+                        <div className="flex flex-col sm:flex-row gap-5 items-center w-full justify-center">
+                            <Button to="/about" variant="outline" size="large"
+                                className="w-full sm:w-[220px] h-14 md:h-16 rounded-full text-lg font-bold border-white/20 text-white hover:bg-white/10 hover:border-white backdrop-blur-sm transition-all duration-300">
                                 Our Mission
                             </Button>
-                            <Button to="/contact" variant="outline" size="large" className="min-w-[200px] h-14 rounded-full text-lg font-bold border-white/40 text-white hover:bg-white/10 hover:border-white backdrop-blur-sm transition-all">
+                            <Button to="/contact" variant="outline" size="large"
+                                className="w-full sm:w-[220px] h-14 md:h-16 rounded-full text-lg font-bold border-white/20 text-white hover:bg-white/10 hover:border-white backdrop-blur-sm transition-all duration-300">
                                 Plan a Visit
                             </Button>
                         </div>
                     </motion.div>
                 </div>
 
-                {/* Scroll Indicator */}
-                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-3 opacity-60">
-                    <div className="w-[1px] h-12 bg-gradient-to-b from-blue-400 to-transparent"></div>
-                    <span className="text-[10px] uppercase font-black tracking-[0.3em] text-blue-200">Discover</span>
+                {/* Animated Scroll Indicator */}
+                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4 group cursor-pointer">
+                    <div className="relative w-[1px] h-16 bg-white/10 overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1/2 bg-blue-400 animate-scroll-line"></div>
+                    </div>
+                    <span className="text-[10px] uppercase font-black tracking-[0.4em] text-blue-200/60 group-hover:text-blue-200 transition-colors">Discover</span>
                 </div>
             </section>
 
