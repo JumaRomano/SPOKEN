@@ -41,6 +41,11 @@ const groupService = {
         return response.data;
     },
 
+    async delete(id) {
+        const response = await api.delete(`/groups/${id}`);
+        return response.data;
+    },
+
     async getMemberContributions(groupId) {
         const response = await api.get(`/groups/${groupId}/contributions`);
         return response.data;
