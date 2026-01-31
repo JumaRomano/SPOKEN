@@ -1,80 +1,101 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FiMapPin, FiClock, FiArrowRight, FiVideo, FiHeart, FiUsers, FiSun } from 'react-icons/fi';
+import { FiMapPin, FiClock, FiArrowRight, FiVideo, FiHeart, FiUsers, FiSun, FiCalendar } from 'react-icons/fi';
 import Button from '../../components/common/Button';
 import eventService from '../../services/eventService';
 
 const LandingPage = () => {
-    const [upcomingEvent, setUpcomingEvent] = useState(null);
+    const [upcomingEvents, setUpcomingEvents] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchEvent = async () => {
+        const fetchEvents = async () => {
             try {
-                const events = await eventService.getPublicEvents({ upcoming: true, limit: 1 });
-                if (events && events.length > 0) {
-                    setUpcomingEvent(events[0]);
-                }
+                const events = await eventService.getPublicEvents({ upcoming: true, limit: 3 });
+                setUpcomingEvents(events || []);
             } catch (error) {
-                console.error('Failed to fetch upcoming event', error);
+                console.error('Failed to fetch upcoming events', error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchEvent();
+        fetchEvents();
     }, []);
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return {
             month: date.toLocaleString('default', { month: 'short' }),
-            day: date.getDate()
+            day: date.getDate(),
+            weekday: date.toLocaleString('default', { weekday: 'short' })
         };
     };
 
     return (
         <div className="flex flex-col min-h-screen font-sans smooth-scroll bg-white">
-            {/* Hero Section - Clean & High Impact */}
-            <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-secondary-dark text-white">
-                {/* Abstract Professional Background */}
-                <div className="absolute inset-0 z-0 opacity-20">
-                    <div className="absolute top-[-50%] left-[-20%] w-[80%] h-[80%] rounded-full bg-primary-dark blur-[120px]"></div>
-                    <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-primary blur-[100px]"></div>
+            {/* Hero Section - Immersive Video Background */}
+            <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden bg-black text-white">
+                {/* Video Background Layer */}
+                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    <div className="absolute inset-0 w-full h-full scale-110">
+                        <iframe
+                            className="w-full h-full object-cover"
+                            src="https://www.youtube.com/embed/pPpWmvBkinA?autoplay=1&mute=1&controls=0&loop=1&playlist=pPpWmvBkinA&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1"
+                            allow="autoplay; encrypted-media"
+                            allowFullScreen
+                            title="Hero Video Background"
+                            style={{
+                                width: '100vw',
+                                height: '56.25vw', // 16:9 Aspect Ratio
+                                minHeight: '100vh',
+                                minWidth: '177.77vh', // 16:9 Aspect Ratio
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                            }}
+                        ></iframe>
+                    </div>
+                    {/* Cinematic Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80 z-10"></div>
                 </div>
 
-                {/* Texture Overlay */}
-                <div className="absolute inset-0 z-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}></div>
-
                 {/* Content */}
-                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-blue-200 text-xs font-medium tracking-wide mb-8">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        WELCOME TO SPOKEN WORD
-                    </div>
+                <div className="relative z-20 max-w-5xl mx-auto px-6 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-100 text-[10px] md:text-xs font-black tracking-[0.2em] uppercase mb-8 backdrop-blur-md">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+                            Spoken Word of God Ministries
+                        </div>
 
-                    <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight tracking-tight">
-                        I shall stay under the Spoken <br />
-                        <span className="text-blue-400">word of God .</span>
-                    </h1>
+                        <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[1.1] tracking-tighter">
+                            I shall stay under the <br className="hidden md:block" />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Spoken Word of God.</span>
+                        </h1>
 
-                    <p className="text-lg md:text-xl text-slate-300 font-medium mb-10 max-w-2xl mx-auto leading-relaxed">
-                        A vibrant community dedicated to authentic worship, deep spiritual growth, and serving our neighbors with love.
-                    </p>
+                        <p className="text-lg md:text-2xl text-slate-200 font-medium mb-12 max-w-3xl mx-auto leading-relaxed opacity-90">
+                            A vibrant community dedicated to authentic worship, deep spiritual growth, and serving our neighbors with love.
+                        </p>
 
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <Button to="/about" variant="primary" size="large" className="min-w-[160px] shadow-glow">
-                            Our Mission
-                        </Button>
-                        <Button to="/contact" variant="outline" size="large" className="min-w-[160px] border-white/20 text-white hover:bg-white/10 hover:border-white">
-                            Plan a Visit
-                        </Button>
-                    </div>
+                        <div className="flex flex-col md:flex-row gap-5 justify-center items-center">
+                            <Button to="/about" variant="primary" size="large" className="min-w-[200px] h-14 rounded-full text-lg font-bold shadow-glow hover:scale-105 transition-transform">
+                                Our Mission
+                            </Button>
+                            <Button to="/contact" variant="outline" size="large" className="min-w-[200px] h-14 rounded-full text-lg font-bold border-white/40 text-white hover:bg-white/10 hover:border-white backdrop-blur-sm transition-all">
+                                Plan a Visit
+                            </Button>
+                        </div>
+                    </motion.div>
                 </div>
 
                 {/* Scroll Indicator */}
-                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 animate-bounce">
-                    <span className="text-xs uppercase tracking-widest text-slate-400">Scroll</span>
-                    <FiArrowRight className="rotate-90 text-white" />
+                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-3 opacity-60">
+                    <div className="w-[1px] h-12 bg-gradient-to-b from-blue-400 to-transparent"></div>
+                    <span className="text-[10px] uppercase font-black tracking-[0.3em] text-blue-200">Discover</span>
                 </div>
             </section>
 
@@ -103,64 +124,98 @@ const LandingPage = () => {
                 </div>
             </section>
 
-            {/* Featured Event Preview - Clean & Modern */}
-            <section className="py-24 px-6 bg-white border-t border-gray-100">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-                        <div className="max-w-xl">
-                            <span className="text-primary font-bold tracking-wider uppercase text-xs mb-3 block">Upcoming Highlights</span>
-                            <h2 className="text-3xl md:text-4xl font-bold text-secondary-dark mb-4">Gather With Us</h2>
-                            <p className="text-slate-600 text-lg leading-relaxed">Don't miss out on what God is doing in our midst.</p>
+            {/* Featured Events Section */}
+            <section className="py-24 px-6 bg-white border-t border-gray-100 relative overflow-hidden">
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                        <div className="max-w-xl text-left">
+                            <div className="flex items-center gap-2 mb-4">
+                                <span className="w-8 h-[2px] bg-primary"></span>
+                                <span className="text-primary font-bold tracking-widest uppercase text-xs">The Gathering</span>
+                            </div>
+                            <h2 className="text-4xl md:text-5xl font-black text-secondary-dark mb-4 tracking-tight">Upcoming Highlights</h2>
+                            <p className="text-slate-500 text-lg leading-relaxed">Experience a community where faith meets life. Join us for these special gatherings.</p>
                         </div>
-                        <Button to="/events" variant="outline" className="hidden md:flex group">
-                            View Calendar <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+                        <Button to="/events" variant="outline" className="group rounded-full px-8 py-3 font-bold border-2">
+                            Full Calendar <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </div>
 
-                    {!loading && upcomingEvent ? (
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-soft border border-slate-100 flex flex-col lg:flex-row">
-                            {/* Stylish Date Column */}
-                            <div className="bg-secondary-dark text-white p-10 flex flex-col items-center justify-center text-center min-w-[200px]">
-                                <span className="text-sm font-bold uppercase tracking-widest text-blue-200 mb-1">{formatDate(upcomingEvent.start_date).month}</span>
-                                <span className="text-6xl font-black tracking-tighter">{formatDate(upcomingEvent.start_date).day}</span>
-                                <span className="text-sm opacity-60 mt-2">{new Date(upcomingEvent.start_date).getFullYear()}</span>
-                            </div>
+                    {!loading && upcomingEvents.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {upcomingEvents.map((event) => {
+                                const date = formatDate(event.start_date);
+                                return (
+                                    <div key={event.id} className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-soft hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+                                        {/* Image Section */}
+                                        <div className="relative h-64 overflow-hidden">
+                                            <img
+                                                src={event.image_url || 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2073&auto=format&fit=crop'}
+                                                alt={event.event_name}
+                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                            />
+                                            {/* Date Badge - Elegant Floating */}
+                                            <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-2xl p-3 flex flex-col items-center min-w-[60px] shadow-lg border border-white/20">
+                                                <span className="text-[10px] uppercase font-black text-primary tracking-widest leading-none mb-1">{date.month}</span>
+                                                <span className="text-2xl font-black text-secondary-dark leading-none">{date.day}</span>
+                                            </div>
+                                            {/* Type Badge */}
+                                            <div className="absolute bottom-4 left-4">
+                                                <span className="px-3 py-1 bg-secondary-dark/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest rounded-full border border-white/10">
+                                                    {event.event_type || 'Gathering'}
+                                                </span>
+                                            </div>
+                                        </div>
 
-                            {/* Main Content */}
-                            <div className="p-8 lg:p-12 flex-1">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wide mb-6">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                                    Next Event
-                                </div>
+                                        {/* Content Section */}
+                                        <div className="p-8 flex-1 flex flex-col">
+                                            <h3 className="text-xl font-bold text-secondary-dark mb-3 group-hover:text-primary transition-colors duration-300">
+                                                {event.event_name}
+                                            </h3>
+                                            <p className="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-3">
+                                                {event.description || 'Join us for a meaningful time of worship and community building as we explore faith together.'}
+                                            </p>
 
-                                <h3 className="text-2xl font-bold text-secondary-dark mb-4">{upcomingEvent.event_name}</h3>
-                                <p className="text-slate-600 mb-8 text-lg leading-relaxed max-w-2xl">{upcomingEvent.description}</p>
+                                            <div className="mt-auto space-y-3">
+                                                <div className="flex items-center gap-3 text-xs font-semibold text-slate-400">
+                                                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                                                        <FiClock size={14} />
+                                                    </div>
+                                                    <span>{date.weekday}, {new Date(event.start_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                </div>
+                                                <div className="flex items-center gap-3 text-xs font-semibold text-slate-400">
+                                                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                                                        <FiMapPin size={14} />
+                                                    </div>
+                                                    <span className="truncate">{event.location || 'Main Sanctuary'}</span>
+                                                </div>
+                                            </div>
 
-                                <div className="flex flex-wrap gap-6 mb-8 text-slate-500 text-sm font-medium">
-                                    <div className="flex items-center gap-2.5">
-                                        <FiMapPin className="text-primary" />
-                                        <span>{upcomingEvent.location}</span>
+                                            <div className="h-[1px] bg-slate-100 my-6"></div>
+
+                                            <Link
+                                                to={`/events/${event.id}`}
+                                                className="inline-flex items-center justify-center gap-2 w-full py-4 bg-gray-50 text-secondary-dark rounded-2xl font-bold text-sm hover:bg-primary hover:text-white transition-all duration-300 active:scale-95"
+                                            >
+                                                Event Details <FiArrowRight size={16} />
+                                            </Link>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2.5">
-                                        <FiClock className="text-primary" />
-                                        <span>{new Date(upcomingEvent.start_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                    </div>
-                                </div>
-
-                                <Button to={`/events/${upcomingEvent.id}`} variant="primary" size="large">
-                                    RSVP Now
-                                </Button>
-                            </div>
+                                );
+                            })}
                         </div>
                     ) : (
-                        <div className="bg-slate-50 rounded-2xl p-12 text-center border border-dashed border-slate-200">
-                            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-slate-300 mx-auto mb-4 shadow-sm">
-                                <FiClock className="w-6 h-6" />
+                        <div className="bg-slate-100 rounded-[2rem] p-16 text-center border border-dashed border-slate-200">
+                            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-slate-300 mx-auto mb-6 shadow-sm">
+                                <FiCalendar className="w-8 h-8" />
                             </div>
-                            <h3 className="text-lg font-bold text-secondary-dark mb-2">No Upcoming Events</h3>
-                            <p className="text-slate-500 mb-6">Check back soon for new announcements.</p>
-                            <Button to="/events" variant="outline" size="small">
-                                View Past Events
+                            <h3 className="text-2xl font-bold text-secondary-dark mb-3">Community is Happening</h3>
+                            <p className="text-slate-500 mb-8 max-w-md mx-auto leading-relaxed">We're currently planning our next gatherings. Check back shortly or join our mailing list for updates.</p>
+                            <Button to="/events" variant="outline" size="large" className="rounded-full px-10">
+                                View Previous Highlights
                             </Button>
                         </div>
                     )}

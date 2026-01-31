@@ -76,8 +76,8 @@ const errorHandler = (err, req, res, next) => {
 
     res.status(statusCode).json({
         error: message,
-        message: err.message, // Add explicit message field
-        ...(process.env.NODE_ENV === 'development' || true && { stack: err.stack }), // Temporarily enable stack for debugging
+        message: err.message,
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
     });
 };
 

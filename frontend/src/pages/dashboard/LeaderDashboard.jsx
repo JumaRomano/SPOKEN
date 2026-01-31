@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import dashboardService from '../../services/dashboardService';
 import memberService from '../../services/memberService';
 import {
-    FiUsers, FiCalendar, FiActivity, FiArrowRight, FiCheckSquare, FiMessageSquare
+    FiUsers, FiCalendar, FiActivity, FiArrowRight, FiCheckSquare, FiMessageSquare, FiPlus
 } from 'react-icons/fi';
 import { BiGroup } from 'react-icons/bi';
 
@@ -109,7 +109,20 @@ const LeaderDashboard = () => {
                                 </div>
                             ))
                         ) : (
-                            <p className="text-sm text-gray-400 text-center py-8">You are not leading any groups yet.</p>
+                            <div className="text-center py-10 px-4">
+                                <div className="p-3 bg-gray-50 rounded-full w-14 h-14 mx-auto mb-4 flex items-center justify-center">
+                                    <BiGroup className="w-6 h-6 text-gray-300" />
+                                </div>
+                                <p className="text-gray-900 font-medium mb-1">No groups led yet</p>
+                                <p className="text-sm text-gray-500 mb-6">Create your first group to start managing members.</p>
+                                <Link
+                                    to="/groups/create"
+                                    className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-5 py-2 rounded-xl text-sm font-bold hover:bg-indigo-100 transition-colors"
+                                >
+                                    <FiPlus />
+                                    Create Group
+                                </Link>
+                            </div>
                         )}
                     </div>
                 </div>

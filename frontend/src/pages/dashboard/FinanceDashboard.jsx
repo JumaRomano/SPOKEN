@@ -113,11 +113,19 @@ const FinanceDashboard = () => {
                         View All <FiArrowRight />
                     </Link>
                 </div>
-                <div className="p-8 text-center text-gray-400">
-                    <div className="p-4 bg-gray-50 rounded-full w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                        <FiDollarSign className="w-6 h-6 text-gray-300" />
+                <div className="p-12 text-center text-gray-500">
+                    <div className="p-4 bg-gray-50 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                        <FiDollarSign className="w-8 h-8 text-gray-300" />
                     </div>
-                    <p>No recent transactions to display here.</p>
+                    <p className="font-medium text-lg text-gray-900 mb-1">No transactions yet</p>
+                    <p className="text-sm mb-6">Start tracking contributions to see financial insights here.</p>
+                    <button
+                        onClick={() => setShowContributionModal(true)}
+                        className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-6 py-2 rounded-xl font-bold hover:bg-indigo-100 transition-colors"
+                    >
+                        <FiPlus />
+                        Record First Contribution
+                    </button>
                 </div>
             </div>
 
