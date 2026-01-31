@@ -11,7 +11,7 @@ const ChairmanDashboard = () => {
     const [stats, setStats] = useState({
         totalMembers: 0,
         totalContributions: 0,
-        upcomingEvents: 0,
+
     });
     const [loading, setLoading] = useState(true);
 
@@ -93,19 +93,7 @@ const ChairmanDashboard = () => {
                     </div>
                 </div>
 
-                {/* Event KPI */}
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden">
-                    <div className="relative z-10">
-                        <div className="text-gray-500 text-sm font-medium mb-1">Upcoming Events</div>
-                        <div className="text-3xl font-bold text-gray-900">{stats.upcomingEvents}</div>
-                        <div className="text-xs text-orange-600 mt-2">
-                            Requires approval: 0
-                        </div>
-                    </div>
-                    <div className="absolute -bottom-4 -right-4 text-orange-50 opacity-50">
-                        <FiActivity className="w-24 h-24" />
-                    </div>
-                </div>
+
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

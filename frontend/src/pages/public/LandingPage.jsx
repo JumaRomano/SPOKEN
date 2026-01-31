@@ -1,42 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiMapPin, FiClock, FiArrowRight, FiVideo, FiHeart, FiUsers, FiSun, FiCalendar } from 'react-icons/fi';
+import { FiMapPin, FiClock, FiArrowRight, FiVideo, FiHeart, FiUsers, FiSun } from 'react-icons/fi';
 import Button from '../../components/common/Button';
-import eventService from '../../services/eventService';
+
 
 const LandingPage = () => {
-    const [upcomingEvents, setUpcomingEvents] = useState([]);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchEvents = async () => {
-            try {
-                const events = await eventService.getPublicEvents({ upcoming: true, limit: 3 });
-                setUpcomingEvents(events || []);
-            } catch (error) {
-                console.error('Failed to fetch upcoming events', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchEvents();
-    }, []);
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return {
-            month: date.toLocaleString('default', { month: 'short' }),
-            day: date.getDate(),
-            weekday: date.toLocaleString('default', { weekday: 'short' })
-        };
-    };
 
     return (
         <div className="flex flex-col min-h-screen font-sans smooth-scroll bg-white">
             {/* Hero Section - Senior Engineer Mobile Optimized Immersive Video */}
             <section className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-black text-white px-safe">
-                {/* Video Background Layer - Optimized for Internal Video Branding Visibility */}
+                {/* Video Background Layer - Optimized for Internal Branding & Wide Screen Clarity */}
                 <div className="absolute inset-0 z-0 pointer-events-none select-none touch-none overflow-hidden bg-black">
                     <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
                         <iframe
@@ -46,75 +22,79 @@ const LandingPage = () => {
                             title="Hero Video Background"
                             style={{
                                 width: '100vw',
-                                height: '56.25vw', /* 16:9 ratio */
+                                height: '56.25vw', // 16:9
                                 minHeight: '100vh',
-                                minWidth: '177.77vh', /* 16:9 ratio */
+                                minWidth: '177.77vh', // 16:9
                                 position: 'absolute',
                                 top: '50%',
                                 left: '50%',
-                                transform: 'translate(-50%, -50%) scale(1.0)', /* Zero crop to maintain all edge text */
+                                transform: 'translate(-50%, -50%) scale(1.0)', // Zero crop to preserve edge-to-edge text
+                                filter: 'contrast(1.02) brightness(1.05)',
                             }}
                         ></iframe>
                     </div>
 
-                    {/* Minimalist Overlays - Specifically designed to keep video text bright and readable */}
-                    <div className="absolute inset-0 bg-black/5 z-10"></div> {/* Extremely subtle tint */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50 z-10"></div>
+                    {/* Precision Overlays - Lightened significantly to reveal address & welcome text in video */}
+                    <div className="absolute inset-0 bg-black/10 z-10"></div>
+
+                    {/* Selective Vignette - Only darkens the top for header and bottom-center for buttons, leaving edges clear */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/30 z-10"></div>
+
+                    {/* Specialized Wide Screen Protection - Keeps video letters punchy on huge monitors */}
                     <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20 z-10 hidden xl:block"></div>
                 </div>
 
-                {/* Content Container - Safe Area Aware */}
-                <div className="relative z-20 w-full max-w-6xl mx-auto px-6 py-12 md:py-24 
-                    mt-[env(safe-area-inset-top)] mb-[env(safe-area-inset-bottom)]">
+                {/* Content Container - Precision Adjusted for 9:16 Screens */}
+                <div className="relative z-20 w-full max-w-6xl mx-auto px-6 py-10 md:py-24 
+                    mt-[env(safe-area-inset-top)] mb-[env(safe-area-inset-bottom)] flex flex-col justify-center min-h-[100svh]">
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 1.2, ease: "easeOut" }}
-                        className="flex flex-col items-center text-center"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        className="flex flex-col items-center text-center -mt-12 md:mt-0"
                     >
-                        {/* Branded Pill */}
-                        <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl text-blue-300 text-[10px] md:text-xs font-black tracking-[0.3em] uppercase mb-10 md:mb-12 shadow-2xl">
-                            <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_#3b82f6] animate-pulse"></span>
+                        {/* Branded Pill - Tighter for Mobile */}
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-blue-300 text-[9px] md:text-xs font-black tracking-[0.2em] uppercase mb-8 md:mb-12 shadow-xl ring-1 ring-white/5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] animate-pulse"></span>
                             Spoken Word of God Ministries
                         </div>
 
-                        {/* Main Title with Responsive Sizing */}
-                        <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-[100px] font-black mb-6 md:mb-10 leading-[1.05] tracking-tighter drop-shadow-2xl">
+                        {/* Main Title - Optimized for vertical stacking on 9:16 */}
+                        <h1 className="text-[38px] sm:text-6xl md:text-8xl lg:text-[100px] font-black mb-6 md:mb-10 leading-[1.1] md:leading-[1.05] tracking-tight md:tracking-tighter drop-shadow-2xl px-2">
                             I shall stay <br className="md:hidden" />
                             under the <br className="hidden md:block" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-blue-400">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-blue-300">
                                 Spoken Word <br className="md:hidden" /> of God.
                             </span>
                         </h1>
 
-                        {/* Glass Container for text to ensure legibility */}
-                        <div className="max-w-2xl mx-auto relative px-4 py-2">
-                            <p className="text-base sm:text-xl md:text-2xl text-slate-100/90 font-medium mb-12 leading-relaxed tracking-tight">
+                        {/* Mobile Optimized Text Container */}
+                        <div className="max-w-[320px] sm:max-w-2xl mx-auto relative px-2">
+                            <p className="text-sm sm:text-xl md:text-2xl text-slate-100/90 font-medium mb-12 leading-relaxed tracking-tight opacity-95">
                                 A vibrant community dedicated to authentic worship,
                                 <span className="hidden sm:inline"> deep spiritual growth, and serving our neighbors with love.</span>
                             </p>
                         </div>
 
-                        {/* Impactful Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-5 items-center w-full justify-center">
+                        {/* Mobile Optimized Actions */}
+                        <div className="flex flex-col sm:flex-row gap-4 md:gap-6 items-center w-full max-w-[280px] sm:max-w-none justify-center">
                             <Button to="/about" variant="outline" size="large"
-                                className="w-full sm:w-[220px] h-14 md:h-16 rounded-full text-lg font-bold border-white/20 text-white hover:bg-white/10 hover:border-white backdrop-blur-sm transition-all duration-300">
+                                className="w-full sm:w-[220px] h-14 md:h-16 rounded-full text-base md:text-lg font-bold border-white/30 text-white hover:bg-white/10 hover:border-white backdrop-blur-md transition-all duration-300 active:scale-95 shadow-lg">
                                 Our Mission
                             </Button>
                             <Button to="/contact" variant="outline" size="large"
-                                className="w-full sm:w-[220px] h-14 md:h-16 rounded-full text-lg font-bold border-white/20 text-white hover:bg-white/10 hover:border-white backdrop-blur-sm transition-all duration-300">
+                                className="w-full sm:w-[220px] h-14 md:h-16 rounded-full text-base md:text-lg font-bold border-white/30 text-white hover:bg-white/10 hover:border-white backdrop-blur-md transition-all duration-300 active:scale-95 shadow-lg">
                                 Plan a Visit
                             </Button>
                         </div>
                     </motion.div>
                 </div>
 
-                {/* Animated Scroll Indicator */}
-                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4 group cursor-pointer">
-                    <div className="relative w-[1px] h-16 bg-white/10 overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1/2 bg-blue-400 animate-scroll-line"></div>
+                {/* Animated Scroll Indicator - Modern & Minimalist */}
+                <div className="absolute bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-3 group">
+                    <div className="relative w-[1px] h-12 md:h-16 bg-white/10 overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1/2 bg-blue-500/50 animate-scroll-line"></div>
                     </div>
-                    <span className="text-[10px] uppercase font-black tracking-[0.4em] text-blue-200/60 group-hover:text-blue-200 transition-colors">Discover</span>
                 </div>
             </section>
 
@@ -143,103 +123,7 @@ const LandingPage = () => {
                 </div>
             </section>
 
-            {/* Featured Events Section */}
-            <section className="py-24 px-6 bg-white border-t border-gray-100 relative overflow-hidden">
-                {/* Decorative background element */}
-                <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
 
-                <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                        <div className="max-w-xl text-left">
-                            <div className="flex items-center gap-2 mb-4">
-                                <span className="w-8 h-[2px] bg-primary"></span>
-                                <span className="text-primary font-bold tracking-widest uppercase text-xs">The Gathering</span>
-                            </div>
-                            <h2 className="text-4xl md:text-5xl font-black text-secondary-dark mb-4 tracking-tight">Upcoming Highlights</h2>
-                            <p className="text-slate-500 text-lg leading-relaxed">Experience a community where faith meets life. Join us for these special gatherings.</p>
-                        </div>
-                        <Button to="/events" variant="outline" className="group rounded-full px-8 py-3 font-bold border-2">
-                            Full Calendar <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                    </div>
-
-                    {!loading && upcomingEvents.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {upcomingEvents.map((event) => {
-                                const date = formatDate(event.start_date);
-                                return (
-                                    <div key={event.id} className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-soft hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
-                                        {/* Image Section */}
-                                        <div className="relative h-64 overflow-hidden">
-                                            <img
-                                                src={event.image_url || 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2073&auto=format&fit=crop'}
-                                                alt={event.event_name}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                            />
-                                            {/* Date Badge - Elegant Floating */}
-                                            <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-2xl p-3 flex flex-col items-center min-w-[60px] shadow-lg border border-white/20">
-                                                <span className="text-[10px] uppercase font-black text-primary tracking-widest leading-none mb-1">{date.month}</span>
-                                                <span className="text-2xl font-black text-secondary-dark leading-none">{date.day}</span>
-                                            </div>
-                                            {/* Type Badge */}
-                                            <div className="absolute bottom-4 left-4">
-                                                <span className="px-3 py-1 bg-secondary-dark/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest rounded-full border border-white/10">
-                                                    {event.event_type || 'Gathering'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Content Section */}
-                                        <div className="p-8 flex-1 flex flex-col">
-                                            <h3 className="text-xl font-bold text-secondary-dark mb-3 group-hover:text-primary transition-colors duration-300">
-                                                {event.event_name}
-                                            </h3>
-                                            <p className="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-3">
-                                                {event.description || 'Join us for a meaningful time of worship and community building as we explore faith together.'}
-                                            </p>
-
-                                            <div className="mt-auto space-y-3">
-                                                <div className="flex items-center gap-3 text-xs font-semibold text-slate-400">
-                                                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                                                        <FiClock size={14} />
-                                                    </div>
-                                                    <span>{date.weekday}, {new Date(event.start_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                                </div>
-                                                <div className="flex items-center gap-3 text-xs font-semibold text-slate-400">
-                                                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                                                        <FiMapPin size={14} />
-                                                    </div>
-                                                    <span className="truncate">{event.location || 'Main Sanctuary'}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="h-[1px] bg-slate-100 my-6"></div>
-
-                                            <Link
-                                                to={`/events/${event.id}`}
-                                                className="inline-flex items-center justify-center gap-2 w-full py-4 bg-gray-50 text-secondary-dark rounded-2xl font-bold text-sm hover:bg-primary hover:text-white transition-all duration-300 active:scale-95"
-                                            >
-                                                Event Details <FiArrowRight size={16} />
-                                            </Link>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ) : (
-                        <div className="bg-slate-100 rounded-[2rem] p-16 text-center border border-dashed border-slate-200">
-                            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-slate-300 mx-auto mb-6 shadow-sm">
-                                <FiCalendar className="w-8 h-8" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-secondary-dark mb-3">Community is Happening</h3>
-                            <p className="text-slate-500 mb-8 max-w-md mx-auto leading-relaxed">We're currently planning our next gatherings. Check back shortly or join our mailing list for updates.</p>
-                            <Button to="/events" variant="outline" size="large" className="rounded-full px-10">
-                                View Previous Highlights
-                            </Button>
-                        </div>
-                    )}
-                </div>
-            </section>
 
             {/* Simple Powerful CTA */}
             <section className="py-24 bg-primary text-white text-center px-6 relative overflow-hidden">

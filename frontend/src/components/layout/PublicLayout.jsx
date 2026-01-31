@@ -14,7 +14,7 @@ const PublicLayout = () => {
         { path: '/', label: 'Home' },
         { path: '/about', label: 'About' },
         { path: '/sermons', label: 'Sermons' },
-        { path: '/events', label: 'Events' },
+
         { path: '/contact', label: 'Contact' },
     ];
 
@@ -125,7 +125,7 @@ const PublicLayout = () => {
                         <ul className="space-y-3">
                             <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
                             <li><Link to="/sermons" className="hover:text-white transition-colors">Sermons</Link></li>
-                            <li><Link to="/events" className="hover:text-white transition-colors">Calendar</Link></li>
+
                         </ul>
                     </div>
                     <div>

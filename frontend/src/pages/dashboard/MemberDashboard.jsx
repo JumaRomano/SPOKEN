@@ -135,16 +135,7 @@ const MemberDashboard = () => {
                 <div className="lg:col-span-2">
                     <Card title="Quick Actions">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <Link to="/events" className="group p-5 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-slate-200 transition-all flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <FiCalendar className="text-xl" />
-                                </div>
-                                <div>
-                                    <span className="block font-bold text-secondary-dark">Browse Events</span>
-                                    <span className="text-sm text-slate-500">Register for upcoming services</span>
-                                </div>
-                                <FiArrowRight className="ml-auto text-slate-300 group-hover:text-primary transition-colors" />
-                            </Link>
+
 
                             <Link to="/sermons" className="group p-5 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-slate-200 transition-all flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">

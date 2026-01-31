@@ -10,7 +10,7 @@ const SecretaryDashboard = () => {
     const { user } = useAuth();
     const [stats, setStats] = useState({
         totalMembers: 0,
-        upcomingEvents: 0,
+
     });
     const [loading, setLoading] = useState(true);
 
@@ -80,20 +80,7 @@ const SecretaryDashboard = () => {
                     </Link>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <div className="flex items-center gap-4 mb-4">
-                        <div className="p-3 bg-orange-50 text-orange-600 rounded-xl">
-                            <FiCalendar className="w-8 h-8" />
-                        </div>
-                        <div>
-                            <p className="text-gray-500 text-sm font-medium">Upcoming Events</p>
-                            <h3 className="text-3xl font-bold text-gray-900">{stats.upcomingEvents}</h3>
-                        </div>
-                    </div>
-                    <Link to="/events-management" className="text-orange-600 text-sm font-medium hover:underline flex items-center gap-1">
-                        Manage Calendar <FiArrowRight />
-                    </Link>
-                </div>
+
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -127,13 +114,7 @@ const SecretaryDashboard = () => {
                             <p className="text-indigo-100 text-sm">Service & Groups</p>
                         </div>
                     </Link>
-                    <Link to="/events-management" className="bg-orange-600 text-white p-6 rounded-2xl shadow-lg hover:bg-orange-700 transition-colors flex flex-col justify-between group">
-                        <FiCalendar className="w-8 h-8 opacity-80 group-hover:scale-110 transition-transform" />
-                        <div>
-                            <h3 className="font-bold text-lg">Church Calendar</h3>
-                            <p className="text-orange-100 text-sm">Schedule events</p>
-                        </div>
-                    </Link>
+
                     <Link to="/minutes" className="bg-green-600 text-white p-6 rounded-2xl shadow-lg hover:bg-green-700 transition-colors flex flex-col justify-between group">
                         <FiFileText className="w-8 h-8 opacity-80 group-hover:scale-110 transition-transform" />
                         <div>

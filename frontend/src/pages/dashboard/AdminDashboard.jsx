@@ -13,7 +13,7 @@ const AdminDashboard = () => {
     const [stats, setStats] = useState({
         totalMembers: 0,
         totalGroups: 0,
-        upcomingEvents: 0,
+
         totalContributions: 0,
         myGroups: 0,
     });
@@ -53,15 +53,7 @@ const AdminDashboard = () => {
             link: '/groups',
             trend: 'Manage groups'
         },
-        {
-            label: 'Upcoming Events',
-            value: stats.upcomingEvents,
-            icon: <FiCalendar className="w-6 h-6" />,
-            color: 'text-orange-600',
-            bg: 'bg-orange-50',
-            link: '/events-management',
-            trend: 'View calendar'
-        },
+
         {
             label: 'Total Contributions',
             value: stats.totalContributions ? `KES ${stats.totalContributions.toLocaleString()}` : 'KES 0',
@@ -76,7 +68,7 @@ const AdminDashboard = () => {
     const quickActions = [
         { to: '/members', label: 'Add Member', icon: <FiPlus />, color: 'bg-blue-600 hover:bg-blue-700' },
         { to: '/finance', label: 'Record Contribution', icon: <FiDollarSign />, color: 'bg-green-600 hover:bg-green-700' },
-        { to: '/events-management?create=true', label: 'Create Event', icon: <FiCalendar />, color: 'bg-orange-600 hover:bg-orange-700' },
+
         { to: '/attendance', label: 'Mark Attendance', icon: <FiCheckCircle />, color: 'bg-purple-600 hover:bg-purple-700' },
     ];
 

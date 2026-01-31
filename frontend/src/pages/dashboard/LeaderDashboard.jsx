@@ -12,7 +12,7 @@ const LeaderDashboard = () => {
     const { user } = useAuth();
     const [stats, setStats] = useState({
         totalGroups: 0,
-        upcomingEvents: 0,
+
         myGroups: 0
     });
     const [groups, setGroups] = useState([]);
@@ -73,20 +73,7 @@ const LeaderDashboard = () => {
                     </Link>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <div className="flex items-center gap-4 mb-4">
-                        <div className="p-3 bg-orange-50 text-orange-600 rounded-xl">
-                            <FiCalendar className="w-8 h-8" />
-                        </div>
-                        <div>
-                            <p className="text-gray-500 text-sm font-medium">Upcoming Events</p>
-                            <h3 className="text-3xl font-bold text-gray-900">{stats.upcomingEvents}</h3>
-                        </div>
-                    </div>
-                    <Link to="/events" className="text-orange-600 text-sm font-medium hover:underline flex items-center gap-1">
-                        Manage Calendar <FiArrowRight />
-                    </Link>
-                </div>
+
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
