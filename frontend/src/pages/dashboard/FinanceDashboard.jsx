@@ -121,9 +121,9 @@ const FinanceDashboard = () => {
                                 </div>
                             </div>
 
-                            {stats.monthlyGrowth !== 0 && (
+                            {stats.monthlyGrowth !== null && stats.monthlyGrowth !== undefined && (
                                 <div className="p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-xl">
-                                    <div className={`flex items-center gap-2 font-black text-xl mb-1 ${stats.monthlyGrowth > 0 ? 'text-blue-300' : 'text-red-400'}`}>
+                                    <div className={`flex items-center gap-2 font-black text-xl mb-1 ${stats.monthlyGrowth >= 0 ? 'text-blue-300' : 'text-red-400'}`}>
                                         <FiActivity />
                                         <span>{stats.monthlyGrowth > 0 ? '+' : ''}{stats.monthlyGrowth}%</span>
                                     </div>

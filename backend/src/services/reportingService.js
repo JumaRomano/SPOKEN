@@ -86,17 +86,30 @@ class ReportingService {
     }
 
     async getPendingPledgeStats() {
+        // Calculate pending amounts in real-time by joining with actual contributions
         const result = await db.query(
             `SELECT 
-                COUNT(*) as count, 
-                COALESCE(SUM(pledge_amount - amount_paid), 0) as total_pending 
-             FROM pledges 
-             WHERE status = $1 AND amount_paid < pledge_amount`,
-            ['active']
+                COUNT(*) as active_count,
+                SUM(pending_amount) as total_pending
+             FROM (
+                SELECT 
+                    p.id,
+                    p.pledge_amount,
+                    COALESCE(SUM(c.amount), 0) as total_paid,
+                    GREATEST(0, p.pledge_amount - COALESCE(SUM(c.amount), 0)) as pending_amount
+                FROM pledges p
+                LEFT JOIN contributions c ON p.member_id = c.member_id 
+                    AND p.fund_id = c.fund_id 
+                    AND c.contribution_date >= p.pledge_date
+                WHERE p.status = 'active'
+                GROUP BY p.id, p.pledge_amount
+             ) subquery
+             WHERE pending_amount > 0`
         );
+
         return {
-            count: parseInt(result.rows[0].count),
-            amount: parseFloat(result.rows[0].total_pending)
+            count: parseInt(result.rows[0].active_count || 0),
+            amount: parseFloat(result.rows[0].total_pending || 0)
         };
     }
 
@@ -114,7 +127,11 @@ class ReportingService {
         const current = parseFloat(currentMonth.rows[0].total);
         const last = parseFloat(lastMonth.rows[0].total);
 
-        if (last === 0) return current > 0 ? 100 : 0;
+        // If there's no data for both months, or current month is zero, 
+        // we return null to avoid misleading 0% or -100% growth
+        if (current === 0) return null;
+        if (last === 0) return 100;
+
         return parseFloat(((current - last) / last * 100).toFixed(1));
     }
 
