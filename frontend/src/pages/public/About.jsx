@@ -320,9 +320,9 @@ const About = () => {
                         </div>
                         <div className="grid md:grid-cols-3 gap-8">
                             {[
-                                { name: 'Bishop Joel Mandu', role: 'Presiding Bishop', img: null },
-                                { name: 'Reverend Sarah Johnson', role: 'Executive Pastor', img: null },
-                                { name: 'Pastor David Wilson', role: 'Worship Pastor', img: null },
+                                { name: 'Bishop Joel Mandu', role: ' Bishop', img: null },
+                                { name: 'Reverend ', role: ' Reverend', img: null },
+                                { name: 'Pastor ', role: 'Pastor', img: null },
                             ].map((leader, idx) => (
                                 <motion.div
                                     key={idx}
