@@ -54,10 +54,7 @@ const ContributionList = () => {
     };
 
     const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('en-KE', {
-            style: 'currency',
-            currency: 'KES',
-        }).format(amount || 0);
+        return `KSh ${(amount || 0).toLocaleString()}`;
     };
 
     return (
@@ -157,7 +154,7 @@ const ContributionList = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                         {contribution.fund_name || '-'}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary">
                                         {formatCurrency(contribution.amount)}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
@@ -174,7 +171,7 @@ const ContributionList = () => {
                     {/* Total */}
                     <div className="mt-4 p-4 bg-gray-50 rounded-lg flex justify-between items-center">
                         <span className="font-medium text-gray-700">Total:</span>
-                        <span className="text-xl font-bold text-green-600">
+                        <span className="text-xl font-bold text-primary">
                             {formatCurrency(
                                 contributions.reduce((sum, c) => sum + parseFloat(c.amount || 0), 0)
                             )}

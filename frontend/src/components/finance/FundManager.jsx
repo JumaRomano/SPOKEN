@@ -93,10 +93,7 @@ const FundManager = () => {
     };
 
     const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('en-KE', {
-            style: 'currency',
-            currency: 'KES',
-        }).format(amount || 0);
+        return `KSh ${(amount || 0).toLocaleString()}`;
     };
 
     return (
@@ -145,8 +142,8 @@ const FundManager = () => {
                                     <h3 className="font-medium text-gray-900">{fund.fund_name}</h3>
                                     <span
                                         className={`px-2 py-1 text-xs font-semibold rounded ${fund.is_active
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-gray-100 text-gray-600'
+                                            ? 'bg-blue-50 text-blue-700'
+                                            : 'bg-slate-100 text-slate-600'
                                             }`}
                                     >
                                         {fund.is_active ? 'Active' : 'Inactive'}
@@ -160,7 +157,7 @@ const FundManager = () => {
                                 <div className="border-t pt-3">
                                     <div className="flex justify-between text-sm mb-1">
                                         <span className="text-gray-600">Total Received:</span>
-                                        <span className="font-semibold text-green-600">
+                                        <span className="font-semibold text-primary">
                                             {formatCurrency(fund.total_received)}
                                         </span>
                                     </div>

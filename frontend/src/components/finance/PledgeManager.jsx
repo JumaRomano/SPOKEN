@@ -127,11 +127,11 @@ const PledgeManager = () => {
                                                 {pledge.first_name} {pledge.last_name}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">{pledge.fund_name}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap font-medium">
-                                                ${parseFloat(pledge.pledge_amount).toLocaleString()}
+                                            <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-700">
+                                                KSh {parseFloat(pledge.pledge_amount).toLocaleString()}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                ${parseFloat(pledge.total_paid).toLocaleString()}
+                                            <td className="px-6 py-4 whitespace-nowrap text-primary font-bold">
+                                                KSh {parseFloat(pledge.total_paid).toLocaleString()}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center">
