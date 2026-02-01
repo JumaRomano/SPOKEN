@@ -6,24 +6,34 @@ class ReportingService {
      * Get dashboard statistics (role-based)
      */
     async getDashboardStats(userId, role) {
-        const stats = {};
+        const stats = {
+            totalMembers: 0,
+            upcomingEvents: 0,
+            totalGroups: 0,
+            totalContributions: 0,
+            thisMonthGiving: 0,
+            thisMonthAttendance: 0,
+            pendingPledgesCount: 0,
+            pendingPledgesAmount: 0,
+            monthlyGrowth: 0
+        };
 
         // Common stats for all roles
         stats.totalMembers = await this.getTotalMembers();
         stats.upcomingEvents = await this.getUpcomingEventsCount();
 
         // Role-specific stats
-        if (role === 'admin' || role === 'sysadmin') {
+        if (role === 'admin' || role === 'sysadmin' || role === 'finance') {
             stats.totalGroups = await this.getTotalGroups();
             stats.totalContributions = await this.getTotalContributions();
             stats.thisMonthGiving = await this.getMonthlyGiving();
             stats.thisMonthAttendance = await this.getMonthlyAttendance();
-        }
 
-        if (role === 'finance') {
-            stats.totalContributions = await this.getTotalContributions();
-            stats.thisMonthGiving = await this.getMonthlyGiving();
-            stats.pendingPledges = await this.getPendingPledges();
+            const pledges = await this.getPendingPledgeStats();
+            stats.pendingPledgesCount = pledges.count;
+            stats.pendingPledgesAmount = pledges.amount;
+
+            stats.monthlyGrowth = await this.calculateMonthlyGrowth();
         }
 
         if (role === 'leader') {
@@ -75,13 +85,37 @@ class ReportingService {
         return parseFloat(result.rows[0].avg_attendance);
     }
 
-    async getPendingPledges() {
-        // Schema uses amount_paid
+    async getPendingPledgeStats() {
         const result = await db.query(
-            `SELECT COUNT(*) FROM pledges WHERE status = $1 AND amount_paid < pledge_amount`,
+            `SELECT 
+                COUNT(*) as count, 
+                COALESCE(SUM(pledge_amount - amount_paid), 0) as total_pending 
+             FROM pledges 
+             WHERE status = $1 AND amount_paid < pledge_amount`,
             ['active']
         );
-        return parseInt(result.rows[0].count);
+        return {
+            count: parseInt(result.rows[0].count),
+            amount: parseFloat(result.rows[0].total_pending)
+        };
+    }
+
+    async calculateMonthlyGrowth() {
+        const currentMonth = await db.query(
+            `SELECT COALESCE(SUM(amount), 0) as total FROM contributions
+             WHERE contribution_date >= DATE_TRUNC('month', CURRENT_DATE)`
+        );
+        const lastMonth = await db.query(
+            `SELECT COALESCE(SUM(amount), 0) as total FROM contributions
+             WHERE contribution_date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+             AND contribution_date < DATE_TRUNC('month', CURRENT_DATE)`
+        );
+
+        const current = parseFloat(currentMonth.rows[0].total);
+        const last = parseFloat(lastMonth.rows[0].total);
+
+        if (last === 0) return current > 0 ? 100 : 0;
+        return parseFloat(((current - last) / last * 100).toFixed(1));
     }
 
     async getMemberGroups(userId) {

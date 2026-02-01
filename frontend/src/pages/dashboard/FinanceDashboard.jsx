@@ -12,9 +12,10 @@ const FinanceDashboard = () => {
     const { user } = useAuth();
     const [stats, setStats] = useState({
         totalContributions: 0,
-        monthlyGrowth: 12.5, // Mock growth for UI
-        activePledges: 0,
-        recentTransactions: []
+        thisMonthGiving: 0,
+        monthlyGrowth: 0,
+        pendingPledgesCount: 0,
+        pendingPledgesAmount: 0
     });
     const [loading, setLoading] = useState(true);
     const [showContributionModal, setShowContributionModal] = useState(false);
@@ -24,7 +25,7 @@ const FinanceDashboard = () => {
         const fetchDashboardData = async () => {
             try {
                 const data = await dashboardService.getStats();
-                setStats(prev => ({ ...prev, ...data }));
+                setStats(data);
             } catch (err) {
                 console.error("Failed to fetch dashboard stats", err);
             } finally {
@@ -40,7 +41,7 @@ const FinanceDashboard = () => {
             await financeService.recordContribution(contributionData);
             setMessage({ type: 'success', text: 'Contribution recorded successfully!' });
             const data = await dashboardService.getStats();
-            setStats(prev => ({ ...prev, ...data }));
+            setStats(data);
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch (err) {
             setMessage({ type: 'error', text: 'Failed to record contribution' });
@@ -56,8 +57,8 @@ const FinanceDashboard = () => {
         <div className="space-y-10 pb-20 max-w-[1600px] mx-auto overflow-hidden px-4 md:px-6">
             {message.text && (
                 <div className={`fixed top-24 right-8 z-50 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-md border animate-in fade-in slide-in-from-top-4 duration-300 ${message.type === 'success'
-                        ? 'bg-blue-500/10 border-blue-200 text-blue-700'
-                        : 'bg-red-500/10 border-red-200 text-red-700'
+                    ? 'bg-blue-500/10 border-blue-200 text-blue-700'
+                    : 'bg-red-500/10 border-red-200 text-red-700'
                     }`}>
                     <div className="flex items-center gap-3">
                         <div className={`w-2 h-2 rounded-full ${message.type === 'success' ? 'bg-blue-500' : 'bg-red-500'}`} />
@@ -120,13 +121,15 @@ const FinanceDashboard = () => {
                                 </div>
                             </div>
 
-                            <div className="p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-xl">
-                                <div className="flex items-center gap-2 text-blue-300 font-black text-xl mb-1">
-                                    <FiActivity />
-                                    <span>+{stats.monthlyGrowth}%</span>
+                            {stats.monthlyGrowth !== 0 && (
+                                <div className="p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-xl">
+                                    <div className={`flex items-center gap-2 font-black text-xl mb-1 ${stats.monthlyGrowth > 0 ? 'text-blue-300' : 'text-red-400'}`}>
+                                        <FiActivity />
+                                        <span>{stats.monthlyGrowth > 0 ? '+' : ''}{stats.monthlyGrowth}%</span>
+                                    </div>
+                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Monthly Growth</span>
                                 </div>
-                                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Monthly Growth</span>
-                            </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -138,13 +141,11 @@ const FinanceDashboard = () => {
                         <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
                             <FiTrendingUp className="text-xl" />
                         </div>
-                        <h4 className="text-slate-500 font-black uppercase tracking-widest text-[10px] mb-2">Operational Funds</h4>
+                        <h4 className="text-slate-500 font-black uppercase tracking-widest text-[10px] mb-2">This Month's Giving</h4>
                         <div className="text-3xl font-black text-secondary-dark tracking-tighter">
-                            {formatCurrency(stats.totalContributions * 0.4)}
+                            {formatCurrency(stats.thisMonthGiving)}
                         </div>
-                        <div className="mt-4 w-full bg-slate-50 h-1.5 rounded-full overflow-hidden">
-                            <div className="bg-primary h-full rounded-full" style={{ width: '40%' }}></div>
-                        </div>
+                        <p className="mt-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Received recently</p>
                     </div>
 
                     {/* Secondary Stat B */}
@@ -152,11 +153,11 @@ const FinanceDashboard = () => {
                         <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 transition-transform">
                             <FiActivity className="text-xl" />
                         </div>
-                        <h4 className="text-slate-500 font-black uppercase tracking-widest text-[10px] mb-2">Pending Pledges</h4>
+                        <h4 className="text-slate-500 font-black uppercase tracking-widest text-[10px] mb-2">Total Unpaid Pledges</h4>
                         <div className="text-3xl font-black text-secondary-dark tracking-tighter">
-                            {formatCurrency(stats.activePledges || 450000)}
+                            {formatCurrency(stats.pendingPledgesAmount)}
                         </div>
-                        <p className="mt-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Awaiting Fulfillment</p>
+                        <p className="mt-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Across {stats.pendingPledgesCount} active pledges</p>
                     </div>
                 </div>
 
@@ -164,11 +165,11 @@ const FinanceDashboard = () => {
                 <div className="md:col-span-12 bg-white rounded-[3rem] border border-slate-100 shadow-xl overflow-hidden min-h-[400px]">
                     <div className="p-10 border-b border-slate-50 flex justify-between items-center">
                         <div>
-                            <h3 className="text-2xl font-black text-secondary-dark tracking-tight">Recent Activity</h3>
-                            <p className="text-slate-400 text-sm font-medium">Real-time contribution registry</p>
+                            <h3 className="text-2xl font-black text-secondary-dark tracking-tight">Financial Registry</h3>
+                            <p className="text-slate-400 text-sm font-medium">Real-time ledger overview</p>
                         </div>
                         <Link to="/finance" className="h-12 px-6 rounded-xl bg-slate-50 text-primary font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all flex items-center gap-2">
-                            <span>Audit Trail</span>
+                            <span>Detailed Audit</span>
                             <FiArrowRight />
                         </Link>
                     </div>
@@ -177,15 +178,15 @@ const FinanceDashboard = () => {
                         <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner border border-slate-100">
                             <FiPieChart className="w-10 h-10 text-slate-200" />
                         </div>
-                        <h4 className="text-xl font-black text-secondary-dark mb-3 tracking-tight">Synchronizing Records</h4>
+                        <h4 className="text-xl font-black text-secondary-dark mb-3 tracking-tight">Data Integrity Check</h4>
                         <p className="text-slate-500 max-w-sm mx-auto mb-8 leading-relaxed font-medium">
-                            We're currently indexing the latest financial data. Complete details will appear here momentarily.
+                            The system is currently indexing the latest transactions to ensure complete financial accuracy.
                         </p>
                         <button
                             onClick={() => setShowContributionModal(true)}
                             className="h-12 px-8 rounded-xl bg-blue-50 text-blue-600 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all shadow-sm"
                         >
-                            Quick Entry +
+                            Log Transaction +
                         </button>
                     </div>
                 </div>
