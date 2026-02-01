@@ -1,47 +1,70 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { FiClock } from 'react-icons/fi';
 import Button from '../../components/common/Button';
 
 const About = () => {
     return (
         <div className="flex flex-col min-h-screen">
-            {/* Hero Section */}
-            <section className="relative bg-secondary-dark text-white py-32 overflow-hidden">
-                {/* High-Resolution Cinematic Building Backdrop */}
-                <div className="absolute inset-0 z-0 bg-secondary-dark">
-                    <img
-                        src="/about-hero.jpg"
-                        alt="Spoken Word Ministry Building"
-                        className="w-full h-full object-cover"
-                        style={{
-                            filter: 'contrast(1.15) brightness(0.95) saturate(1.1) shadow(0 0 10px black)',
-                            animation: 'subtle-zoom-out 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1)'
-                        }}
-                    />
-                    {/* Precision Glass Mask - Darkens edges but keeps center clear for building branding */}
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(2,6,23,0.7)_80%)] z-10"></div>
-                    <div className="absolute inset-0 bg-gradient-to-b from-secondary-dark/40 via-transparent to-secondary-dark z-10"></div>
+            {/* Hero Section - Optimized for Immersive Cinematic Experience */}
+            <section className="relative bg-secondary-dark text-white py-32 overflow-hidden transition-all duration-700">
+                {/* Visual Backdrop Artistry */}
+                <div className="absolute inset-0 z-0">
+                    {/* The Hero Image - Visible on all screens with premium treatment */}
+                    <div className="absolute inset-0 bg-secondary-dark">
+                        <motion.img
+                            initial={{ scale: 1.15 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            src="/about-hero.jpg"
+                            alt="Spoken Word Ministry Building"
+                            className="w-full h-full object-cover opacity-60 lg:opacity-70"
+                            style={{
+                                filter: 'contrast(1.1) brightness(0.8) saturate(1.1)',
+                            }}
+                        />
+
+                        {/* Cinematic Multi-Layered Masking */}
+                        {/* Layer 1: Radial Vignette - Focus on center while darkening edges */}
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(2,6,23,0.8)_90%)] z-10"></div>
+
+                        {/* Layer 2: Strategic Vertical Gradient - Ensures text readability on any image part */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-secondary-dark/60 via-transparent to-secondary-dark z-10"></div>
+
+                        {/* Layer 3: Mobile Subtle Grid - Adds architectural texture */}
+                        <div className="lg:hidden absolute inset-0 opacity-[0.05] z-10"
+                            style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }}>
+                        </div>
+
+                        {/* Subtle vertical watermark - Restyled for image backdrop */}
+                        <div className="absolute top-20 left-6 origin-top-left rotate-90 select-none opacity-[0.08] pointer-events-none z-10">
+                            <span className="text-6xl font-black tracking-tighter uppercase whitespace-nowrap text-white">Foundations</span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Inline CSS for the refined zoom-out animation */}
-                <style dangerouslySetInnerHTML={{
-                    __html: `
-                    @keyframes subtle-zoom-out {
-                        from { transform: scale(1.15); }
-                        to { transform: scale(1); }
-                    }
-                `}} />
-
-                <div className="relative max-w-4xl mx-auto px-6 text-center z-10 py-20">
-                    <span className="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/10 text-blue-200 text-xs font-bold tracking-widest uppercase mb-6 backdrop-blur-sm">
-                        Who We Are
-                    </span>
-                    <h1 className="text-5xl lg:text-7xl font-bold mb-8 leading-tight tracking-tight">
-                        About Spoken Word
-                    </h1>
-                    <p className="text-xl text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed">
-                        Building a community of faith, hope, and love where everyone belongs and finds their purpose.
-                    </p>
+                {/* Hero Content - Clean & Punchy */}
+                <div className="relative max-w-4xl mx-auto px-6 text-center z-20 py-10 lg:py-20">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <motion.span
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="inline-block py-2 px-6 rounded-full bg-white/10 border border-white/20 text-blue-200 text-[10px] font-black tracking-[0.3em] uppercase mb-10 backdrop-blur-md shadow-2xl"
+                        >
+                            Who We Are
+                        </motion.span>
+                        <h1 className="text-[44px] sm:text-6xl lg:text-[85px] font-black mb-8 leading-[0.95] tracking-tighter text-white drop-shadow-2xl">
+                            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-blue-300">Spoken Word</span>
+                        </h1>
+                        <p className="text-lg lg:text-xl text-slate-200 font-medium max-w-xl mx-auto leading-relaxed opacity-95">
+                            Building a community of faith, hope, and love where everyone belongs and finds their purpose.
+                        </p>
+                    </motion.div>
                 </div>
             </section>
 
@@ -50,26 +73,38 @@ const About = () => {
                 <div className="max-w-7xl mx-auto">
                     <div className="grid md:grid-cols-2 gap-8">
                         {/* Vision Card */}
-                        <div className="group bg-white p-10 rounded-2xl shadow-soft hover:shadow-lg transition-all duration-300 border border-slate-100 flex flex-col justify-between h-full relative overflow-hidden">
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                            className="group bg-white p-10 rounded-2xl shadow-soft hover:shadow-lg transition-all duration-300 border border-slate-100 flex flex-col justify-between h-full relative overflow-hidden"
+                        >
                             <div className="absolute right-0 top-0 w-32 h-32 bg-blue-50 rounded-bl-full opacity-50 z-0 transition-transform group-hover:scale-150 duration-700"></div>
                             <div className="relative z-10">
-                                <h2 className="text-3xl font-bold text-secondary-dark mb-4 mt-4 md:mt-0">Our Vision</h2>
+                                <h2 className="text-3xl font-black text-secondary-dark mb-4 mt-4 md:mt-0 tracking-tight">Our Vision</h2>
                                 <p className="text-slate-600 text-lg leading-relaxed">
                                     To be a beacon of light in our community, transforming lives through the power of the Gospel and raising disciples who impact the world with Kingdom vales.
                                 </p>
                             </div>
-                        </div>
+                        </motion.div>
 
-                        {/* Mission Card */}
-                        <div className="group bg-secondary-dark text-white p-10 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between h-full relative overflow-hidden">
-                            <div className="absolute right-0 bottom-0 w-40 h-40 bg-white/5 rounded-tl-full z-0 transition-transform group-hover:scale-150 duration-700"></div>
+                        {/* Mission Card - Now consistent with Vision Card */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="group bg-white p-10 rounded-2xl shadow-soft hover:shadow-lg transition-all duration-300 border border-slate-100 flex flex-col justify-between h-full relative overflow-hidden"
+                        >
+                            <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-50 rounded-bl-full opacity-50 z-0 transition-transform group-hover:scale-150 duration-700"></div>
                             <div className="relative z-10">
-                                <h2 className="text-3xl font-bold text-white mb-4 mt-4 md:mt-0">Our Mission</h2>
-                                <p className="text-slate-300 text-lg leading-relaxed">
+                                <h2 className="text-3xl font-black text-secondary-dark mb-4 mt-4 md:mt-0 tracking-tight">Our Mission</h2>
+                                <p className="text-slate-600 text-lg leading-relaxed">
                                     We exist to worship God, disciple believers, and serve our neighbors with the tangible, life-changing love of Jesus Christ in action.
                                 </p>
                             </div>
-                        </div>
+                        </motion.div>
                     </div>
                 </div>
             </section>

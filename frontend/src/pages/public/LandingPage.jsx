@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiMapPin, FiClock, FiArrowRight, FiVideo, FiHeart, FiUsers, FiSun } from 'react-icons/fi';
 import Button from '../../components/common/Button';
+import heroMobile from '../../assets/church_hero_mobile.png';
 
 
 const LandingPage = () => {
@@ -18,95 +19,144 @@ const LandingPage = () => {
 
     return (
         <div className="flex flex-col min-h-screen font-sans smooth-scroll bg-white">
-            {/* Hero Section - Senior Engineer Mobile Optimized Immersive Video */}
-            <section className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-black text-white px-safe">
-                {/* Video Background Layer - Optimized for Internal Branding & Wide Screen Clarity */}
-                <div className="absolute inset-0 z-0 pointer-events-none select-none touch-none overflow-hidden bg-black">
-                    <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-slate-900">
-                        {videoUrl ? (
-                            <iframe
-                                className="pointer-events-none border-none transition-opacity duration-1000 animate-in fade-in"
-                                src={videoUrl}
-                                allow="autoplay; encrypted-media"
-                                title="Hero Video Background"
-                                style={{
-                                    width: '100vw',
-                                    height: '56.25vw', // 16:9
-                                    minHeight: '100vh',
-                                    minWidth: '177.77vh', // 16:9
-                                    position: 'absolute',
-                                    top: '50%',
-                                    left: '50%',
-                                    transform: 'translate(-50%, -50%) scale(1.0)', // Zero crop to preserve edge-to-edge text
-                                    filter: 'contrast(1.02) brightness(1.05)',
-                                }}
-                            ></iframe>
-                        ) : (
-                            <div className="absolute inset-0 bg-slate-900 flex items-center justify-center">
-                                {/* Subtle animated placeholder */}
-                                <div className="w-16 h-16 border-2 border-white/5 border-t-white/20 rounded-full animate-spin"></div>
-                            </div>
-                        )}
+            {/* Hero Section - Iridescent Spiritual Masterpiece */}
+            <section className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden lg:bg-black bg-white transition-all duration-1000">
+                {/* Background Artistry Layer */}
+                <div className="absolute inset-0 z-0 pointer-events-none select-none touch-none overflow-hidden">
+                    {/* Mobile: Iridescent Mesh & Glass Aesthetic */}
+                    <div className="lg:hidden absolute inset-0 bg-white">
+                        {/* Phase 1: Holographic Mesh Gradients (Ethereal shifting colors) */}
+                        <div className="absolute top-[-10%] left-[-20%] w-[120%] h-[60%] bg-[radial-gradient(circle_at_center,_rgba(186,230,253,0.3)_0%,_rgba(167,139,250,0.1)_50%,_transparent_100%)] blur-[120px] animate-pulse"></div>
+                        <div className="absolute bottom-[-10%] right-[-10%] w-[100%] h-[50%] bg-[radial-gradient(circle_at_center,_rgba(244,243,238,0.8)_0%,_rgba(191,219,254,0.2)_60%,_transparent_100%)] blur-[100px]"></div>
+
+                        {/* Phase 2: Floating Glass Orbs - Adding Dimension */}
+                        <motion.div
+                            animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
+                            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute top-[20%] right-[15%] w-32 h-32 bg-gradient-to-tr from-blue-100/30 to-purple-100/20 rounded-full blur-2xl"
+                        ></motion.div>
+                        <motion.div
+                            animate={{ y: [0, 30, 0], x: [0, -15, 0] }}
+                            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute bottom-[25%] left-[10%] w-48 h-48 bg-gradient-to-br from-indigo-50/40 to-blue-50/30 rounded-full blur-3xl opacity-60"
+                        ></motion.div>
+
+                        {/* Phase 3: The 'Path of Light' - Guiding User down */}
+                        <div className="absolute left-[8%] top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-blue-200/40 to-transparent"></div>
+                        <motion.div
+                            animate={{ top: ['0%', '100%'], opacity: [0, 1, 0] }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                            className="absolute left-[8%] w-[3px] h-20 bg-gradient-to-b from-blue-400 to-transparent -translate-x-1/2 blur-[2px]"
+                        ></motion.div>
                     </div>
 
-                    {/* Precision Overlays - Lightened significantly to reveal address & welcome text in video */}
-                    <div className="absolute inset-0 bg-black/10 z-10"></div>
-
-                    {/* Selective Vignette - Only darkens the top for header and bottom-center for buttons, leaving edges clear */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/30 z-10"></div>
-
-                    {/* Specialized Wide Screen Protection - Keeps video letters punchy on huge monitors */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20 z-10 hidden xl:block"></div>
+                    {/* Desktop Video Background - Preserved for High-End Desktop Feel */}
+                    <div className="hidden lg:flex absolute inset-0 w-full h-full items-center justify-center bg-black">
+                        <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-slate-900">
+                            {videoUrl && (
+                                <iframe
+                                    className="pointer-events-none border-none transition-opacity duration-1000 animate-in fade-in"
+                                    src={videoUrl}
+                                    allow="autoplay; encrypted-media"
+                                    title="Hero Video Background"
+                                    style={{
+                                        width: '100vw',
+                                        height: '56.25vw',
+                                        minHeight: '100vh',
+                                        minWidth: '177.77vh',
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%) scale(1.0)',
+                                        filter: 'contrast(1.02) brightness(1.05)',
+                                    }}
+                                ></iframe>
+                            )}
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/40 z-10"></div>
+                    </div>
                 </div>
 
-                {/* Content Container - Precision Adjusted for 9:16 Screens */}
-                <div className="relative z-20 w-full max-w-6xl mx-auto px-6 py-10 md:py-24 
-                    mt-[env(safe-area-inset-top)] mb-[env(safe-area-inset-bottom)] flex flex-col justify-center min-h-[100svh]">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                        className="flex flex-col items-center text-center -mt-12 md:mt-0"
-                    >
-                        {/* Branded Pill - Tighter for Mobile */}
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-blue-300 text-[9px] md:text-xs font-black tracking-[0.2em] uppercase mb-8 md:mb-12 shadow-xl ring-1 ring-white/5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] animate-pulse"></span>
-                            Spoken Word of God Ministries
+                {/* Content - Cinematic Typography & Glass Panels */}
+                <div className="relative z-20 w-full max-w-6xl mx-auto px-6 flex flex-col justify-center min-h-[100svh] py-12 md:py-24">
+                    <div className="flex flex-col items-center">
+                        {/* Branded Pill - Iridescent/Glass Style */}
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                            className="inline-flex items-center gap-3 px-6 py-2 rounded-full lg:bg-white/10 bg-white/60 border lg:border-white/20 border-blue-100 backdrop-blur-xl lg:text-blue-300 text-primary text-[10px] md:text-xs font-black tracking-[0.4em] uppercase mb-16 shadow-soft group hover:border-primary/30 transition-all"
+                        >
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_#3b82f6] animate-pulse"></span>
+                            A Sanctuary of Restoration
+                        </motion.div>
+
+                        {/* Mobile Title - High-End Magazine Style Layout */}
+                        <div className="relative mb-16 lg:mb-20 flex flex-col items-center text-center">
+                            {/* Mobile Title Backdrop Glow */}
+                            <div className="lg:hidden absolute inset-0 -z-10 bg-blue-50/30 blur-[60px] rounded-full scale-110"></div>
+
+                            <motion.h1
+                                initial={{ opacity: 0, y: 40 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+                                className="text-[46px] sm:text-7xl md:text-8xl lg:text-[115px] font-black leading-[0.9] tracking-tighter lg:text-white text-secondary-dark"
+                            >
+                                <span className="block mb-4 lg:mb-6 opacity-60 lg:opacity-100">I shall stay</span>
+                                <span className="block mb-4 lg:hidden relative">
+                                    under the
+                                    <span className="absolute -left-4 -right-4 bottom-1 h-3 bg-blue-500/10 -z-10"></span>
+                                </span>
+                                <span className="hidden lg:inline">under the </span>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-br lg:from-white from-primary lg:via-blue-200 via-blue-500 lg:to-blue-400 to-blue-900 drop-shadow-sm">
+                                    Spoken Word of God.
+                                </span>
+                            </motion.h1>
                         </div>
 
-                        {/* Main Title - Optimized for vertical stacking on 9:16 */}
-                        <h1 className="text-[38px] sm:text-6xl md:text-8xl lg:text-[100px] font-black mb-6 md:mb-10 leading-[1.1] md:leading-[1.05] tracking-tight md:tracking-tighter drop-shadow-2xl px-2">
-                            I shall stay <br className="md:hidden" />
-                            under the <br className="hidden md:block" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-blue-300">
-                                Spoken Word <br className="md:hidden" /> of God.
-                            </span>
-                        </h1>
+                        {/* Description - Scriptural Promise Area */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 1.5, delay: 0.6 }}
+                            className="max-w-[340px] sm:max-w-2xl mx-auto text-center"
+                        >
+                            <div className="relative inline-block">
+                                <p className="text-[18px] sm:text-xl md:text-2xl lg:text-slate-100/90 text-slate-400 italic font-serif leading-relaxed tracking-tight lg:opacity-95">
+                                    "I will restore to you the years that the swarmed locust has eaten."
+                                </p>
+                                <motion.span
+                                    initial={{ width: 0 }}
+                                    whileInView={{ width: '40px' }}
+                                    className="block h-[1px] bg-primary mx-auto my-4"
+                                ></motion.span>
+                                <span className="text-primary-dark lg:text-blue-300 font-black tracking-[0.3em] uppercase text-xs sm:text-sm">
+                                    — Joel 2:25
+                                </span>
+                            </div>
+                        </motion.div>
 
-                        {/* Mobile Optimized Text Container */}
-                        <div className="max-w-[320px] sm:max-w-2xl mx-auto relative px-2">
-                            <p className="text-sm sm:text-xl md:text-2xl text-slate-100/90 font-medium mb-12 leading-relaxed tracking-tight opacity-95">
-                                A vibrant community dedicated to authentic worship,
-                                <span className="hidden sm:inline"> deep spiritual growth, and serving our neighbors with love.</span>
-                            </p>
-                        </div>
-
-                        {/* Mobile Optimized Actions */}
-                        <div className="flex flex-col sm:flex-row gap-4 md:gap-6 items-center w-full max-w-[280px] sm:max-w-none justify-center">
-                            <Button to="/about" variant="outline" size="large"
-                                className="w-full sm:w-[220px] h-14 md:h-16 rounded-full text-base md:text-lg font-bold border-white/30 text-white hover:bg-white/10 hover:border-white backdrop-blur-md transition-all duration-300 active:scale-95 shadow-lg">
-                                Our Mission
+                        {/* Stunner Action Buttons - Twin Primary Style */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.8 }}
+                            className="flex flex-col sm:flex-row gap-6 mt-16 items-center w-full max-w-[280px] sm:max-w-none justify-center"
+                        >
+                            <Button to="/about" variant="primary" size="large"
+                                className="w-full sm:w-[240px] h-14 md:h-16 rounded-full text-base font-black shadow-[0_20px_40px_rgba(59,130,246,0.3)] lg:bg-transparent lg:border-2 lg:border-white/30 hover:scale-105 active:scale-95 transition-all text-white">
+                                Discover Our Story
                             </Button>
-                            <Button to="/contact" variant="outline" size="large"
-                                className="w-full sm:w-[220px] h-14 md:h-16 rounded-full text-base md:text-lg font-bold border-white/30 text-white hover:bg-white/10 hover:border-white backdrop-blur-md transition-all duration-300 active:scale-95 shadow-lg">
+                            <Button to="/contact" variant="primary" size="large"
+                                className="w-full sm:w-[240px] h-14 md:h-16 rounded-full text-base font-black shadow-[0_20px_40px_rgba(59,130,246,0.3)] lg:bg-transparent lg:border-2 lg:border-white/30 hover:scale-105 active:scale-95 transition-all text-white">
                                 Plan a Visit
                             </Button>
-                        </div>
-                    </motion.div>
+                        </motion.div>
+                    </div>
                 </div>
 
-                {/* Animated Scroll Indicator - Modern & Minimalist */}
-                <div className="absolute bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-3 group">
+                {/* Animated Scroll Indicator - Only visible on Desktop or if desired */}
+                <div className="absolute bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 hidden lg:flex flex-col items-center gap-3 group">
                     <div className="relative w-[1px] h-12 md:h-16 bg-white/10 overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1/2 bg-blue-500/50 animate-scroll-line"></div>
                     </div>
@@ -118,20 +168,17 @@ const LandingPage = () => {
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {[
-                            { title: 'Worship With Us', icon: <FiSun className="w-6 h-6" />, text: 'Join us every Sunday at 9:00 AM & 11:30 AM for a time of refreshing.', link: '/contact', linkText: 'Plan Your Visit', accent: 'border-l-4 border-blue-500' },
-                            { title: 'Sermon Library', icon: <FiVideo className="w-6 h-6" />, text: 'Access our archive of life-changing messages and teachings anytime.', link: '/sermons', linkText: 'Watch Now', accent: 'border-l-4 border-indigo-500' },
+                            { title: 'Worship With Us', text: 'Join us every Sunday at 9:00 AM & 11:30 AM for a time of refreshing.', link: '/contact', linkText: 'Plan Your Visit', accent: 'border-l-4 border-primary' },
+                            { title: 'Sermon Library', text: 'Access our archive of life-changing messages and teachings anytime.', link: '/sermons', linkText: 'Watch Now', accent: 'border-l-4 border-primary' },
                         ].map((card, index) => (
-                            <div key={index} className={`bg-white p-8 rounded-xl shadow-soft hover:shadow-lg transition-all duration-300 border border-gray-100 ${card.accent} group`}>
-                                <div className="flex items-start justify-between mb-6">
-                                    <div className="p-3 bg-gray-50 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                                        {card.icon}
-                                    </div>
-                                    <Link to={card.link} className="flex items-center gap-2 text-sm font-semibold text-slate-500 group-hover:text-primary transition-colors">
+                            <div key={index} className={`bg-white p-10 rounded-xl shadow-soft hover:shadow-lg transition-all duration-300 border border-gray-100 ${card.accent} group`}>
+                                <div className="flex items-center justify-between mb-8">
+                                    <h3 className="text-2xl font-black text-secondary-dark tracking-tight">{card.title}</h3>
+                                    <Link to={card.link} className="flex items-center gap-2 text-sm font-bold text-slate-400 group-hover:text-primary transition-colors">
                                         {card.linkText} <FiArrowRight className="transition-transform group-hover:translate-x-1" />
                                     </Link>
                                 </div>
-                                <h3 className="text-xl font-bold text-secondary-dark mb-3">{card.title}</h3>
-                                <p className="text-slate-600 leading-relaxed">{card.text}</p>
+                                <p className="text-slate-600 text-lg leading-relaxed max-w-md">{card.text}</p>
                             </div>
                         ))}
                     </div>
