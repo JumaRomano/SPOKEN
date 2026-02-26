@@ -99,37 +99,37 @@ const FinanceDashboard = () => {
             {/* Bento Grid Layout */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                 {/* Main Card - Big Stat */}
-                <div className="md:col-span-8 group relative bg-slate-900 rounded-[2.5rem] p-10 text-white overflow-hidden shadow-xl min-h-[400px] flex flex-col justify-end">
+                <div className="md:col-span-8 group relative bg-white border border-slate-200 shadow-sm rounded-[2.5rem] p-8 md:p-12 overflow-hidden min-h-[400px] flex flex-col justify-between transition-all hover:border-slate-300">
                     {/* Flat Visuals */}
-                    <div className="absolute top-10 right-10 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
-                        <FiPieChart className="w-80 h-80 rotate-12" />
+                    <div className="absolute top-0 right-0 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity duration-700 pointer-events-none transform translate-x-1/4 -translate-y-1/4">
+                        <FiPieChart className="w-[400px] h-[400px] text-slate-900 rotate-12" />
                     </div>
 
-                    <div className="relative z-10 w-full">
-                        <div className="inline-flex items-center gap-3 py-1.5 px-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md mb-8">
-                            <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-100">Global Revenue</span>
+                    <div className="relative z-10 w-full flex justify-between items-start">
+                        <div className="inline-flex items-center gap-3 py-2 px-4 rounded-xl bg-blue-50 border border-blue-100">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-primary">Global Revenue</span>
                         </div>
+                    </div>
 
-                        <div className="flex flex-col md:flex-row md:items-end justify-between items-start gap-4">
-                            <div>
-                                <h3 className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[11px] mb-4">Total Contributions Balance</h3>
-                                <div className="text-5xl md:text-7xl font-black tracking-tighter flex items-start gap-2">
-                                    <span className="text-3xl mt-2 opacity-50">KSh</span>
-                                    {loading ? '---,---' : (stats.totalContributions || 0).toLocaleString()}
-                                </div>
+                    <div className="relative z-10 w-full flex flex-col md:flex-row md:items-end justify-between items-start gap-8 mt-16">
+                        <div>
+                            <h3 className="text-slate-500 font-black uppercase tracking-[0.2em] text-[11px] mb-4">Total Contributions Balance</h3>
+                            <div className="text-6xl md:text-8xl font-black text-slate-800 tracking-tighter flex items-start gap-2">
+                                <span className="text-2xl mt-4 text-slate-400 font-bold">KSh</span>
+                                {loading ? '---,---' : (stats.totalContributions || 0).toLocaleString()}
                             </div>
-
-                            {stats.monthlyGrowth !== null && stats.monthlyGrowth !== undefined && (
-                                <div className="p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-xl">
-                                    <div className={`flex items-center gap-2 font-black text-xl mb-1 ${stats.monthlyGrowth >= 0 ? 'text-blue-300' : 'text-red-400'}`}>
-                                        <FiActivity />
-                                        <span>{stats.monthlyGrowth > 0 ? '+' : ''}{stats.monthlyGrowth}%</span>
-                                    </div>
-                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Monthly Growth</span>
-                                </div>
-                            )}
                         </div>
+
+                        {stats.monthlyGrowth !== null && stats.monthlyGrowth !== undefined && (
+                            <div className="px-6 py-5 bg-slate-50 border border-slate-100 rounded-3xl min-w-[160px]">
+                                <div className={`flex items-center gap-2 font-black text-2xl mb-1 ${stats.monthlyGrowth >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                    <FiActivity />
+                                    <span>{stats.monthlyGrowth > 0 ? '+' : ''}{stats.monthlyGrowth}%</span>
+                                </div>
+                                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Monthly Growth</span>
+                            </div>
+                        )}
                     </div>
                 </div>
 
