@@ -65,17 +65,6 @@ const LandingPage = () => {
                 {/* Content - Sophisticated Typography & Layout */}
                 <div className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col justify-center min-h-[100svh] py-16">
                     <div className="flex flex-col items-center text-center">
-                        {/* Premium Badge */}
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-                            className="inline-flex items-center gap-3 px-8 py-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-2xl text-slate-200 text-[11px] font-bold tracking-[0.35em] uppercase mb-12 lg:mb-16 shadow-2xl hover:border-white/20 transition-all duration-500 group"
-                        >
-                            <span className="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.8)] animate-pulse"></span>
-                            <span className="group-hover:tracking-[0.4em] transition-all duration-300">A Sanctuary of Restoration</span>
-                        </motion.div>
-
                         {/* Elegant Heading */}
                         <div className="relative mb-12 lg:mb-16">
                             <motion.h1
