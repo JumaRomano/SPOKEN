@@ -7,44 +7,50 @@ const About = () => {
     return (
         <div className="flex flex-col min-h-screen">
             {/* Hero Section - Optimized for Immersive Cinematic Experience */}
-            <section className="relative bg-secondary-dark text-white py-32 overflow-hidden transition-all duration-700">
+            <section className="relative bg-secondary-dark text-white py-32 lg:py-40 overflow-hidden transition-all duration-700">
                 {/* Visual Backdrop Artistry */}
                 <div className="absolute inset-0 z-0">
-                    {/* The Hero Image - Visible on all screens with premium treatment */}
+                    {/* The Hero Image - Church Interior with Premium Treatment */}
                     <div className="absolute inset-0 bg-secondary-dark">
                         <motion.img
-                            initial={{ scale: 1.15 }}
+                            initial={{ scale: 1.1 }}
                             animate={{ scale: 1 }}
-                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            transition={{ duration: 2, ease: "easeOut" }}
                             src="/about-hero.jpg"
-                            alt="Spoken Word Ministry Building"
-                            className="w-full h-full object-cover opacity-60 lg:opacity-70"
+                            alt="Spoken Word Ministry Interior"
+                            className="w-full h-full object-cover opacity-50 lg:opacity-75"
                             style={{
-                                filter: 'contrast(1.1) brightness(0.8) saturate(1.1)',
+                                filter: 'contrast(1.15) brightness(0.75) saturate(1.2)',
+                                objectPosition: 'center center',
                             }}
                         />
 
-                        {/* Cinematic Multi-Layered Masking */}
-                        {/* Layer 1: Radial Vignette - Focus on center while darkening edges */}
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(2,6,23,0.8)_90%)] z-10"></div>
+                        {/* Cinematic Multi-Layered Masking - Enhanced for Laptop */}
+                        {/* Layer 1: Sophisticated Radial Vignette - Creates depth and focus */}
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(2,6,23,0.3)_50%,_rgba(2,6,23,0.85)_100%)] z-10"></div>
 
-                        {/* Layer 2: Strategic Vertical Gradient - Ensures text readability on any image part */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-secondary-dark/60 via-transparent to-secondary-dark z-10"></div>
+                        {/* Layer 2: Vertical Gradient - Superior text legibility */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-secondary-dark/70 via-secondary-dark/20 to-secondary-dark/90 z-10"></div>
 
-                        {/* Layer 3: Mobile Subtle Grid - Adds architectural texture */}
-                        <div className="lg:hidden absolute inset-0 opacity-[0.05] z-10"
-                            style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }}>
+                        {/* Layer 3: Laptop-optimized Horizontal Gradient - Adds cinematic width */}
+                        <div className="hidden lg:block absolute inset-0 bg-gradient-to-r from-secondary-dark/40 via-transparent to-secondary-dark/40 z-10"></div>
+
+                        {/* Layer 4: Subtle Noise Texture - Film grain effect for premium feel */}
+                        <div className="absolute inset-0 opacity-[0.03] z-10 mix-blend-overlay"
+                            style={{
+                                backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' /%3E%3C/svg%3E")',
+                            }}>
                         </div>
 
                         {/* Subtle vertical watermark - Restyled for image backdrop */}
-                        <div className="absolute top-20 left-6 origin-top-left rotate-90 select-none opacity-[0.08] pointer-events-none z-10">
-                            <span className="text-6xl font-black tracking-tighter uppercase whitespace-nowrap text-white">Foundations</span>
+                        <div className="absolute top-20 left-6 origin-top-left rotate-90 select-none opacity-[0.06] pointer-events-none z-10">
+                            <span className="text-7xl lg:text-8xl font-black tracking-tighter uppercase whitespace-nowrap text-white">Foundations</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Hero Content - Clean & Punchy */}
-                <div className="relative max-w-4xl mx-auto px-6 text-center z-20 py-10 lg:py-20">
+                {/* Hero Content - Clean & Punchy - Laptop Optimized */}
+                <div className="relative max-w-5xl mx-auto px-6 text-center z-20 py-12 lg:py-24">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -54,14 +60,14 @@ const About = () => {
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ delay: 0.2 }}
-                            className="inline-block py-2 px-6 rounded-full bg-white/10 border border-white/20 text-blue-200 text-[10px] font-black tracking-[0.3em] uppercase mb-10 backdrop-blur-md shadow-2xl"
+                            className="inline-block py-2.5 px-7 rounded-full bg-white/10 border border-white/20 text-blue-200 text-[11px] font-black tracking-[0.3em] uppercase mb-10 backdrop-blur-md shadow-2xl hover:bg-white/15 transition-all duration-300"
                         >
                             Who We Are
                         </motion.span>
-                        <h1 className="text-[44px] sm:text-6xl lg:text-[85px] font-black mb-8 leading-[0.95] tracking-tighter text-white drop-shadow-2xl">
-                            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-blue-300">Spoken Word</span>
+                        <h1 className="text-5xl sm:text-6xl lg:text-[90px] xl:text-[100px] font-black mb-8 lg:mb-10 leading-[0.95] tracking-tighter text-white drop-shadow-2xl">
+                            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-blue-300 drop-shadow-none">Spoken Word</span>
                         </h1>
-                        <p className="text-lg lg:text-xl text-slate-200 font-medium max-w-xl mx-auto leading-relaxed opacity-95">
+                        <p className="text-lg lg:text-2xl xl:text-2xl text-slate-200 font-medium max-w-3xl mx-auto leading-relaxed opacity-95 drop-shadow-lg">
                             Building a community of faith, hope, and love where everyone belongs and finds their purpose.
                         </p>
                     </motion.div>
@@ -136,7 +142,7 @@ const About = () => {
                                     {
                                         day: "Weekdays (Tue, Thu)",
                                         items: [
-                                            { name: "Midweek Service", time: "2:00 PM - 5:00 PM" }
+                                            { name: "Midweek Service", time: "10:00 AM - 12:00 PM" }
                                         ]
                                     }
                                 ].map((service, idx) => (
@@ -352,28 +358,7 @@ const About = () => {
                         </div>
                     </div>
 
-                    <div className="mt-32 text-center">
-                        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[3rem] p-12 lg:p-20 relative overflow-hidden shadow-2xl">
-                            {/* Background decoration */}
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
-                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
 
-                            <div className="relative z-10">
-                                <h3 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight">Join Our Journey</h3>
-                                <p className="text-blue-100 mb-10 text-lg max-w-2xl mx-auto opacity-90 leading-relaxed">
-                                    Whether you're looking for a spiritual home or just want to see what we're about, we'd love to welcome you.
-                                </p>
-                                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                    <Button to="/contact" variant="white" size="large" className="font-black tracking-widest">
-                                        PLAN YOUR VISIT
-                                    </Button>
-                                    <Button to="/events" variant="outline-white" size="large" className="font-black tracking-widest">
-                                        VIEW EVENTS
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </section>
         </div>
