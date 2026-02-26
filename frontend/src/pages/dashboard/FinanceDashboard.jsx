@@ -74,7 +74,7 @@ const FinanceDashboard = () => {
                         Financial Stewardship
                     </span>
                     <h1 className="text-[40px] md:text-5xl font-black text-secondary-dark tracking-tighter leading-none mb-4">
-                        Treasury <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600">Overview</span>
+                        Treasury <span className="text-primary">Overview</span>
                     </h1>
                     <p className="text-slate-500 font-medium max-w-lg">
                         Detailed reporting and management of Kingdom resources and community contributions.
@@ -88,7 +88,7 @@ const FinanceDashboard = () => {
                     </button>
                     <button
                         onClick={() => setShowContributionModal(true)}
-                        className="h-14 px-8 rounded-2xl bg-gradient-to-r from-primary to-indigo-700 text-white font-black text-xs uppercase tracking-widest hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2 shadow-blue-200 shadow-lg"
+                        className="h-14 px-8 rounded-2xl bg-primary text-white font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2 shadow-sm"
                     >
                         <FiPlus className="text-lg" />
                         <span>Record Funds</span>
@@ -99,10 +99,9 @@ const FinanceDashboard = () => {
             {/* Bento Grid Layout */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                 {/* Main Card - Big Stat */}
-                <div className="md:col-span-8 group relative bg-secondary-dark rounded-[2.5rem] p-10 text-white overflow-hidden shadow-2xl border border-white/5 min-h-[400px] flex flex-col justify-end">
-                    {/* Background Visuals */}
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/30 transition-colors duration-1000"></div>
-                    <div className="absolute top-10 right-10 opacity-10 group-hover:opacity-20 transition-opacity duration-700">
+                <div className="md:col-span-8 group relative bg-slate-900 rounded-[2.5rem] p-10 text-white overflow-hidden shadow-xl min-h-[400px] flex flex-col justify-end">
+                    {/* Flat Visuals */}
+                    <div className="absolute top-10 right-10 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
                         <FiPieChart className="w-80 h-80 rotate-12" />
                     </div>
 
@@ -137,8 +136,8 @@ const FinanceDashboard = () => {
                 {/* Right Side Cards */}
                 <div className="md:col-span-4 flex flex-col gap-6">
                     {/* Secondary Stat A */}
-                    <div className="flex-1 bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-soft group hover:border-primary/20 transition-all">
-                        <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+                    <div className="flex-1 bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-sm group hover:border-slate-300 transition-all">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-primary mb-6 transition-transform">
                             <FiTrendingUp className="text-xl" />
                         </div>
                         <h4 className="text-slate-500 font-black uppercase tracking-widest text-[10px] mb-2">This Month's Giving</h4>
@@ -149,8 +148,8 @@ const FinanceDashboard = () => {
                     </div>
 
                     {/* Secondary Stat B */}
-                    <div className="flex-1 bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-soft group hover:border-primary/20 transition-all">
-                        <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 transition-transform">
+                    <div className="flex-1 bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-sm group hover:border-slate-300 transition-all">
+                        <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 transition-transform">
                             <FiActivity className="text-xl" />
                         </div>
                         <h4 className="text-slate-500 font-black uppercase tracking-widest text-[10px] mb-2">Total Unpaid Pledges</h4>
@@ -162,20 +161,20 @@ const FinanceDashboard = () => {
                 </div>
 
                 {/* Bottom Wide Card - Transactions */}
-                <div className="md:col-span-12 bg-white rounded-[3rem] border border-slate-100 shadow-xl overflow-hidden min-h-[400px]">
-                    <div className="p-10 border-b border-slate-50 flex justify-between items-center">
+                <div className="md:col-span-12 bg-white rounded-[3rem] border border-slate-200 shadow-sm overflow-hidden min-h-[400px]">
+                    <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                         <div>
-                            <h3 className="text-2xl font-black text-secondary-dark tracking-tight">Financial Registry</h3>
-                            <p className="text-slate-400 text-sm font-medium">Real-time ledger overview</p>
+                            <h3 className="text-2xl font-black text-slate-800 tracking-tight">Financial Registry</h3>
+                            <p className="text-slate-500 text-sm font-medium">Real-time ledger overview</p>
                         </div>
-                        <Link to="/finance" className="h-12 px-6 rounded-xl bg-slate-50 text-primary font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all flex items-center gap-2">
+                        <Link to="/finance" className="h-12 px-6 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-widest hover:bg-slate-200 transition-all flex items-center gap-2">
                             <span>Detailed Audit</span>
                             <FiArrowRight />
                         </Link>
                     </div>
 
                     <div className="p-12 text-center text-gray-500">
-                        <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner border border-slate-100">
+                        <div className="w-24 h-24 bg-slate-100 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-slate-200">
                             <FiPieChart className="w-10 h-10 text-slate-200" />
                         </div>
                         <h4 className="text-xl font-black text-secondary-dark mb-3 tracking-tight">Data Integrity Check</h4>
