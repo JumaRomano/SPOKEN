@@ -100,11 +100,6 @@ const FinanceDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                 {/* Main Card - Big Stat */}
                 <div className="md:col-span-8 group relative bg-white border border-slate-200 shadow-sm rounded-[2.5rem] p-8 md:p-12 overflow-hidden min-h-[400px] flex flex-col justify-between transition-all hover:border-slate-300">
-                    {/* Flat Visuals */}
-                    <div className="absolute top-0 right-0 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity duration-700 pointer-events-none transform translate-x-1/4 -translate-y-1/4">
-                        <FiPieChart className="w-[400px] h-[400px] text-slate-900 rotate-12" />
-                    </div>
-
                     <div className="relative z-10 w-full flex justify-between items-start">
                         <div className="inline-flex items-center gap-3 py-2 px-4 rounded-xl bg-blue-50 border border-blue-100">
                             <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
