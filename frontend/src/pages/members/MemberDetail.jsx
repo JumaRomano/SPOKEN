@@ -150,7 +150,7 @@ const MemberDetail = () => {
 
             {/* Header / Banner */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="h-32 bg-gradient-to-r from-primary-gradientStart to-primary-gradientEnd"></div>
+                <div className="h-32 bg-slate-900"></div>
                 <div className="px-8 pb-8">
                     <div className="relative flex justify-between items-end -mt-12 mb-6">
                         <div className="flex items-end gap-6">

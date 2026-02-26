@@ -87,7 +87,7 @@ const PublicLayout = () => {
                                 className={clsx(
                                     "px-4 py-3.5 rounded-xl font-medium min-h-[52px] flex items-center transition-all active-scale group",
                                     isActive(link.path)
-                                        ? "bg-gradient-to-r from-primary/10 to-primary/5 text-primary shadow-sm"
+                                        ? "bg-primary/10 text-primary shadow-sm"
                                         : "text-secondary hover:bg-gray-50"
                                 )}
                             >

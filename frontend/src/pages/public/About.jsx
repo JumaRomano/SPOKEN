@@ -30,10 +30,10 @@ const About = () => {
                         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(2,6,23,0.3)_50%,_rgba(2,6,23,0.85)_100%)] z-10"></div>
 
                         {/* Layer 2: Vertical Gradient - Superior text legibility */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-secondary-dark/70 via-secondary-dark/20 to-secondary-dark/90 z-10"></div>
+                        <div className="absolute inset-0 bg-slate-900/60 z-10"></div>
 
                         {/* Layer 3: Laptop-optimized Horizontal Gradient - Adds cinematic width */}
-                        <div className="hidden lg:block absolute inset-0 bg-gradient-to-r from-secondary-dark/40 via-transparent to-secondary-dark/40 z-10"></div>
+                        <div className="hidden lg:block absolute inset-0 bg-slate-900/30 z-10"></div>
 
                         {/* Layer 4: Subtle Noise Texture - Film grain effect for premium feel */}
                         <div className="absolute inset-0 opacity-[0.03] z-10 mix-blend-overlay"
@@ -65,7 +65,7 @@ const About = () => {
                             Who We Are
                         </motion.span>
                         <h1 className="text-5xl sm:text-6xl lg:text-[90px] xl:text-[100px] font-black mb-8 lg:mb-10 leading-[0.95] tracking-tighter text-white drop-shadow-2xl">
-                            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-blue-300 drop-shadow-none">Spoken Word</span>
+                            About <span className="text-blue-200 drop-shadow-none">Spoken Word</span>
                         </h1>
                         <p className="text-lg lg:text-2xl xl:text-2xl text-slate-200 font-medium max-w-3xl mx-auto leading-relaxed opacity-95 drop-shadow-lg">
                             Building a community of faith, hope, and love where everyone belongs and finds their purpose.
@@ -234,7 +234,7 @@ const About = () => {
                                         </svg>
                                     </div>
                                     <span className="text-xs font-black tracking-[0.2em] uppercase opacity-40">Team Photo Coming Soon</span>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-secondary-dark/10 to-transparent"></div>
+                                    <div className="absolute inset-0 bg-secondary-dark/10"></div>
                                 </div>
                             </motion.div>
                             <motion.div
@@ -279,7 +279,7 @@ const About = () => {
                                         </svg>
                                     </div>
                                     <span className="text-xs font-black tracking-[0.2em] uppercase opacity-40">Ministry Photo Coming Soon</span>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-secondary-dark/10 to-transparent"></div>
+                                    <div className="absolute inset-0 bg-secondary-dark/10"></div>
                                 </div>
                             </motion.div>
                             <motion.div
@@ -340,7 +340,7 @@ const About = () => {
                                     {leader.img ? (
                                         <img src={leader.img} alt={leader.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                     ) : (
-                                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 text-slate-400">
+                                        <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-400">
                                             <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center mb-4 shadow-soft">
                                                 <svg className="w-12 h-12 opacity-20" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
@@ -349,7 +349,7 @@ const About = () => {
                                             <span className="text-xs font-black tracking-widest uppercase opacity-40">Leader Portrait</span>
                                         </div>
                                     )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-secondary-dark/90 via-secondary-dark/40 to-transparent flex flex-col justify-end p-8 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                    <div className="absolute gap-1 inset-0 bg-secondary-dark/60 flex flex-col justify-end p-8 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                                         <h4 className="text-xl font-bold mb-1">{leader.name}</h4>
                                         <p className="text-primary-light font-black text-[10px] uppercase tracking-[0.2em]">{leader.role}</p>
                                     </div>

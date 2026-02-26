@@ -135,7 +135,7 @@ const Login = () => {
                             <Button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-4 rounded-xl font-bold text-lg shadow-lg shadow-primary/30 hover:shadow-primary/50 border border-white/20 !bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 transition-all transform hover:-translate-y-1 relative overflow-hidden group text-white"
+                                className="w-full py-4 rounded-xl font-bold text-lg shadow-sm border border-white/20 transition-all transform hover:-translate-y-1 relative overflow-hidden group text-white"
                                 variant="primary"
                             >
                                 <span className="relative z-10">{loading ? 'Signing In...' : 'Sign In'}</span>

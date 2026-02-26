@@ -42,7 +42,7 @@ const MainLayout = ({ children }) => {
     return (
         <div className="flex min-h-screen bg-gray-50">
             {/* Mobile Header & Overlay */}
-            <div className="lg:hidden fixed top-0 w-full z-20 bg-gradient-to-r from-primary-gradientStart to-primary-gradientEnd text-white p-4 flex justify-between items-center shadow-md">
+            <div className="lg:hidden fixed top-0 w-full z-20 bg-slate-900 text-white p-4 flex justify-between items-center shadow-md">
                 <span className="font-bold text-lg">Spoken Word</span>
                 <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}

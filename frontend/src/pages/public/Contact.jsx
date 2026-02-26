@@ -154,7 +154,7 @@ const Contact = () => {
 
                                 <button
                                     type="submit"
-                                    className="w-full sm:w-auto px-6 sm:px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-xl shadow-lg shadow-green-500/30 hover:shadow-green-500/50 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 min-h-[52px] text-base touch-manipulation"
+                                    className="w-full sm:w-auto px-6 sm:px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl shadow-sm active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 min-h-[52px] text-base touch-manipulation"
                                 >
                                     <FaWhatsapp className="text-xl" />
                                     Send via WhatsApp

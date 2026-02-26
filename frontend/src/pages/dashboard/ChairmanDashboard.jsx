@@ -130,7 +130,7 @@ const ChairmanDashboard = () => {
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-8 text-white relative overflow-hidden">
+                    <div className="bg-slate-900 rounded-2xl p-8 text-white relative overflow-hidden">
                         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                             <div>
                                 <h3 className="font-bold text-xl mb-2">Quarterly Board Meeting</h3>
@@ -140,8 +140,6 @@ const ChairmanDashboard = () => {
                                 View Agenda
                             </button>
                         </div>
-                        {/* Circle decoration */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
                     </div>
                 </div>
 
